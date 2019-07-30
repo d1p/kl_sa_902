@@ -1,0 +1,43 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+mixer = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-django = "*"
+
+[packages]
+django = "*"
+django-environ = "*"
+psycopg2-binary = "*"
+dj-database-url = "*"
+django-storages = "*"
+pillow = "*"
+django-anymail = "*"
+redis = "*"
+celery = "*"
+twilio = "*"
+djangorestframework = "*"
+djangorestframework-simplejwt = "*"
+fcm-django = "*"
+drf-yasg = "*"
+django-filter = "*"
+django-rest-swagger = "*"
+qrcode = "*"
+packaging = "*"
+pytest = "*"
+django-redis = "*"
+
+[requires]
+python_version = "3.7.3"
+
+[pipenv]
+allow_prereleases = true
+
+[scripts]
+s = "python manage.py runserver"
+mg = "python manage.py migrate"
+mkmg = "python manage.py makemigrations"
