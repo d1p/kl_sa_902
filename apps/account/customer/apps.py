@@ -7,4 +7,4 @@ class CustomerConfig(AppConfig):
     verbose_name = _("Customer")
 
     def ready(self):
-        pass
+        import apps.account.customer.signals

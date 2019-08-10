@@ -139,14 +139,3 @@ class ResetPasswordSerializer(serializers.Serializer):
 class ChangePasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True, min_length=8)
-
-    def create(self, validated_data):
-        user = self.context["request"].user
-        if user.check_password(validated_data.get("current_password")) is False:
-            raise ValidationError({"current_password": [_("Invalid password")]})
-
-        user.set_password(validated_data.get("new_password"))
-        return user
-
-    def update(self, instance, validated_data):
-        pass
