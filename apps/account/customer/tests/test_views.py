@@ -15,13 +15,11 @@ class TestCustomerViewSet:
 
     @pytest.fixture
     def customer(self):
-        return mixer.blend(
-            "customer.Customer"
-        )
+        return mixer.blend("customer.Customer")
 
     def test_registration_success(self, groups):
         data = {
-            "user.full_name": "Zedd",
+            "user.name": "Zedd",
             "user.phone_number": "+88018903786782",
             "user.email": "zedd@example.com",
             "user.locale": "en",
@@ -38,7 +36,7 @@ class TestCustomerViewSet:
 
     def test_update_profile_success(self, groups, customer):
         data = {
-            "user.full_name": "Zedd",
+            "user.name": "Zedd",
             "user.phone_number": "+88012903786782",
             "user.email": "zd@example.com",
             "user.locale": "en",
@@ -48,7 +46,10 @@ class TestCustomerViewSet:
 
         request = factory.put("/", data=data)
         force_authenticate(request, customer.user)
-        response = CustomerViewSet.as_view({"put": "update"})(request, user=customer.user.id)
+        response = CustomerViewSet.as_view({"put": "update"})(
+            request, user=customer.user.id
+        )
+
         assert (
             response.status_code == status.HTTP_200_OK
         ), "Should edit customers profile"

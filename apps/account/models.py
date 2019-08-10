@@ -3,11 +3,11 @@ from random import randrange
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.core.mail import send_mail
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django.core.mail import send_mail
 from twilio.rest import Client
 
 from utils.file import RandomFileName
@@ -23,8 +23,8 @@ _PHONE_REGEX = RegexValidator(
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    full_name = models.CharField(
-        max_length=50, db_index=True, help_text=_("Full name of the user")
+    name = models.CharField(
+        max_length=50, db_index=True, help_text=_("Users name / Restaurants name")
     )
     phone_number = models.CharField(
         validators=[_PHONE_REGEX], max_length=17, unique=True
@@ -104,9 +104,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.is_superuser or self.is_staff:
             return ProfileType.SUPERUSER
 
-        if self.groups.filter(name="CUSTOMER").exists():
+        if self.groups.filter(name="Customer").exists():
             return ProfileType.CUSTOMER
-        elif self.groups.filter(name="RESTAURANT").exists():
+        elif self.groups.filter(name="Restaurant").exists():
             return ProfileType.RESTAURANT
         else:
             return "None"
@@ -116,9 +116,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _("Users")
 
 
-class PhoneVerification(models.Model):
+class Token(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
-    code = models.CharField(max_length=5)
+    code = models.CharField(max_length=4)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -130,14 +130,17 @@ class PhoneVerification(models.Model):
         checks if the user has requested for a phone number verification in last 1 minutes.
         """
         created_time = timezone.datetime.now() - timezone.timedelta(minutes=1)
-        return PhoneVerification.objects.filter(
-            user=user, created_at__lt=created_time
-        ).exists()
+        return Token.objects.filter(user=user, created_at__lt=created_time).exists()
 
     class Meta:
         get_latest_by = "created_at"
 
     def save(self, *args, **kwargs):
         if self.pk is None:
-            self.code = randrange(100_00, 999_99)
-        super(PhoneVerification, self).save(*args, **kwargs)
+            self.code = randrange(100_0, 999_9)
+        super(Token, self).save(*args, **kwargs)
+
+
+class ForgotPasswordToken(Token):
+    def __str__(self):
+        return f"{self.user} : {self.code}"

@@ -11,45 +11,154 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('auth', '0011_update_proxy_permissions'),
-    ]
+    dependencies = [("auth", "0011_update_proxy_permissions")]
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('full_name', models.CharField(db_index=True, help_text='Full name of the user', max_length=50)),
-                ('phone_number', models.CharField(max_length=17, unique=True, validators=[django.core.validators.RegexValidator(message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.", regex='^\\+?1?\\d{9,15}$')])),
-                ('phone_number_verified', models.BooleanField(db_index=True, default=False, help_text='Checks if the user has a verified phone number.')),
-                ('email', models.EmailField(blank=True, db_index=True, max_length=254, null=True, unique=True, verbose_name='Email Address')),
-                ('profile_picture', models.ImageField(default='user/profile-picture/default.png', upload_to=utils.file.RandomFileName('user/profile-picture/'), verbose_name='Profile Picture')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether this user can log into the admin site.', verbose_name='Staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active.Unselect this instead of deleting the account', verbose_name='Active')),
-                ('locale', models.CharField(choices=[('en', 'English'), ('ar', 'Arabic')], default='en', max_length=2)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "full_name",
+                    models.CharField(
+                        db_index=True, help_text="Full name of the user", max_length=50
+                    ),
+                ),
+                (
+                    "phone_number",
+                    models.CharField(
+                        max_length=17,
+                        unique=True,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
+                                regex="^\\+?1?\\d{9,15}$",
+                            )
+                        ],
+                    ),
+                ),
+                (
+                    "phone_number_verified",
+                    models.BooleanField(
+                        db_index=True,
+                        default=False,
+                        help_text="Checks if the user has a verified phone number.",
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        blank=True,
+                        db_index=True,
+                        max_length=254,
+                        null=True,
+                        unique=True,
+                        verbose_name="Email Address",
+                    ),
+                ),
+                (
+                    "profile_picture",
+                    models.ImageField(
+                        default="user/profile-picture/default.png",
+                        upload_to=utils.file.RandomFileName("user/profile-picture/"),
+                        verbose_name="Profile Picture",
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether this user can log into the admin site.",
+                        verbose_name="Staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active.Unselect this instead of deleting the account",
+                        verbose_name="Active",
+                    ),
+                ),
+                (
+                    "locale",
+                    models.CharField(
+                        choices=[("en", "English"), ("ar", "Arabic")],
+                        default="en",
+                        max_length=2,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.Group",
+                        verbose_name="groups",
+                    ),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Specific permissions for this user.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.Permission",
+                        verbose_name="user permissions",
+                    ),
+                ),
             ],
-            options={
-                'verbose_name': 'User',
-                'verbose_name_plural': 'Users',
-            },
+            options={"verbose_name": "User", "verbose_name_plural": "Users"},
         ),
         migrations.CreateModel(
-            name='PhoneVerification',
+            name="PhoneVerification",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=5)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=5)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
-            options={
-                'get_latest_by': 'created_at',
-            },
+            options={"get_latest_by": "created_at"},
         ),
     ]

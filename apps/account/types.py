@@ -5,4 +5,3 @@ class ProfileType:
     SUPERUSER = _("Superuser")
     CUSTOMER = _("Customer")
     RESTAURANT = _("Restaurant")
-
