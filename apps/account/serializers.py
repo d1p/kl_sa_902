@@ -7,6 +7,7 @@ from six import text_type
 
 from apps.account.models import User
 from .models import _PHONE_REGEX
+from .types import ProfileType
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -85,6 +86,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             },
         )
         data["profile_type"] = self.user.profile_type
+        if self.user.profile_type == ProfileType.CUSTOMER:
+            try:
+                data["customer"] = {"qr_code": self.user.customer.qr_code.url}
+            except ValueError:
+                pass
+
         self.user.last_login = timezone.now()
         self.user.save()
         return data

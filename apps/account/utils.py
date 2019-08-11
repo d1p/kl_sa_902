@@ -35,8 +35,8 @@ def register_basic_user(group_name: str, user_data: dict) -> User:
             phone_number=user_data.get("phone_number"),
             email=user_data.get("email"),
             locale=user_data.get("locale", "en"),
-            profile_picture=user_data.get("profile_picture"),
         )
+
     except IntegrityError as e:
         if "email" in e.args[0]:
             field_name = "email_address"
@@ -51,6 +51,8 @@ def register_basic_user(group_name: str, user_data: dict) -> User:
 
     user.groups.add(group)
     user.set_password(user_data.get("password"))
+    if user_data.get("profile_picture") is not None:
+        user.profile_picture = user_data.get("profile_picture")
     user.save()
 
     return user
