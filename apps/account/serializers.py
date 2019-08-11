@@ -1,13 +1,11 @@
 from django.conf import settings
 from django.core.validators import EmailValidator
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from six import text_type
 
-from apps.account.models import User, ForgotPasswordToken
+from apps.account.models import User
 from .models import _PHONE_REGEX
 
 
@@ -95,45 +93,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class ForgotPasswordSerializer(serializers.Serializer):
     phone_number = serializers.CharField(required=True)
 
-    def create(self, validated_data):
-        try:
-            user = User.objects.get(phone_number=validated_data.get("phone_number"))
-        except User.DoesNotExist:
-            raise ValidationError({"phone_number": ["User does not exists."]})
-        if ForgotPasswordToken.has_sent_recently(user) is True:
-            raise ValidationError(
-                {"non_field_errors": "Please wait before requesting for a new code."}
-            )
-
-        return ForgotPasswordToken.objects.create(user=user)
-
-    def update(self, instance, validated_data):
-        pass
-
 
 class ResetPasswordSerializer(serializers.Serializer):
     phone_number = serializers.CharField(required=True)
     code = serializers.IntegerField(required=True)
     new_password = serializers.CharField(required=True, min_length=8)
-
-    def create(self, validated_data):
-        try:
-            user = User.objects.get(phone_number=validated_data.get("phone_number"))
-        except User.DoesNotExist:
-            raise ValidationError({"phone_number": [_("Invalid phone number.")]})
-
-        if ForgotPasswordToken.objects.filter(
-            user=user, code=validated_data.get("code")
-        ).exists():
-            user.set_password(validated_data.get("new_password"))
-            ForgotPasswordToken.objects.filter(
-                user=user, created_at_lte=timezone.now()
-            ).delete()
-        else:
-            raise ValidationError({"code": [_("Invalid code.")]})
-
-    def update(self, instance, validated_data):
-        pass
 
 
 class ChangePasswordSerializer(serializers.Serializer):

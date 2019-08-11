@@ -4,7 +4,12 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .customer.views import CustomerViewSet
-from .views import MyTokenObtainPairView, ChangePasswordViewSet
+from .views import (
+    MyTokenObtainPairView,
+    ChangePasswordViewSet,
+    ForgotPasswordViewSet,
+    ResetPasswordViewSet,
+)
 
 router = DefaultRouter()
 router.register("account/fcm", FCMDeviceAuthorizedViewSet, basename="fcm")
@@ -12,6 +17,12 @@ router.register("account/fcm", FCMDeviceAuthorizedViewSet, basename="fcm")
 router.register("account/customer", CustomerViewSet, basename="customer")
 router.register(
     "account/change-password", ChangePasswordViewSet, base_name="change-password"
+)
+router.register(
+    "account/forgot-password", ForgotPasswordViewSet, base_name="forgot-password"
+)
+router.register(
+    "account/reset-password", ResetPasswordViewSet, base_name="reset-password"
 )
 
 urlpatterns = [

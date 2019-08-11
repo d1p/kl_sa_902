@@ -130,7 +130,7 @@ class Token(models.Model):
         checks if the user has requested for a phone number verification in last 1 minutes.
         """
         created_time = timezone.datetime.now() - timezone.timedelta(minutes=1)
-        return Token.objects.filter(user=user, created_at__lt=created_time).exists()
+        return Token.objects.filter(user=user, created_at__gte=created_time).exists()
 
     class Meta:
         get_latest_by = "created_at"
