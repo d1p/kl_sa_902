@@ -11,6 +11,8 @@ from .views import (
     ResetPasswordViewSet,
     ResendVerificationViewSet,
     VerifyPhoneNumberViewSet,
+    ChangePhoneNumberViewSet,
+    ChangePhoneNumberVerificationViewSet,
 )
 
 router = DefaultRouter()
@@ -31,11 +33,21 @@ router.register(
     ResendVerificationViewSet,
     base_name="resend-verification-code",
 )
-
+router.register(
+    "account/change-phone-number",
+    ChangePhoneNumberViewSet,
+    base_name="change-phone-number",
+)
 router.register(
     "account/verify-phone-number",
     VerifyPhoneNumberViewSet,
     base_name="verify-phone-number",
+)
+
+router.register(
+    "account/verify-new-phone-number",
+    ChangePhoneNumberVerificationViewSet,
+    base_name="verify-new-phone-number",
 )
 
 urlpatterns = [

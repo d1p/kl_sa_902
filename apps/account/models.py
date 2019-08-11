@@ -154,3 +154,15 @@ class ForgotPasswordToken(Token):
 class VerifyPhoneToken(Token):
     def __str__(self):
         return f"{self.user}: {self.code}"
+
+
+class ChangePhoneNumberToken(Token):
+    new_phone_number = models.CharField(
+        validators=[_PHONE_REGEX], max_length=17, db_index=True
+    )
+    old_phone_number = models.CharField(
+        validators=[_PHONE_REGEX], max_length=17, db_index=True
+    )
+
+    def __str__(self):
+        return f"{self.user}: Old: {self.old_phone_number}, New: {self.new_phone_number}"

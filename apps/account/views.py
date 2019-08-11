@@ -1,19 +1,27 @@
+from django.db import transaction
 from django.utils import timezone
 from rest_framework import permissions, status
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
+from twilio.base.exceptions import TwilioRestException
 
-from apps.account.models import User, ForgotPasswordToken, VerifyPhoneToken
+from apps.account.models import (
+    User,
+    ForgotPasswordToken,
+    VerifyPhoneToken,
+    ChangePhoneNumberToken,
+)
 from .serializers import (
     MyTokenObtainPairSerializer,
     ChangePasswordSerializer,
     ForgotPasswordSerializer,
     ResetPasswordSerializer,
     ResendVerificationSerializer,
-VerifyPhoneNumberSerializer
-)
+    VerifyPhoneNumberSerializer,
+    ChangePhoneNumberVerificationSerializer,
+    ChangePhoneNumberSerializer)
 
 
 # Create your views here.
@@ -166,7 +174,10 @@ class VerifyPhoneNumberViewSet(GenericViewSet, CreateModelMixin):
             )
 
         if user.is_active is True:
-            return Response({"non_field_error": "Account is already verified."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"non_field_error": "Account is already verified."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if VerifyPhoneToken.objects.filter(
             user=user, code=serializer.validated_data.get("code")
@@ -178,3 +189,82 @@ class VerifyPhoneNumberViewSet(GenericViewSet, CreateModelMixin):
             return Response({"success": True}, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class ChangePhoneNumberViewSet(GenericViewSet, CreateModelMixin):
+    """
+    Responses other than the default validation ones are given bellow
+    ```{"success": true}```
+    ```{"password": ["Invalid Password"]}```
+    ```{"new_phone_number": ["Phone Number is already registered"]}```
+    ```{"new_phone_number": ["Invalid phone Number."]}```
+    """
+
+    serializer_class = ChangePhoneNumberSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid() is False:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if (
+            request.user.check_password(serializer.validated_data.get("password"))
+            is False
+        ):
+            return Response({"password": ["Invalid Password."]})
+
+        if User.objects.filter(
+            phone_number=serializer.validated_data.get("new_phone_number")
+        ).exists():
+            return Response(
+                {"new_phone_number": ["Phone Number is already registered"]}
+            )
+        with transaction.atomic():
+            token = ChangePhoneNumberToken.objects.create(
+                user=request.user,
+                old_phone_number=request.user.phone_number,
+                new_phone_number=serializer.validated_data.get("new_phone_number"),
+            )
+            try:
+                request.user.sms_user(
+                    f"Use {token.code} as verification code for Kole."
+                )
+            except TwilioRestException:
+                return Response({"new_phone_number": ["Invalid phone Number."]})
+
+            return Response({"success": True}, status=status.HTTP_200_OK)
+
+
+class ChangePhoneNumberVerificationViewSet(GenericViewSet, CreateModelMixin):
+    """
+    Responses other than the default validation ones are given bellow
+    ```{"success": true}```
+    ```{"code": "Invalid Code"}```
+    """
+
+    serializer_class = ChangePhoneNumberVerificationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid() is False:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if ChangePhoneNumberToken.objects.filter(
+            user=request.user,
+            old_phone_number=request.user.phone_number,
+            new_phone_number=serializer.validated_data.get("new_phone_number"),
+            code=serializer.validated_data.get("code"),
+        ).exists():
+            request.user.phone_number = serializer.validated_data.get(
+                "new_phone_number"
+            )
+            request.user.save()
+            ChangePhoneNumberToken.objects.filter(
+                user=request.user,
+                old_phone_number=request.user.phone_number,
+                new_phone_number=serializer.validated_data.get("new_phone_number"),
+                code=serializer.validated_data.get("code"),
+            ).delete()
+            return Response({"success": True}, status=status.HTTP_200_OK)
+        else:
+            return Response({"code": "Invalid Code"}, status.HTTP_400_BAD_REQUEST)

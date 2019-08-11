@@ -113,3 +113,16 @@ class VerifyPhoneNumberSerializer(serializers.Serializer):
     phone_number = serializers.CharField(required=True)
     code = serializers.CharField(required=True)
 
+
+class ChangePhoneNumberSerializer(serializers.Serializer):
+    password = serializers.CharField(required=True)
+    new_phone_number = serializers.CharField(
+        required=True, validators=[_PHONE_REGEX], max_length=17
+    )
+
+
+class ChangePhoneNumberVerificationSerializer(serializers.Serializer):
+    new_phone_number = serializers.CharField(
+        required=True, validators=[_PHONE_REGEX], max_length=17
+    )
+    code = serializers.CharField(required=True)

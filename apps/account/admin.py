@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import User, VerifyPhoneToken, ForgotPasswordToken
+from .models import User, VerifyPhoneToken, ForgotPasswordToken, ChangePhoneNumberToken
 
 
 @admin.register(User)
@@ -68,3 +68,4 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(VerifyPhoneToken)
 admin.site.register(ForgotPasswordToken)
+admin.site.register(ChangePhoneNumberToken)
