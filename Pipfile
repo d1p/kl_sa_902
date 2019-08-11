@@ -31,6 +31,7 @@ packaging = "*"
 pytest = "*"
 django-redis = "*"
 boto3 = "*"
+markdown = "*"
 
 [requires]
 python_version = "3.7.3"
