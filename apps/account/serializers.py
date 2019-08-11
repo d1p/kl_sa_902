@@ -103,3 +103,13 @@ class ResetPasswordSerializer(serializers.Serializer):
 class ChangePasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True, min_length=8)
+
+
+class ResendVerificationSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(required=True)
+
+
+class VerifyPhoneNumberSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(required=True)
+    code = serializers.CharField(required=True)
+

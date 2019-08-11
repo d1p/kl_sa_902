@@ -8,6 +8,8 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from rest_framework.exceptions import ValidationError
+from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
 from utils.file import RandomFileName
@@ -82,9 +84,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     def sms_user(self, body: str):
         """ Send a sms to the user """
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        client.messages.create(
-            to=self.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=body
-        )
+        try:
+            client.messages.create(
+                to=self.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=body
+            )
+        except TwilioRestException:
+            raise ValidationError({"non_field_errors": ["Invalid phone number"]})
 
     @property
     def profile(self) -> object:
@@ -144,3 +149,8 @@ class Token(models.Model):
 class ForgotPasswordToken(Token):
     def __str__(self):
         return f"{self.user} : {self.code}"
+
+
+class VerifyPhoneToken(Token):
+    def __str__(self):
+        return f"{self.user}: {self.code}"

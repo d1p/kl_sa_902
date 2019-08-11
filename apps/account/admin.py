@@ -2,8 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import User
-from .types import ProfileType
+from .models import User, VerifyPhoneToken, ForgotPasswordToken
 
 
 @admin.register(User)
@@ -62,6 +61,10 @@ class CustomUserAdmin(UserAdmin):
         "is_superuser",
         "profile_type",
     )
-    search_fields = ("id", "email", "phone_number",)
+    search_fields = ("id", "email", "phone_number")
     ordering = ("id", "is_staff", "is_superuser")
     extra = 0
+
+
+admin.site.register(VerifyPhoneToken)
+admin.site.register(ForgotPasswordToken)

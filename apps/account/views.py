@@ -5,12 +5,14 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from apps.account.models import User, ForgotPasswordToken
+from apps.account.models import User, ForgotPasswordToken, VerifyPhoneToken
 from .serializers import (
     MyTokenObtainPairSerializer,
     ChangePasswordSerializer,
     ForgotPasswordSerializer,
     ResetPasswordSerializer,
+    ResendVerificationSerializer,
+VerifyPhoneNumberSerializer
 )
 
 
@@ -79,6 +81,7 @@ class ForgotPasswordViewSet(GenericViewSet, CreateModelMixin):
 
         token = ForgotPasswordToken.objects.create(user=user)
         user.sms_user(f"Use {token.code} as your reset code for Kole.")
+
         return Response({"success": True}, status=status.HTTP_200_OK)
 
 
@@ -114,3 +117,64 @@ class ResetPasswordViewSet(GenericViewSet, CreateModelMixin):
             return Response(
                 {"code": ["Invalid code."]}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class ResendVerificationViewSet(GenericViewSet, CreateModelMixin):
+    serializer_class = ResendVerificationSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid() is False:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(
+                phone_number=serializer.validated_data.get("phone_number")
+            )
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if VerifyPhoneToken.has_sent_recently(user) is True:
+            return Response(
+                {"non_field_errors": "Please wait before requesting for a new code."},
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
+        token = VerifyPhoneToken.objects.create(user=user)
+
+        user.sms_user(f"Use {token.code} as your verification code for Kole.")
+        return Response({"success": True}, status=status.HTTP_200_OK)
+
+
+class VerifyPhoneNumberViewSet(GenericViewSet, CreateModelMixin):
+    serializer_class = VerifyPhoneNumberSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid() is False:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(
+                phone_number=serializer.validated_data.get("phone_number")
+            )
+        except User.DoesNotExist:
+            return Response(
+                {"phone_number": ["Invalid phone number."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if user.is_active is True:
+            return Response({"non_field_error": "Account is already verified."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if VerifyPhoneToken.objects.filter(
+            user=user, code=serializer.validated_data.get("code")
+        ).exists():
+            user.is_active = True
+            user.phone_number_verified = True
+            user.save()
+            VerifyPhoneToken.objects.filter(user=user).delete()
+            return Response({"success": True}, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)

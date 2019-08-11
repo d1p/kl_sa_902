@@ -20,7 +20,7 @@ class TestCustomerViewSet:
     def test_registration_success(self, groups):
         data = {
             "user.name": "Zedd",
-            "user.phone_number": "+88018903786782",
+            "user.phone_number": "+8801978609908",
             "user.email": "zedd@example.com",
             "user.locale": "en",
             "user.password": "zedorbed123",
@@ -37,7 +37,6 @@ class TestCustomerViewSet:
     def test_update_profile_success(self, groups, customer):
         data = {
             "user.name": "Zedd",
-            "user.phone_number": "+88012903786782",
             "user.email": "zd@example.com",
             "user.locale": "en",
         }
