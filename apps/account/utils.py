@@ -14,14 +14,6 @@ def save_user_information(user_instance: User, user_data: dict):
         raise ValidationError(
             {"user": {"email": [_("Email address is already registered")]}}
         )
-    try:
-        user_instance.phone_number = user_data.get(
-            "phone_number", user_instance.phone_number
-        )
-    except IntegrityError:
-        raise ValidationError(
-            {"user": {"phone_number": [_("Phone Number is already registered")]}}
-        )
 
     user_instance.locale = user_data.get("locale", user_instance.locale)
     user_instance.profile_picture = user_data.get(
