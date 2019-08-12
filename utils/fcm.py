@@ -14,6 +14,8 @@ def send_push_notification(user: User, title: str, body: str, data={}):
     """
     ios_devices = FCMDevice.objects.filter(user=user, active=True, type="ios")
     ios_devices.send_message(title, body, data=data)
+    web_devices = FCMDevice.objects.filter(user=user, active=True, type="web")
+    web_devices.send_message(title, body, data=data)
     android_devices = FCMDevice.objects.filter(user=user, active=True, type="android")
 
     notification_data = {"title": title, "body": body}
