@@ -3,6 +3,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.account.serializers import PublicUserSerializer
 from .models import Ticket, Message, PreBackedTicketTopic
+from .tasks import send_message_notification
 
 
 class PreBackedTicketTopicSerializer(serializers.ModelSerializer):
@@ -40,4 +41,6 @@ class MessageSerializer(serializers.ModelSerializer):
                 {"non_field_errors": ["This ticket has been closed."]}
             )
 
-        return Message.objects.create(**validated_data)
+        message = Message.objects.create(**validated_data)
+        send_message_notification.delay(message.id)
+        return message
