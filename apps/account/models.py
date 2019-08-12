@@ -83,6 +83,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def sms_user(self, body: str):
         """ Send a sms to the user """
+        if settings.UNIT_TESTING:
+            pass
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
         try:
             client.messages.create(

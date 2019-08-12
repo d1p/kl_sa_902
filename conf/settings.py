@@ -31,6 +31,7 @@ DJANGO_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.gis",
 ]
 
 THIRD_PARTY_APPS = [
@@ -43,7 +44,12 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
 ]
 
-CORE_APPS = ["apps.account", "apps.account.customer"]
+CORE_APPS = [
+    "apps.account",
+    "apps.account.customer",
+    "apps.account.restaurant",
+    "apps.ticket",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + CORE_APPS
 
@@ -227,6 +233,10 @@ if DEBUG is True:
                 "handlers": ["console", "file"],
                 "propagate": False,
             },
-            "apps": {"level": "DEBUG", "handlers": ["console", "file"], "propagate": False},
+            "apps": {
+                "level": "DEBUG",
+                "handlers": ["console", "file"],
+                "propagate": False,
+            },
         },
     }

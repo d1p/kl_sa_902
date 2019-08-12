@@ -32,6 +32,8 @@ pytest = "*"
 django-redis = "*"
 boto3 = "*"
 gunicorn = "*"
+django-extensions = "*"
+shortuuid = "*"
 
 [requires]
 python_version = "3.7.3"

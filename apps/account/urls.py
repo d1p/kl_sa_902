@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .customer.views import CustomerViewSet
+from .restaurant.views import RestaurantViewSet, RestaurantCategoryViewSet
 from .views import (
     MyTokenObtainPairView,
     ChangePasswordViewSet,
@@ -19,6 +20,9 @@ router = DefaultRouter()
 router.register("account/fcm", FCMDeviceAuthorizedViewSet, basename="fcm")
 
 router.register("account/customer", CustomerViewSet, basename="customer")
+router.register("account/restaurant", RestaurantViewSet, basename="restaurant")
+router.register(r"account/restaurant/category", RestaurantCategoryViewSet)
+
 router.register(
     "account/change-password", ChangePasswordViewSet, base_name="change-password"
 )

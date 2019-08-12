@@ -34,6 +34,22 @@ class TestCustomerViewSet:
             response.status_code == status.HTTP_201_CREATED
         ), "Should register a new customer"
 
+    def test_registration_validation_error(self, groups):
+        data = {
+            "user.name": "Zedd",
+            "user.email": "zedd@example.com",
+            "user.locale": "en",
+            "user.password": "zedorbed123",
+        }
+
+        factory = APIRequestFactory()
+
+        request = factory.post("/", data=data)
+        response = CustomerViewSet.as_view({"post": "create"})(request)
+        assert (
+            response.status_code == status.HTTP_400_BAD_REQUEST
+        ), "Should return validation errors"
+
     def test_update_profile_success(self, groups, customer):
         data = {
             "user.name": "Zedd",
@@ -52,3 +68,4 @@ class TestCustomerViewSet:
         assert (
             response.status_code == status.HTTP_200_OK
         ), "Should edit customers profile"
+

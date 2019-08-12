@@ -60,7 +60,8 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "phone_number_verified", "created_at")
         extra_kwargs = {
             "email": {"validators": [EmailValidator()]},
-            "phone_number": {"validators": [_PHONE_REGEX]},
+            "phone_number": {"validators": [_PHONE_REGEX], "required": False},
+
         }
 
 
