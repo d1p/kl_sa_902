@@ -1,3 +1,4 @@
 binutils
 libproj-dev
 gdal-bin
+libatlas-base-dev
