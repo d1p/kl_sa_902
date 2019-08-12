@@ -10,7 +10,6 @@ root_path = environ.Path(__file__) - 2
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -21,7 +20,6 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 DJANGO_APPS = [
@@ -85,14 +83,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "conf.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {"default": env.db()}
 
 CACHES = {"default": env.cache()}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -105,7 +101,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -177,7 +172,6 @@ TWILIO_ACCOUNT_SID = env.str("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = env.str("TWILIO_AUTH_TOKEN")
 TWILIO_FROM_NUMBER = env.str("TWILIO_FROM_NUMBER")
 
-
 # Email
 ANYMAIL = {"MAILGUN_API_KEY": env.str("MAILGUN_API_KEY")}
 DEFAULT_SERVER_EMAIL = env.str("DEFAULT_SERVER_EMAIL")
@@ -241,6 +235,6 @@ if DEBUG is True:
         },
     }
 
-if 'heroku' in os.environ:
-    GDAL_LIBRARY_PATH = '/app/.heroku/vendor/lib/libgdal.so'
-    GEOS_LIBRARY_PATH = '/app/.heroku/vendor/lib/libgeos_c.so'
+if "heroku" in os.environ:
+    GDAL_LIBRARY_PATH = os.getenv("GDAL_LIBRARY_PATH")
+    GEOS_LIBRARY_PATH = os.getenv("GEOS_LIBRARY_PATH")
