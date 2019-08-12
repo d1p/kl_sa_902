@@ -5,6 +5,18 @@ from django_extensions.db.fields import ShortUUIDField
 from apps.account.models import User
 
 
+class PreBackedTicketTopic(models.Model):
+    text = models.TextField(max_length=300)
+    text_in_ar = models.TextField(max_length=300, verbose_name="Text in arabic")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("text", "text_in_ar")
+
+    def __str__(self):
+        return f"{self.text}"
+
+
 class Ticket(models.Model):
     OPEN = 0
     CLOSED = 1

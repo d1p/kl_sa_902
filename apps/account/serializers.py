@@ -10,6 +10,13 @@ from .models import _PHONE_REGEX
 from .types import ProfileType
 
 
+class PublicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "name", "profile_picture")
+        read_only_fields = ("id", "name", "profile_picture")
+
+
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={"input_type": "password"}, write_only=True, required=False, min_length=8
@@ -61,7 +68,6 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "email": {"validators": [EmailValidator()]},
             "phone_number": {"validators": [_PHONE_REGEX], "required": False},
-
         }
 
 

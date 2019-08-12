@@ -7,18 +7,50 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('account', '0008_remove_verifyphonetoken_phone_number'),
-    ]
+    dependencies = [("account", "0008_remove_verifyphonetoken_phone_number")]
 
     operations = [
         migrations.CreateModel(
-            name='ChangePhoneNumberToken',
+            name="ChangePhoneNumberToken",
             fields=[
-                ('token_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='account.Token')),
-                ('new_phone_number', models.CharField(db_index=True, max_length=17, validators=[django.core.validators.RegexValidator(message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.", regex='^\\+?1?\\d{9,15}$')])),
-                ('old_phone_number', models.CharField(db_index=True, max_length=17, validators=[django.core.validators.RegexValidator(message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.", regex='^\\+?1?\\d{9,15}$')])),
+                (
+                    "token_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="account.Token",
+                    ),
+                ),
+                (
+                    "new_phone_number",
+                    models.CharField(
+                        db_index=True,
+                        max_length=17,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
+                                regex="^\\+?1?\\d{9,15}$",
+                            )
+                        ],
+                    ),
+                ),
+                (
+                    "old_phone_number",
+                    models.CharField(
+                        db_index=True,
+                        max_length=17,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
+                                regex="^\\+?1?\\d{9,15}$",
+                            )
+                        ],
+                    ),
+                ),
             ],
-            bases=('account.token',),
-        ),
+            bases=("account.token",),
+        )
     ]

@@ -5,13 +5,8 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('account', '0007_auto_20190811_0703'),
-    ]
+    dependencies = [("account", "0007_auto_20190811_0703")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='verifyphonetoken',
-            name='phone_number',
-        ),
+        migrations.RemoveField(model_name="verifyphonetoken", name="phone_number")
     ]

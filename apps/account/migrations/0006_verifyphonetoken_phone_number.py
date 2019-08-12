@@ -6,15 +6,22 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('account', '0005_verifyphonetoken'),
-    ]
+    dependencies = [("account", "0005_verifyphonetoken")]
 
     operations = [
         migrations.AddField(
-            model_name='verifyphonetoken',
-            name='phone_number',
-            field=models.CharField(default='', max_length=15, validators=[django.core.validators.RegexValidator(message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.", regex='^\\+?1?\\d{9,15}$')]),
+            model_name="verifyphonetoken",
+            name="phone_number",
+            field=models.CharField(
+                default="",
+                max_length=15,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
+                        regex="^\\+?1?\\d{9,15}$",
+                    )
+                ],
+            ),
             preserve_default=False,
-        ),
+        )
     ]

@@ -11,30 +11,76 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+    dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL)]
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(db_index=True, max_length=45, unique=True)),
-                ('name_in_ar', models.CharField(db_index=True, max_length=45, unique=True, verbose_name='Name in Arabic')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(db_index=True, max_length=45, unique=True)),
+                (
+                    "name_in_ar",
+                    models.CharField(
+                        db_index=True,
+                        max_length=45,
+                        unique=True,
+                        verbose_name="Name in Arabic",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Restaurant',
+            name="Restaurant",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cover_picture', models.ImageField(default='user/restaurant/cover/default.png', upload_to=utils.file.RandomFileName('user/restaurant/cover/'))),
-                ('full_address', models.TextField(db_index=True, max_length=800)),
-                ('geolocation', django.contrib.gis.db.models.fields.PointField(blank=True, null=True, srid=4326)),
-                ('online', models.BooleanField(db_index=True, default=False)),
-                ('restaurant_type', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='restaurant.Category')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "cover_picture",
+                    models.ImageField(
+                        default="user/restaurant/cover/default.png",
+                        upload_to=utils.file.RandomFileName("user/restaurant/cover/"),
+                    ),
+                ),
+                ("full_address", models.TextField(db_index=True, max_length=800)),
+                (
+                    "geolocation",
+                    django.contrib.gis.db.models.fields.PointField(
+                        blank=True, null=True, srid=4326
+                    ),
+                ),
+                ("online", models.BooleanField(db_index=True, default=False)),
+                (
+                    "restaurant_type",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="restaurant.Category",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

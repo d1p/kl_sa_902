@@ -14,7 +14,7 @@ schema_view = get_schema_view(
         title="Kole API",
         default_version="a1",
         description="API For Kole application",
-        terms_of_service="https://kl-902.herokuapp.com/terms-of-service/",
+        terms_of_service="https://kl-sa-902.herokuapp.com/terms-of-service/",
         contact=openapi.Contact(email="nihan.dip@gmail.com"),
         license=openapi.License(name="Commercial"),
     ),

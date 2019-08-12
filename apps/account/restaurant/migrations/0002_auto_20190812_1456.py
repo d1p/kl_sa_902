@@ -6,30 +6,30 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('restaurant', '0001_initial'),
-    ]
+    dependencies = [("restaurant", "0001_initial")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='category',
-            options={'verbose_name': 'Category', 'verbose_name_plural': 'Categories'},
+            name="category",
+            options={"verbose_name": "Category", "verbose_name_plural": "Categories"},
         ),
         migrations.AddField(
-            model_name='restaurant',
-            name='lat',
+            model_name="restaurant",
+            name="lat",
             field=models.FloatField(default=10),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='restaurant',
-            name='lng',
+            model_name="restaurant",
+            name="lng",
             field=models.FloatField(default=10),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='restaurant',
-            name='geolocation',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, editable=False, null=True, srid=4326),
+            model_name="restaurant",
+            name="geolocation",
+            field=django.contrib.gis.db.models.fields.PointField(
+                blank=True, editable=False, null=True, srid=4326
+            ),
         ),
     ]

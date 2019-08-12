@@ -27,7 +27,9 @@ def register_basic_user(group_name: str, user_data: dict) -> User:
     group = Group.objects.get(name=group_name)
 
     if user_data.get("phone_number") is None:
-        raise ValidationError({"user": {"phone_number": ["This field may not be blank."]}})
+        raise ValidationError(
+            {"user": {"phone_number": ["This field may not be blank."]}}
+        )
 
     if user_data.get("password") is None:
         raise ValidationError({"user": {"password": ["This field may not be blank."]}})

@@ -167,4 +167,6 @@ class ChangePhoneNumberToken(Token):
     )
 
     def __str__(self):
-        return f"{self.user}: Old: {self.old_phone_number}, New: {self.new_phone_number}"
+        return (
+            f"{self.user}: Old: {self.old_phone_number}, New: {self.new_phone_number}"
+        )

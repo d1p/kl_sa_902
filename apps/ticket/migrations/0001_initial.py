@@ -10,40 +10,68 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+    dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL)]
 
     operations = [
         migrations.CreateModel(
-            name='Ticket',
+            name="Ticket",
             fields=[
-                ('id', django_extensions.db.fields.ShortUUIDField(blank=True, editable=False, primary_key=True, serialize=False)),
-                ('topic', models.CharField(help_text='Topic Name', max_length=300)),
-                ('description', models.TextField(max_length=1000)),
-                ('status', models.IntegerField(choices=[(0, 'Open'), (1, 'Closed')], default=0)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('last_updated', models.DateTimeField(auto_now=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    django_extensions.db.fields.ShortUUIDField(
+                        blank=True, editable=False, primary_key=True, serialize=False
+                    ),
+                ),
+                ("topic", models.CharField(help_text="Topic Name", max_length=300)),
+                ("description", models.TextField(max_length=1000)),
+                (
+                    "status",
+                    models.IntegerField(
+                        choices=[(0, "Open"), (1, "Closed")], default=0
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Ticket',
-                'verbose_name_plural': 'Tickets',
-                'ordering': ('-last_updated',),
+                "verbose_name": "Ticket",
+                "verbose_name_plural": "Tickets",
+                "ordering": ("-last_updated",),
             },
         ),
         migrations.CreateModel(
-            name='Message',
+            name="Message",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.TextField(max_length=5000)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('ticket', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ticket.Ticket')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField(max_length=5000)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "ticket",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="ticket.Ticket"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Message',
-                'verbose_name_plural': 'Messages',
-                'ordering': ('-created_at',),
+                "verbose_name": "Message",
+                "verbose_name_plural": "Messages",
+                "ordering": ("-created_at",),
             },
         ),
     ]

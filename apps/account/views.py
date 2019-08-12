@@ -21,7 +21,8 @@ from .serializers import (
     ResendVerificationSerializer,
     VerifyPhoneNumberSerializer,
     ChangePhoneNumberVerificationSerializer,
-    ChangePhoneNumberSerializer)
+    ChangePhoneNumberSerializer,
+)
 
 
 # Create your views here.

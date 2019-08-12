@@ -6,14 +6,16 @@ import utils.file
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('account', '0009_changephonenumbertoken'),
-    ]
+    dependencies = [("account", "0009_changephonenumbertoken")]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='profile_picture',
-            field=models.ImageField(default='user/profile-picture/default.jpg', upload_to=utils.file.RandomFileName('user/profile-picture/'), verbose_name='Profile Picture'),
-        ),
+            model_name="user",
+            name="profile_picture",
+            field=models.ImageField(
+                default="user/profile-picture/default.jpg",
+                upload_to=utils.file.RandomFileName("user/profile-picture/"),
+                verbose_name="Profile Picture",
+            ),
+        )
     ]
