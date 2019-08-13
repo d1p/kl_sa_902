@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 from twilio.base.exceptions import TwilioRestException
-
+from .tasks import send_password_change_alert
 from apps.account.models import (
     User,
     ForgotPasswordToken,
@@ -121,6 +121,10 @@ class ResetPasswordViewSet(GenericViewSet, CreateModelMixin):
             ForgotPasswordToken.objects.filter(
                 user=user, created_at__lte=timezone.now()
             ).delete()
+
+            # send password changed alert.
+            send_password_change_alert.delay(user_id=user.id)
+
             return Response({"success": True}, status=status.HTTP_200_OK)
         else:
             return Response(
