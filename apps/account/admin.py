@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
+from apps.account.customer.admin import CustomerInline
+from apps.account.restaurant.admin import RestaurantInline
+from apps.account.types import ProfileType
 from .models import User, VerifyPhoneToken, ForgotPasswordToken, ChangePhoneNumberToken
 
 
@@ -17,18 +20,6 @@ class CustomUserAdmin(UserAdmin):
                     "password",
                     "profile_picture",
                     "locale",
-                )
-            },
-        ),
-        (
-            _("Permissions"),
-            {
-                "fields": (
-                    "is_active",
-                    "is_staff",
-                    "is_superuser",
-                    "groups",
-                    "user_permissions",
                 )
             },
         ),
@@ -53,7 +44,7 @@ class CustomUserAdmin(UserAdmin):
     )
 
     list_display = (
-        "id",
+        "name",
         "email",
         "phone_number",
         "is_active",
@@ -64,6 +55,58 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ("id", "email", "phone_number")
     ordering = ("id", "is_staff", "is_superuser")
     extra = 0
+
+    def get_inline_instances(self, request, obj=None):
+        try:
+            if obj.profile_type is ProfileType.CUSTOMER:
+                inline = [CustomerInline]
+            elif obj.profile_type is ProfileType.RESTAURANT:
+                inline = [RestaurantInline]
+            else:
+                inline = []
+        except:
+            inline = []
+
+        self.inlines = inline
+        return super(UserAdmin, self).get_inline_instances(request, obj)
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super(CustomUserAdmin, self).get_fieldsets(request, obj)
+        if obj is None:
+            fieldsets += (
+                (
+                    _("Permissions"),
+                    {
+                        "fields": (
+                            "is_active",
+                            "is_staff",
+                            "is_superuser",
+                            "groups",
+                            "user_permissions",
+                        )
+                    },
+                ),
+            )
+        else:
+            if (
+                obj.profile_type != ProfileType.CUSTOMER
+                and obj.profile_type != ProfileType.RESTAURANT
+            ):
+                fieldsets += (
+                    (
+                        _("Permissions"),
+                        {
+                            "fields": (
+                                "is_active",
+                                "is_staff",
+                                "is_superuser",
+                                "groups",
+                                "user_permissions",
+                            )
+                        },
+                    ),
+                )
+        return fieldsets
 
 
 admin.site.register(VerifyPhoneToken)

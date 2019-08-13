@@ -3,6 +3,14 @@ from django.contrib import admin
 from .models import Category, Restaurant
 
 
+class RestaurantInline(admin.TabularInline):
+    def __init__(self, *args, **kwargs):
+        super(RestaurantInline, self).__init__(*args, **kwargs)
+        self.can_delete = False
+
+    model = Restaurant
+
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "name_in_ar")

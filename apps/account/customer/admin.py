@@ -4,8 +4,12 @@ from apps.account.models import User
 from .models import Customer
 
 
-class UserInline(admin.TabularInline):
-    model = User
+class CustomerInline(admin.TabularInline):
+    def __init__(self, *args, **kwargs):
+        super(CustomerInline, self).__init__(*args, **kwargs)
+        self.can_delete = False
+
+    model = Customer
 
 
 class CustomerAdmin(admin.ModelAdmin):
