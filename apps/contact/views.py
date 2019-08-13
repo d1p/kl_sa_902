@@ -32,6 +32,18 @@ class ContactListSyncApiView(CreateAPIView):
 
 
 class ContactGroupViewSet(ModelViewSet):
+    """
+    Create contact list groups.
+    group name must be unique.
+    Add and delete a contact from group.
+    response on successfully adding a user into group
+    ```{"success": True}``` WITH status HTTP 201
+    response on successfully deleting a user from the group
+    ```{"success": True}``` WITH status HTTP 200
+    response on user not found.
+    ```{"id": "User not found."}``` WITH HTTP STATUS 404
+
+    """
     serializer_class = ContactGroupSerializer
     lookup_field = "id"
 
