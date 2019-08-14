@@ -4,6 +4,7 @@ from rest_framework import serializers
 from apps.account.restaurant.models import Restaurant, Category, RestaurantTable
 from apps.account.serializers import UserSerializer
 from apps.account.utils import save_user_information, register_basic_user
+from .tasks import generate_table_qr_code
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -47,5 +48,10 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class RestaurantTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantTable
-        fields = ("id", "name", "qr_code",)
-        read_only_fields = ("id", "qr_code",)
+        fields = ("id", "name", "qr_code")
+        read_only_fields = ("id", "qr_code")
+
+    def create(self, validated_data):
+        instance = RestaurantTable.objects.create(**validated_data)
+        generate_table_qr_code.delay(instance.id)
+        return instance
