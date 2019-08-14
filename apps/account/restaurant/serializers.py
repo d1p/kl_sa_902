@@ -1,7 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from apps.account.restaurant.models import Restaurant, Category
+from apps.account.restaurant.models import Restaurant, Category, RestaurantTable
 from apps.account.serializers import UserSerializer
 from apps.account.utils import save_user_information, register_basic_user
 
@@ -42,3 +42,10 @@ class RestaurantSerializer(serializers.ModelSerializer):
             instance.online = validated_data.get("online", instance.online)
 
             return instance
+
+
+class RestaurantTableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RestaurantTable
+        fields = ("id", "name", "qr_code",)
+        read_only_fields = ("id", "qr_code",)

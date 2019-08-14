@@ -41,8 +41,21 @@ class Restaurant(models.Model):
 
     online = models.BooleanField(default=False, db_index=True)
 
+    is_public = models.BooleanField(default=False, db_index=True)
+
     def __str__(self):
         return f"{self.user} - {self.user.name}"
 
     def clean(self):
         self.geolocation = Point(self.lng, self.lat, srid=4326)
+
+
+class RestaurantTable(models.Model):
+    restaurant = models.ForeignKey(Restaurant, db_index=True, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    qr_code = models.ImageField(upload_to=RandomFileName("user/restaurant/table"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True, db_index=True)
+
+    def __str__(self):
+        return f"{self.name} by {self.restaurant.user.name}"

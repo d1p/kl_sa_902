@@ -13,15 +13,16 @@ class RestaurantInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "name_in_ar")
+    list_display = ("id", "name", "name_in_ar", )
     search_fields = ("name", "name_in_ar")
     date_hierarchy = "created_at"
 
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ("name", "email_address", "phone_number", "lat", "lng")
+    list_display = ("name", "email_address", "phone_number", "is_public")
     search_fields = ("user__name", "user__email_address", "user__phone_number")
+    list_filter = ("is_public", )
 
     def name(self, obj):
         return obj.user.name
