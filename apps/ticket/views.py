@@ -6,11 +6,12 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from .models import Ticket, Message, PreBackedTicketTopic
-from .serializers import TicketSerializer, MessageSerializer
+from .serializers import TicketSerializer, MessageSerializer, PreBackedTicketTopicSerializer
 from .tasks import send_new_ticket_notification
 
 
 class PreBackedTicketTopicViewSet(ReadOnlyModelViewSet):
+    serializer_class = PreBackedTicketTopicSerializer
     permission_classes = [AllowAny]
     queryset = PreBackedTicketTopic.objects.all()
     page_size = 100
