@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Category, Restaurant
 
 
-class RestaurantInline(admin.TabularInline):
+class RestaurantInline(admin.StackedInline):
     def __init__(self, *args, **kwargs):
         super(RestaurantInline, self).__init__(*args, **kwargs)
         self.can_delete = False

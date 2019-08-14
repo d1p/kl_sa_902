@@ -2,9 +2,9 @@ from django.db import transaction
 from rest_framework import serializers
 
 from apps.account.restaurant.models import Restaurant, Category, RestaurantTable
+from apps.account.restaurant.tasks import generate_table_qr_code
 from apps.account.serializers import UserSerializer
 from apps.account.utils import save_user_information, register_basic_user
-from .tasks import generate_table_qr_code
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -22,7 +22,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = register_basic_user("Restaurant", validated_data.pop("user", {}))
-        user.is_active = False
+        user.is_active = True
         user.save()
         restaurant = Restaurant.objects.create(user=user)
         return restaurant
@@ -54,4 +54,10 @@ class RestaurantTableSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         instance = RestaurantTable.objects.create(**validated_data)
         generate_table_qr_code.delay(instance.id)
+        instance.refresh_from_db()
+        return instance
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name")
+        instance.save()
         return instance

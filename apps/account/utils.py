@@ -30,6 +30,10 @@ def register_basic_user(group_name: str, user_data: dict) -> User:
         raise ValidationError(
             {"user": {"phone_number": ["This field may not be blank."]}}
         )
+    if user_data.get("email") is None:
+        raise ValidationError(
+            {"user": {"email": ["This field may not be blank."]}}
+        )
 
     if user_data.get("password") is None:
         raise ValidationError({"user": {"password": ["This field may not be blank."]}})

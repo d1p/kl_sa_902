@@ -29,15 +29,15 @@ class Restaurant(models.Model):
         default="user/restaurant/cover/default.png",
     )
     restaurant_type = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True, blank=False, db_index=True
+        Category, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
-    full_address = models.TextField(max_length=800, db_index=True)
+    full_address = models.TextField(max_length=800, db_index=True, blank=True,)
     geolocation = PointField(
         spatial_index=True, srid=4326, null=True, blank=True, editable=False
     )  # Srid 4326 is compatible with google maps.
 
-    lat = models.FloatField()
-    lng = models.FloatField()
+    lat = models.FloatField(null=True, blank=True)
+    lng = models.FloatField(null=True, blank=True)
 
     online = models.BooleanField(default=False, db_index=True)
 
@@ -47,7 +47,8 @@ class Restaurant(models.Model):
         return f"{self.user} - {self.user.name}"
 
     def clean(self):
-        self.geolocation = Point(self.lng, self.lat, srid=4326)
+        if self.lat and self.lng:
+            self.geolocation = Point(self.lng, self.lat, srid=4326)
 
 
 class RestaurantTable(models.Model):
