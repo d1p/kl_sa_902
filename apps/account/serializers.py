@@ -98,6 +98,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
                 data["customer"] = {"qr_code": self.user.customer.qr_code.url}
             except ValueError:
                 pass
+        elif self.user.profile_type == ProfileType.RESTAURANT:
+            data["restaurant"] = {
+                "is_public": self.user.restaurant.is_public
+            }
 
         self.user.last_login = timezone.now()
         self.user.save()

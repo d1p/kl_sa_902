@@ -8,18 +8,18 @@ from .models import User
 
 def save_user_information(user_instance: User, user_data: dict):
     user_instance.name = user_data.get("name", user_instance.name)
-    try:
-        user_instance.email = user_data.get("email", user_instance.email)
-    except IntegrityError:
-        raise ValidationError(
-            {"user": {"email": [_("Email address is already registered")]}}
-        )
+    user_instance.email = user_data.get("email", user_instance.email)
 
     user_instance.locale = user_data.get("locale", user_instance.locale)
     user_instance.profile_picture = user_data.get(
         "profile_picture", user_instance.profile_picture
     )
-    user_instance.save()
+    try:
+        user_instance.save()
+    except IntegrityError:
+        raise ValidationError(
+            {"user": {"email": [_("Email address is already registered")]}}
+        )
     return user_instance
 
 
@@ -31,9 +31,7 @@ def register_basic_user(group_name: str, user_data: dict) -> User:
             {"user": {"phone_number": ["This field may not be blank."]}}
         )
     if user_data.get("email") is None:
-        raise ValidationError(
-            {"user": {"email": ["This field may not be blank."]}}
-        )
+        raise ValidationError({"user": {"email": ["This field may not be blank."]}})
 
     if user_data.get("password") is None:
         raise ValidationError({"user": {"password": ["This field may not be blank."]}})

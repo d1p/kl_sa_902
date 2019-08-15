@@ -10,6 +10,7 @@ from apps.account.restaurant.serializers import (
     CategorySerializer,
     RestaurantSerializer,
     RestaurantTableSerializer,
+    PublicRestaurantSerializer,
 )
 from utils.permission import IsAuthenticatedOrCreateOnly, IsRestaurantOrViewOnly
 
@@ -38,7 +39,25 @@ class RestaurantViewSet(
 
     permission_classes = [IsAuthenticatedOrCreateOnly]
     queryset = Restaurant.objects.filter(is_public=True)
-    serializer_class = RestaurantSerializer
+
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return RestaurantSerializer
+
+        if self.action == "list":
+            return PublicRestaurantSerializer
+        elif self.action in ("create", "update", "destroy"):
+            return RestaurantSerializer
+        else:
+            try:
+                instance = self.get_object()
+                if instance.user.id != self.request.user.id:
+                    return PublicRestaurantSerializer
+                else:
+                    return RestaurantSerializer
+            except AssertionError:
+                return PublicRestaurantSerializer
+
     lookup_field = "user"
     filter_backends = [DjangoFilterBackend]
     filterset_class = RestaurantFilter
