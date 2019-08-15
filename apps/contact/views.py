@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -39,7 +40,7 @@ class ContactGroupViewSet(ModelViewSet):
     response on successfully adding a user into group
     ```{"success": True}``` WITH status HTTP 201
     response on successfully deleting a user from the group
-    ```{"success": True}``` WITH status HTTP 200
+    ```{"success": True}``` WITH status HTTP 204
     response on user not found.
     ```{"id": "User not found."}``` WITH HTTP STATUS 404
 
@@ -56,6 +57,12 @@ class ContactGroupViewSet(ModelViewSet):
         return ContactGroup.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        instance: ContactGroup = self.get_object()
+        if instance.user != self.request.user:
+            raise PermissionDenied
         serializer.save(user=self.request.user)
 
     @action(detail=True, methods=["POST", "DELETE"])
@@ -81,4 +88,4 @@ class ContactGroupViewSet(ModelViewSet):
                 return Response({"success": True}, status.HTTP_201_CREATED)
             else:
                 group.contacts.filter(id=user.id).delete()
-                return Response({"success": True}, status.HTTP_200_OK)
+                return Response({"success": True}, status.HTTP_204_NO_CONTENT)
