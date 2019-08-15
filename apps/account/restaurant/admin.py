@@ -36,7 +36,7 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 @admin.register(RestaurantTable)
 class RestaurantTableAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "restaurant", "is_active")
+    list_display = ("id", "name", "user", "is_active")
     list_filter = ("is_active",)
     search_fields = ("restaurant__name", "restaurant__phone_number")
     date_hierarchy = "created_at"

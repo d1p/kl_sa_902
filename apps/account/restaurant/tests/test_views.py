@@ -94,7 +94,7 @@ class TestRestaurantTableViewset:
         ), "Should create a new table"
 
     def test_edit_table(self, restaurant):
-        table = mixer.blend("restaurant.RestaurantTable", restaurant=restaurant)
+        table = mixer.blend("restaurant.RestaurantTable", user=restaurant.user)
         data = {"name": "Table Two"}
         factory = APIRequestFactory()
         request = factory.put("/", data=data)

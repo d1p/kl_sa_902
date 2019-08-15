@@ -52,11 +52,11 @@ class Restaurant(models.Model):
 
 
 class RestaurantTable(models.Model):
-    restaurant = models.ForeignKey(Restaurant, db_index=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, db_index=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     qr_code = models.ImageField(upload_to=RandomFileName("user/restaurant/table"))
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True, db_index=True)
 
     def __str__(self):
-        return f"{self.name} by {self.restaurant.user.name}"
+        return f"{self.name} by {self.user.name}"

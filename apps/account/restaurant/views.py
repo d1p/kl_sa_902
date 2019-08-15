@@ -79,18 +79,18 @@ class RestaurantTableViewSet(ModelViewSet):
         return RestaurantTable.objects.filter(is_active=True)
 
     def perform_create(self, serializer):
-        restaurant = self.request.user.restaurant
-        serializer.save(restaurant=restaurant)
+        user = self.request.user
+        serializer.save(user=user)
 
     def perform_update(self, serializer):
         instance: RestaurantTable = self.get_object()
-        if instance.restaurant.user != self.request.user:
+        if instance.user.id != self.request.user.id:
             raise PermissionDenied
         serializer.save()
 
     def perform_destroy(self, instance):
         instance: RestaurantTable = self.get_object()
-        if instance.restaurant.user != self.request.user:
+        if instance.user != self.request.user:
             raise PermissionDenied
         instance.is_active = False
         instance.save()
