@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Restaurant
+from .models import Category, Restaurant, RestaurantTable
 
 
 class RestaurantInline(admin.StackedInline):
@@ -13,7 +13,7 @@ class RestaurantInline(admin.StackedInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "name_in_ar", )
+    list_display = ("id", "name", "name_in_ar")
     search_fields = ("name", "name_in_ar")
     date_hierarchy = "created_at"
 
@@ -22,7 +22,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class RestaurantAdmin(admin.ModelAdmin):
     list_display = ("name", "email_address", "phone_number", "is_public")
     search_fields = ("user__name", "user__email_address", "user__phone_number")
-    list_filter = ("is_public", )
+    list_filter = ("is_public",)
 
     def name(self, obj):
         return obj.user.name
@@ -32,3 +32,11 @@ class RestaurantAdmin(admin.ModelAdmin):
 
     def phone_number(self, obj):
         return obj.user.phone_number
+
+
+@admin.register(RestaurantTable)
+class RestaurantTableAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "restaurant", "is_active")
+    list_filter = ("is_active",)
+    search_fields = ("restaurant__name", "restaurant__phone_number")
+    date_hierarchy = "created_at"

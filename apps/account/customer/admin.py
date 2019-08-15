@@ -37,3 +37,4 @@ class CustomerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Customer, CustomerAdmin)
+
