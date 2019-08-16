@@ -12,6 +12,7 @@ from apps.account.restaurant.serializers import (
     RestaurantTableSerializer,
     PublicRestaurantSerializer,
 )
+from apps.account.types import ProfileType
 from utils.permission import IsAuthenticatedOrCreateOnly, IsRestaurantOrViewOnly
 
 
@@ -76,10 +77,16 @@ class RestaurantTableViewSet(ModelViewSet):
     filterset_class = RestaurantTableFilter
 
     def get_queryset(self):
+        if self.action in ["update", "create", "delete"]:
+            return RestaurantTable.objects.filter(
+                is_active=True, user=self.request.user
+            )
         return RestaurantTable.objects.filter(is_active=True)
 
     def perform_create(self, serializer):
         user = self.request.user
+        if user.profile_type != ProfileType.RESTAURANT:
+            raise PermissionDenied
         serializer.save(user=user)
 
     def perform_update(self, serializer):

@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from apps.account.models import User
 from .models import Category, Restaurant, RestaurantTable
 
 
@@ -38,5 +39,16 @@ class RestaurantAdmin(admin.ModelAdmin):
 class RestaurantTableAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "user", "is_active")
     list_filter = ("is_active",)
-    search_fields = ("restaurant__name", "restaurant__phone_number")
+    search_fields = ("user__name", "user__phone_number")
     date_hierarchy = "created_at"
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(RestaurantTableAdmin, self).get_form(request, obj, **kwargs)
+        if obj is None:
+            form.base_fields["user"].queryset = User.objects.filter(
+                groups__name="Restaurant", restaurant__is_public=True
+            )
+        else:
+            form.base_fields["user"].queryset = User.objects.filter(id=obj.user.id)
+        form.base_fields["user"].widget.can_add_related = False
+        return form

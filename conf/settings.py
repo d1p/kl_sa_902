@@ -48,6 +48,7 @@ CORE_APPS = [
     "apps.account.restaurant",
     "apps.ticket",
     "apps.contact",
+    "apps.food",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + CORE_APPS

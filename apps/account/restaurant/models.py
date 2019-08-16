@@ -1,3 +1,4 @@
+import qrcode
 from django.contrib.gis.db.models import PointField
 from django.contrib.gis.geos import Point
 from django.db import models
