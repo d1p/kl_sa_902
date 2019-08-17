@@ -194,13 +194,13 @@ BROKER_POOL_LIMIT = 1
 BROKER_TRANSPORT_OPTIONS = {"max_connections": 2}
 
 if DEBUG is False:
+    UNIT_TESTING = False
     sentry_sdk.init(
         env.str("RAVEN_DSN", default=""),
         integrations=[DjangoIntegration()]
     )
 
 LOGIN_URL = "/admin/"
-
 # Logging
 if DEBUG is True:
     LOGS_ROOT = env("LOGS_ROOT", default=root_path("logs"))
