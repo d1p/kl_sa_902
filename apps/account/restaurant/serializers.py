@@ -80,7 +80,7 @@ class RestaurantTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantTable
         fields = ("id", "name", "qr_code", "user",)
-        read_only_fields = ("id", "qr_code")
+        read_only_fields = ("id", "qr_code", "user", )
 
     def create(self, validated_data):
         instance = RestaurantTable.objects.create(**validated_data)

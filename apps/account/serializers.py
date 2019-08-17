@@ -2,10 +2,10 @@ from django.conf import settings
 from django.core.validators import EmailValidator
 from django.utils import timezone
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from six import text_type
 
 from apps.account.models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import _PHONE_REGEX
 from .types import ProfileType
 
@@ -83,15 +83,19 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["refresh_token_lifetime"] = settings.SIMPLE_JWT[
             "REFRESH_TOKEN_LIFETIME"
         ].total_seconds()
-        data["user"] = (
+        data["user"] = [
             {
                 "id": self.user.id,
                 "phone_number": self.user.phone_number,
-                "profile_picture": self.user.profile_picture.url,
                 "email": self.user.email,
                 "name": self.user.name,
             },
-        )
+        ]
+        try:
+            data["user"][0]["profile_picture"] = self.user.profile_picture.url
+        except ValueError:
+            data["user"][0]["profile_picture"] = None
+
         data["profile_type"] = self.user.profile_type
         if self.user.profile_type == ProfileType.CUSTOMER:
             try:
@@ -99,9 +103,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             except ValueError:
                 pass
         elif self.user.profile_type == ProfileType.RESTAURANT:
-            data["restaurant"] = {
-                "is_public": self.user.restaurant.is_public
-            }
+            data["restaurant"] = {"is_public": self.user.restaurant.is_public}
 
         self.user.last_login = timezone.now()
         self.user.save()

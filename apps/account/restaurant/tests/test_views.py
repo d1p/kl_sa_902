@@ -103,4 +103,6 @@ class TestRestaurantTableViewset:
         response = RestaurantTableViewSet.as_view({"put": "update"})(
             request, pk=table.id
         )
+        response.render()
+        print(response.content)
         assert response.status_code == status.HTTP_200_OK, "Should edit the table"
