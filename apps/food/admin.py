@@ -12,7 +12,7 @@ class FoodCategoryAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
 
     def get_form(self, request, obj=None, **kwargs):
-        # Override the form so that only real restaurants which are public can be shown in the user field. if already
+        # Override the form so that only real restaurants which are public can be shown in the user      field. if already
         # exists then hide others.
         form = super(FoodCategoryAdmin, self).get_form(request, obj, **kwargs)
         if obj is None:
