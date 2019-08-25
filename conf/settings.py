@@ -42,6 +42,7 @@ THIRD_PARTY_APPS = [
     "rest_framework_swagger",
     "fcm_django",
     "drf_yasg",
+    "nested_admin",
 ]
 
 CORE_APPS = [

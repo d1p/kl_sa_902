@@ -1,25 +1,62 @@
 from django.contrib import admin
+from nested_admin.nested import NestedModelAdmin, NestedTabularInline
 
-from apps.account.models import User
-from .models import FoodCategory
+from apps.account.restaurant.admin import OnlyRestaurantInUserAdmin
+from .models import (
+    FoodCategory,
+    FoodItem,
+    FoodAddOn,
+    FoodAttribute,
+    FoodAttributeMatrix,
+)
+
+admin.site.register(FoodAttribute)
+admin.site.register(FoodAttributeMatrix)
 
 
 @admin.register(FoodCategory)
-class FoodCategoryAdmin(admin.ModelAdmin):
+class FoodCategoryAdmin(OnlyRestaurantInUserAdmin):
     list_display = ("id", "name", "user", "is_active", "created_at")
     list_filter = ("is_active",)
     search_fields = ("user__name",)
     date_hierarchy = "created_at"
 
-    def get_form(self, request, obj=None, **kwargs):
-        # Override the form so that only real restaurants which are public can be shown in the user      field. if already
-        # exists then hide others.
-        form = super(FoodCategoryAdmin, self).get_form(request, obj, **kwargs)
-        if obj is None:
-            form.base_fields["user"].queryset = User.objects.filter(
-                groups__name="Restaurant", restaurant__is_public=True
-            )
-        else:
-            form.base_fields["user"].queryset = User.objects.filter(id=obj.user.id)
-        form.base_fields["user"].widget.can_add_related = False
-        return form
+
+class FoodAddOnInline(NestedTabularInline):
+    model = FoodAddOn
+    classes = "collapse"
+    fields = ("name", "price")
+    sortable_field_name = "name"
+
+
+class FoodAttributeMatrixInline(NestedTabularInline):
+    model = FoodAttributeMatrix
+    sortable_field_name = "name"
+    extra = 2
+
+
+
+class FoodAttributeInline(NestedTabularInline):
+    model = FoodAttribute
+    inlines = [FoodAttributeMatrixInline]
+    sortable_field_name = "name"
+    extra = 1
+
+
+class FoodItemAdmin(NestedModelAdmin, OnlyRestaurantInUserAdmin):
+    list_display = (
+        "id",
+        "name",
+        "user",
+        "category",
+        "price",
+        "is_active",
+        "created_at",
+    )
+    list_filter = ("category", "created_at", "price")
+    search_fields = ("user", "name")
+    date_hierarchy = "created_at"
+    inlines = [FoodAddOnInline, FoodAttributeInline]
+
+
+admin.site.register(FoodItem, FoodItemAdmin)

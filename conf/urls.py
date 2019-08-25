@@ -36,6 +36,8 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    path('nested_admin/', include('nested_admin.urls')),
+
 ]
 
 urlpatterns += account_urls

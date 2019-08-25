@@ -72,7 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ["email"]
 
     def __str__(self) -> str:
-        return f"{self.profile_type}: {self.name}"
+        return self.name
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user if the user emial exists."""

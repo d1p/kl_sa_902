@@ -35,6 +35,7 @@ gunicorn = "*"
 django-extensions = "*"
 shortuuid = "*"
 sentry-sdk = "*"
+django-nested-admin = "*"
 
 [requires]
 python_version = "3.7.3"

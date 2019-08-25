@@ -64,6 +64,7 @@ class FoodAttributeMatrix(models.Model):
         return self.name
 
 
+
 class FoodAddOn(models.Model):
     food = models.ForeignKey(FoodItem, on_delete=models.CASCADE)
     name = models.CharField(max_length=144, db_index=True)

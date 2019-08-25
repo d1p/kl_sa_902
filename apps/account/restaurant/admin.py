@@ -4,6 +4,19 @@ from apps.account.models import User
 from .models import Category, Restaurant, RestaurantTable
 
 
+class OnlyRestaurantInUserAdmin(admin.ModelAdmin):
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(OnlyRestaurantInUserAdmin, self).get_form(request, obj, **kwargs)
+        if obj is None:
+            form.base_fields["user"].queryset = User.objects.filter(
+                groups__name="Restaurant", restaurant__is_public=True
+            )
+        else:
+            form.base_fields["user"].queryset = User.objects.filter(id=obj.user.id)
+        form.base_fields["user"].widget.can_add_related = False
+        return form
+
+
 class RestaurantInline(admin.StackedInline):
     def __init__(self, *args, **kwargs):
         super(RestaurantInline, self).__init__(*args, **kwargs)
@@ -36,19 +49,8 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 
 @admin.register(RestaurantTable)
-class RestaurantTableAdmin(admin.ModelAdmin):
+class RestaurantTableAdmin(OnlyRestaurantInUserAdmin):
     list_display = ("id", "name", "user", "is_active")
     list_filter = ("is_active",)
     search_fields = ("user__name", "user__phone_number")
     date_hierarchy = "created_at"
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super(RestaurantTableAdmin, self).get_form(request, obj, **kwargs)
-        if obj is None:
-            form.base_fields["user"].queryset = User.objects.filter(
-                groups__name="Restaurant", restaurant__is_public=True
-            )
-        else:
-            form.base_fields["user"].queryset = User.objects.filter(id=obj.user.id)
-        form.base_fields["user"].widget.can_add_related = False
-        return form
