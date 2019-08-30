@@ -1,6 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
 
@@ -12,8 +11,7 @@ from apps.account.restaurant.serializers import (
     RestaurantTableSerializer,
     PublicRestaurantSerializer,
 )
-from apps.account.types import ProfileType
-from utils.permission import IsAuthenticatedOrCreateOnly, IsRestaurantOrViewOnly
+from utils.permission import IsAuthenticatedOrCreateOnly, IsRestaurantOwnerOrReadOnly
 
 
 class RestaurantCategoryViewSet(ReadOnlyModelViewSet):
@@ -72,7 +70,7 @@ class RestaurantTableViewSet(ModelViewSet):
     """
 
     serializer_class = RestaurantTableSerializer
-    permission_classes = [IsRestaurantOrViewOnly]
+    permission_classes = [IsRestaurantOwnerOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_class = RestaurantTableFilter
 
@@ -85,19 +83,12 @@ class RestaurantTableViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        if user.profile_type != ProfileType.RESTAURANT:
-            raise PermissionDenied
         serializer.save(user=user)
 
     def perform_update(self, serializer):
-        instance: RestaurantTable = self.get_object()
-        if instance.user.id != self.request.user.id:
-            raise PermissionDenied
         serializer.save()
 
     def perform_destroy(self, instance):
         instance: RestaurantTable = self.get_object()
-        if instance.user != self.request.user:
-            raise PermissionDenied
         instance.is_active = False
         instance.save()

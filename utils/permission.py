@@ -14,12 +14,15 @@ class IsAuthenticatedOrCreateOnly(permissions.BasePermission):
                 return False
 
 
-class IsRestaurantOrViewOnly(permissions.BasePermission):
-    def has_permission(self, request, view):
+class IsRestaurantOwnerOrReadOnly(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
         if request.user.is_authenticated is False:
             return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
         if request.user.profile_type != ProfileType.RESTAURANT:
-            # basically if user is a customer then only allow get method
-            if request.method != "GET":
-                return False
-        return True
+            return False
+
+        return obj.user == request.user

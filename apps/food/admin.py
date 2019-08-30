@@ -16,8 +16,8 @@ admin.site.register(FoodAttributeMatrix)
 
 @admin.register(FoodCategory)
 class FoodCategoryAdmin(OnlyRestaurantInUserAdmin):
-    list_display = ("id", "name", "user", "is_active", "created_at")
-    list_filter = ("is_active",)
+    list_display = ("id", "name", "user", "is_deleted", "created_at")
+    list_filter = ("is_deleted",)
     search_fields = ("user__name",)
     date_hierarchy = "created_at"
 
@@ -33,7 +33,6 @@ class FoodAttributeMatrixInline(NestedTabularInline):
     model = FoodAttributeMatrix
     sortable_field_name = "name"
     extra = 2
-
 
 
 class FoodAttributeInline(NestedTabularInline):

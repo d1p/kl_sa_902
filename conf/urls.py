@@ -9,6 +9,7 @@ from rest_framework import permissions
 from apps.account.urls import urlpatterns as account_urls
 from apps.ticket.urls import urlpatterns as ticket_urls
 from apps.contact.urls import urlpatterns as contact_urls
+from apps.food.urls import urlpatterns as food_urls
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -43,6 +44,8 @@ urlpatterns = [
 urlpatterns += account_urls
 urlpatterns += ticket_urls
 urlpatterns += contact_urls
+urlpatterns += food_urls
+
 
 urlpatterns += i18n_patterns(
     path("admin/", admin.site.urls), prefix_default_language=False

@@ -9,7 +9,7 @@ class FoodCategory(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, db_index=True)
     name = models.CharField(max_length=266, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True, db_index=True)
+    is_deleted = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         verbose_name = _("Category")
@@ -30,7 +30,7 @@ class FoodItem(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2)
     calorie = models.IntegerField()
     is_active = models.BooleanField(default=False, db_index=True)
-
+    is_deleted = models.BooleanField(default=False, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -62,7 +62,6 @@ class FoodAttributeMatrix(models.Model):
 
     def __str__(self):
         return self.name
-
 
 
 class FoodAddOn(models.Model):

@@ -21,6 +21,7 @@ class CustomUserAdmin(UserAdmin):
                     "password",
                     "profile_picture",
                     "locale",
+                    "is_active",
                 )
             },
         ),
@@ -80,7 +81,6 @@ class CustomUserAdmin(UserAdmin):
                     _("Permissions"),
                     {
                         "fields": (
-                            "is_active",
                             "is_staff",
                             "is_superuser",
                             "groups",
