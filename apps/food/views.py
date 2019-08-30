@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 
+from apps.account.types import ProfileType
 from utils.permission import IsRestaurantOwnerOrReadOnly
 from .models import FoodCategory, FoodItem
 from .serializers import FoodCategorySerializer, FoodItemSerializer
@@ -28,7 +29,13 @@ class FoodCategoryViewSet(ModelViewSet):
 class FoodItemViewSet(ModelViewSet):
     permission_classes = [IsRestaurantOwnerOrReadOnly]
     serializer_class = FoodItemSerializer
-    queryset = FoodItem.objects.filter(is_active=True, is_deleted=False)
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.profile_type == ProfileType.RESTAURANT:
+            return FoodItem.objects.filter(is_deleted=False)
+        return FoodItem.objects.filter(is_active=True, is_deleted=False)
+
     filter_backends = [DjangoFilterBackend]
 
     def perform_create(self, serializer):

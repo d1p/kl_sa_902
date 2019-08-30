@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.account.serializers import PublicUserSerializer
-from .models import FoodCategory, FoodItem, FoodAttributeMatrix, FoodAttribute, FoodAddOn
+from .models import FoodCategory, FoodItem
 
 
 class FoodCategorySerializer(serializers.ModelSerializer):
@@ -12,10 +12,21 @@ class FoodCategorySerializer(serializers.ModelSerializer):
 
 
 class FoodItemSerializer(serializers.ModelSerializer):
-    category = FoodCategorySerializer()
     user = PublicUserSerializer(read_only=True)
+    category_name = serializers.CharField(source="category.name", read_only=True)
 
     class Meta:
         model = FoodItem
-        fields = ("id", "category", "name", "user", "picture", "price",
-                  "calorie", "is_active", )
+        fields = (
+            "id",
+            "category",
+            "category_name",
+            "name",
+            "user",
+            "picture",
+            "price",
+            "calorie",
+            "is_active",
+        )
+
+        read_only_fields = ("id", "user")
