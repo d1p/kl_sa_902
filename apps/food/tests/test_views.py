@@ -6,7 +6,7 @@ from mixer.backend.django import mixer
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from apps.food.views import FoodCategoryViewSet, FoodItemViewSet
+from apps.food.views import FoodCategoryViewSet, FoodItemViewSet, FoodAddOnViewSet
 
 pytestmark = pytest.mark.django_db
 
@@ -158,9 +158,7 @@ class TestFoodItemViewSet:
         force_authenticate(request, restaurant1.user)
 
         response = FoodItemViewSet.as_view({"put": "update"})(request, pk=item.id)
-        assert (
-            response.status_code == status.HTTP_200_OK
-        ), "Should edit the food item"
+        assert response.status_code == status.HTTP_200_OK, "Should edit the food item"
 
     def test_delete_item(self, restaurant1):
         item = mixer.blend("food.FoodItem", user=restaurant1.user)
@@ -208,3 +206,105 @@ class TestFoodItemViewSet:
         assert (
             response.status_code == status.HTTP_403_FORBIDDEN
         ), "Should not delete a food Item"
+
+
+class TestFoodItemAddOnViewSet:
+    @pytest.fixture
+    def groups(self):
+        return mixer.blend("auth.Group", name="Restaurant")
+
+    @pytest.fixture
+    def restaurant1(self, groups):
+        r = mixer.blend("restaurant.Restaurant", is_public=True)
+        r.user.groups.add(groups)
+        return r
+
+    @pytest.fixture
+    def restaurant2(self, groups):
+        r = mixer.blend("restaurant.Restaurant", is_public=True)
+        r.user.groups.add(groups)
+        return r
+
+    @pytest.fixture
+    def food(self, restaurant1):
+        return mixer.blend("food.FoodItem", user=restaurant1.user)
+
+    @pytest.fixture
+    def addon(self, food):
+        return mixer.blend("food.FoodAddOn", food=food)
+
+    def test_add_a_new_add_on(self, restaurant1, food):
+        data = {"name": "Cheese", "price": 9.96, "food": food.id}
+
+        factory = APIRequestFactory()
+        request = factory.post("/", data=data)
+        force_authenticate(request, restaurant1.user)
+
+        response = FoodAddOnViewSet.as_view({"post": "create"})(request)
+
+        assert (
+            response.status_code == status.HTTP_201_CREATED
+        ), "Should create a new add on"
+
+    def test_edit_add_on(self, restaurant1, addon):
+        data = {"name": "Cheese", "price": 9.96, "food": addon.food.id}
+
+        factory = APIRequestFactory()
+        request = factory.put("/", data=data)
+        force_authenticate(request, restaurant1.user)
+
+        response = FoodAddOnViewSet.as_view({"put": "update"})(request, pk=addon.id)
+
+        assert response.status_code == status.HTTP_200_OK, "Should edit add on"
+
+    def test_delete_add_on(self, restaurant1, addon):
+        data = {}
+
+        factory = APIRequestFactory()
+        request = factory.delete("/", data=data)
+        force_authenticate(request, restaurant1.user)
+
+        response = FoodAddOnViewSet.as_view({"delete": "destroy"})(request, pk=addon.id)
+
+        assert (
+            response.status_code == status.HTTP_204_NO_CONTENT
+        ), "Should destroy add on"
+
+    def test_invalid_add_a_new_add_on(self, restaurant2, food):
+        data = {"name": "Cheese", "price": 9.96, "food": food.id}
+
+        factory = APIRequestFactory()
+        request = factory.post("/", data=data)
+        force_authenticate(request, restaurant2.user)
+
+        response = FoodAddOnViewSet.as_view({"post": "create"})(request)
+
+        assert (
+            response.status_code == status.HTTP_403_FORBIDDEN
+        ), "Should not create a new add on"
+
+    def test_invalid_edit_add_on(self, restaurant2, addon):
+        data = {"name": "Cheese", "price": 9.96, "food": addon.food.id}
+
+        factory = APIRequestFactory()
+        request = factory.put("/", data=data)
+        force_authenticate(request, restaurant2.user)
+
+        response = FoodAddOnViewSet.as_view({"put": "update"})(request, pk=addon.id)
+
+        assert (
+            response.status_code == status.HTTP_403_FORBIDDEN
+        ), "Should not edit add on"
+
+    def test_invalid_delete_add_on(self, restaurant2, addon):
+        data = {}
+
+        factory = APIRequestFactory()
+        request = factory.delete("/", data=data)
+        force_authenticate(request, restaurant2.user)
+
+        response = FoodAddOnViewSet.as_view({"delete": "destroy"})(request, pk=addon.id)
+
+        assert (
+            response.status_code == status.HTTP_403_FORBIDDEN
+        ), "Should not destroy add on"

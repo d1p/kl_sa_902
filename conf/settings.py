@@ -209,7 +209,7 @@ if DEBUG is True:
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
-            "console_format": {"format": "%(name)-12s %(levelname)-8s %(message)s"},
+            "console_format": {"format": " %(asctime)-4s %(levelname)-8s %(message)s"},
             "file_format": {
                 "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
             },
