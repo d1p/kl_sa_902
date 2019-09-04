@@ -89,7 +89,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
                 "phone_number": self.user.phone_number,
                 "email": self.user.email,
                 "name": self.user.name,
-            },
+            }
         ]
         try:
             data["user"][0]["profile_picture"] = self.user.profile_picture.url
@@ -118,6 +118,11 @@ class ResetPasswordSerializer(serializers.Serializer):
     phone_number = serializers.CharField(required=True)
     code = serializers.IntegerField(required=True)
     new_password = serializers.CharField(required=True, min_length=8)
+
+
+class ResetTokenCheckSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(required=True)
+    code = serializers.IntegerField(required=True)
 
 
 class ChangePasswordSerializer(serializers.Serializer):

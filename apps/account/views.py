@@ -4,15 +4,15 @@ from rest_framework import permissions, status
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_framework_simplejwt.views import TokenObtainPairView
 from twilio.base.exceptions import TwilioRestException
-from .tasks import send_password_change_alert
+
 from apps.account.models import (
     User,
     ForgotPasswordToken,
     VerifyPhoneToken,
     ChangePhoneNumberToken,
 )
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import (
     MyTokenObtainPairSerializer,
     ChangePasswordSerializer,
@@ -22,7 +22,9 @@ from .serializers import (
     VerifyPhoneNumberSerializer,
     ChangePhoneNumberVerificationSerializer,
     ChangePhoneNumberSerializer,
+    ResetTokenCheckSerializer,
 )
+from .tasks import send_password_change_alert
 
 
 # Create your views here.
@@ -273,3 +275,21 @@ class ChangePhoneNumberVerificationViewSet(GenericViewSet, CreateModelMixin):
             return Response({"success": True}, status=status.HTTP_200_OK)
         else:
             return Response({"code": "Invalid Code"}, status.HTTP_400_BAD_REQUEST)
+
+
+class CheckResetTokenViewSet(GenericViewSet, CreateModelMixin):
+    """
+    returns {"valid": true} for valid code and {"valid": false } for invalid code.
+    Note: This only checks if there is a code sent from the reset password api. Not the time restriction of it.
+    """
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ResetTokenCheckSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid() is False:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return {"valid": ForgotPasswordToken.objects.filter(
+            user__phone_number=serializer.validated_data.get("phone_number"),
+            code=serializer.validated_data.get("code"),
+        ).exists()}

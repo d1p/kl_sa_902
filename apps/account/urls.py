@@ -1,8 +1,8 @@
 from django.urls import path, include
 from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenRefreshView
 
+from rest_framework_simplejwt.views import TokenRefreshView
 from .customer.views import CustomerViewSet
 from .restaurant.views import (
     RestaurantViewSet,
@@ -18,6 +18,7 @@ from .views import (
     VerifyPhoneNumberViewSet,
     ChangePhoneNumberViewSet,
     ChangePhoneNumberVerificationViewSet,
+    CheckResetTokenViewSet,
 )
 
 router = DefaultRouter()
@@ -42,6 +43,10 @@ router.register(
 router.register(
     "account/reset-password", ResetPasswordViewSet, base_name="reset-password"
 )
+router.register(
+    "account/check-reset-token", CheckResetTokenViewSet, base_name="check-reset-token"
+)
+
 router.register(
     "account/resend-verification-code",
     ResendVerificationViewSet,
