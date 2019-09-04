@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from .models import FoodAddOn, FoodItem
+from .models import FoodAddOn, FoodItem, FoodAttribute
 
 
 class FoodItemFilter(filters.FilterSet):
@@ -25,5 +25,5 @@ class FoodAttributeFilter(filters.FilterSet):
     food = filters.NumberFilter(lookup_expr="exact", field_name="food__id")
 
     class Meta:
-        model = FoodAddOn
+        model = FoodAttribute
         fields = ("food",)
