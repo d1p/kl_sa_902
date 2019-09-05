@@ -289,7 +289,7 @@ class CheckResetTokenViewSet(GenericViewSet, CreateModelMixin):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid() is False:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return {"valid": ForgotPasswordToken.objects.filter(
+        return Response({"valid": ForgotPasswordToken.objects.filter(
             user__phone_number=serializer.validated_data.get("phone_number"),
             code=serializer.validated_data.get("code"),
-        ).exists()}
+        ).exists()}, status=status.HTTP_200_OK)
