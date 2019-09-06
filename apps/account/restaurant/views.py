@@ -1,3 +1,6 @@
+from django.contrib.gis.geos import Point
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.measure import D
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework.permissions import AllowAny
@@ -32,18 +35,40 @@ class RestaurantViewSet(
     mixins.ListModelMixin,
 ):
     """
+    to search and filter stores by users geolocation add "lat", "lng" in the url get params.
+    Example:
+        url :/api/restaurant/?lat=32.1231&lng=32.4452
     #### Note
     geolocation = { "latitude": Latitude, "longitude": Longitude }
     """
 
     permission_classes = [IsAuthenticatedOrCreateOnly]
-    queryset = Restaurant.objects.filter(is_public=True)
+
+    def get_queryset(self):
+        request = self.request
+        radius = request.GET.get("radius", 10)
+
+        if (
+            request.GET.get("lat", None) is not None
+            and request.GET.get("lng", None) is not None
+        ):
+            point = Point(
+                float(request.GET.get("lng")), float(request.GET.get("lat")), srid=4326
+            )
+            return (
+                Restaurant.objects.filter(
+                    is_public=True, geolocation__distance_lte=(point, D(km=radius))
+                )
+                .annotate(distance=Distance("geolocation", point))
+                .order_by("distance")
+            )
+        return Restaurant.objects.filter(is_public=True)
 
     def get_serializer_class(self):
         if self.request.user.is_superuser:
             return RestaurantSerializer
 
-        if self.action == "list":
+        if self.action in ["list", "geo_list"]:
             return PublicRestaurantSerializer
         elif self.action in ("create", "update", "destroy"):
             return RestaurantSerializer

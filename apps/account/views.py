@@ -282,6 +282,7 @@ class CheckResetTokenViewSet(GenericViewSet, CreateModelMixin):
     returns {"valid": true} for valid code and {"valid": false } for invalid code.
     Note: This only checks if there is a code sent from the reset password api. Not the time restriction of it.
     """
+
     permission_classes = [permissions.AllowAny]
     serializer_class = ResetTokenCheckSerializer
 
@@ -289,7 +290,12 @@ class CheckResetTokenViewSet(GenericViewSet, CreateModelMixin):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid() is False:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"valid": ForgotPasswordToken.objects.filter(
-            user__phone_number=serializer.validated_data.get("phone_number"),
-            code=serializer.validated_data.get("code"),
-        ).exists()}, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "valid": ForgotPasswordToken.objects.filter(
+                    user__phone_number=serializer.validated_data.get("phone_number"),
+                    code=serializer.validated_data.get("code"),
+                ).exists()
+            },
+            status=status.HTTP_200_OK,
+        )
