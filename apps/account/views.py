@@ -218,13 +218,13 @@ class ChangePhoneNumberViewSet(GenericViewSet, CreateModelMixin):
             request.user.check_password(serializer.validated_data.get("password"))
             is False
         ):
-            return Response({"password": ["Invalid Password."]})
+            return Response({"password": ["Invalid Password."]}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(
             phone_number=serializer.validated_data.get("new_phone_number")
         ).exists():
             return Response(
-                {"new_phone_number": ["Phone Number is already registered"]}
+                {"new_phone_number": ["Phone Number is already registered"]}, status=status.HTTP_400_BAD_REQUEST
             )
         with transaction.atomic():
             token = ChangePhoneNumberToken.objects.create(
@@ -237,7 +237,7 @@ class ChangePhoneNumberViewSet(GenericViewSet, CreateModelMixin):
                     f"Use {token.code} as verification code for Kole."
                 )
             except TwilioRestException:
-                return Response({"new_phone_number": ["Invalid phone Number."]})
+                return Response({"new_phone_number": ["Invalid phone Number."]}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({"success": True}, status=status.HTTP_200_OK)
 
