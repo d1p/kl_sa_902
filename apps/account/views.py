@@ -226,6 +226,7 @@ class ChangePhoneNumberViewSet(GenericViewSet, CreateModelMixin):
             return Response(
                 {"new_phone_number": ["Phone Number is already registered"]}, status=status.HTTP_400_BAD_REQUEST
             )
+
         with transaction.atomic():
             token = ChangePhoneNumberToken.objects.create(
                 user=request.user,
