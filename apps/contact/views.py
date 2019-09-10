@@ -22,6 +22,7 @@ class ContactListSyncApiView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             contact_list = serializer.validated_data.get("contacts")
+            # add country extension if not available.
             valid_contact_list = []
             for c in contact_list:
                 if "+" not in c:
