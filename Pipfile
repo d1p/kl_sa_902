@@ -36,6 +36,7 @@ django-extensions = "*"
 shortuuid = "*"
 sentry-sdk = "*"
 django-nested-admin = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.7.3"

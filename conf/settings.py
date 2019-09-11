@@ -1,8 +1,7 @@
 import os
 from datetime import timedelta
 import sentry_sdk
-from sentry_sdk.integrations.django import \
-    DjangoIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
 import environ
 from django.utils.translation import ugettext_lazy as _
 
@@ -35,6 +34,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -52,6 +52,7 @@ CORE_APPS = [
     "apps.ticket",
     "apps.contact",
     "apps.food",
+    "apps.order",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + CORE_APPS
@@ -61,6 +62,7 @@ AUTH_USER_MODEL = "account.User"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -87,7 +89,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "conf.wsgi.application"
-
+CORS_ORIGIN_ALLOW_ALL = True
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -176,7 +178,9 @@ SIMPLE_JWT = {
 TWILIO_ACCOUNT_SID = env.str("TWILIO_ACCOUNT_SID")
 TWILIO_AUTH_TOKEN = env.str("TWILIO_AUTH_TOKEN")
 TWILIO_FROM_NUMBER = env.str("TWILIO_FROM_NUMBER")
-DEFAULT_PHONE_NUMBER_COUNTRY_EXTENSION = env.str("DEFAULT_PHONE_NUMBER_COUNTRY_EXTENSION", default="+88")
+DEFAULT_PHONE_NUMBER_COUNTRY_EXTENSION = env.str(
+    "DEFAULT_PHONE_NUMBER_COUNTRY_EXTENSION", default="+88"
+)
 
 # Invite
 MAX_NUMBER_OF_ORDER_INVITE_TRY = env.int("MAX_NUMBER_OF_ORDER_INVITE_TRY", default=3)
@@ -200,8 +204,7 @@ BROKER_TRANSPORT_OPTIONS = {"max_connections": 2}
 if DEBUG is False:
     UNIT_TESTING = False
     sentry_sdk.init(
-        env.str("RAVEN_DSN", default=""),
-        integrations=[DjangoIntegration()]
+        env.str("RAVEN_DSN", default=""), integrations=[DjangoIntegration()]
     )
 
 LOGIN_URL = "/admin/"

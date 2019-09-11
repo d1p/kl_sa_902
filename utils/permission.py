@@ -26,3 +26,8 @@ class IsRestaurantOwnerOrReadOnly(permissions.IsAuthenticated):
             return False
 
         return obj.user == request.user
+
+
+class IsCustomer(permissions.IsAuthenticated):
+    def has_permission(self, request, view):
+        return request.user.profile_type == ProfileType.CUSTOMER

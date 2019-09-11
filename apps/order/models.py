@@ -10,13 +10,33 @@ from apps.food.models import FoodItem, FoodAddOn, FoodAttributeMatrix
 
 
 class Order(models.Model):
-    ORDER_TYPE_CHOICES = ((0, _("Pick Up")), (1, _("In House")))
+    STATUS_NEW = 0
+    STATUS_PENDING = 1
+    STATUS_Confirmed = 2
+    STATUS_PAID = 3
+    STATUS_ON_PROCESS = 4
+    STATUS_CLOSED = 5
+    STATUS_CHOICES = (
+        (STATUS_NEW, _("New")),
+        (STATUS_PENDING, _("Pending")),
+        (STATUS_Confirmed, _("Confirmed")),
+        (STATUS_PAID, _("Paid")),
+        (STATUS_CLOSED, _("Closed")),
+    )
+    TYPE_PICKUP = 0
+    TYPE_IN_HOUSE = 1
+    TYPE_CHOICES = ((TYPE_PICKUP, _("Pick Up")), (TYPE_IN_HOUSE, _("In House")))
+
     order_type = models.SmallIntegerField(
-        choices=ORDER_TYPE_CHOICES,
+        choices=TYPE_CHOICES,
         help_text=_("Indicates weather the order is a Pick up order or In House "),
     )
     restaurant = models.ForeignKey(
-        User, on_delete=models.SET_NULL, db_index=True, null=True
+        User,
+        on_delete=models.SET_NULL,
+        db_index=True,
+        null=True,
+        related_name="order_restaurants",
     )
     table = models.ForeignKey(
         RestaurantTable, on_delete=models.SET_NULL, db_index=True, null=True
@@ -28,9 +48,7 @@ class Order(models.Model):
         null=True,
         help_text=_("The user that initialed the order."),
     )
-    participants = models.ManyToManyField(
-        User, help_text=_("Total participants of this order.")
-    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_total(self) -> Decimal:
@@ -65,6 +83,14 @@ class Order(models.Model):
         return Decimal(total)
 
 
+class OrderParticipant(models.Model):
+    order = models.ForeignKey(
+        Order, related_name="order_participants", on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class OrderInvite(models.Model):
     STATUSES = ((0, _("Pending")), (1, _("Accepted")), (2, _("Rejected")))
     order = models.ForeignKey(
@@ -74,9 +100,18 @@ class OrderInvite(models.Model):
         related_name="restaurant_order_invites",
         null=True,
     )
-    invited_user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
-    invited_by = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
-    status = models.SmallIntegerField()
+    invited_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, db_index=True, related_name="order_invited_user"
+    )
+    invited_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name="order_invited_by_user",
+    )
+
+    status = models.SmallIntegerField(choices=STATUSES, default=0)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     @staticmethod
@@ -98,11 +133,16 @@ class OrderItem(models.Model):
         Order, on_delete=models.CASCADE, related_name="order_items"
     )
     status = models.SmallIntegerField(choices=STATUS_CHOICES, default=0, db_index=True)
-    shared_with = models.ManyToManyField(User)
-    added_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, db_index=True
+    shared_with = models.ManyToManyField(
+        User, related_name="order_item_shared_with_users"
     )
-    attributes = models.ManyToManyField(FoodAttributeMatrix)
+    added_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        db_index=True,
+        related_name="order_item_added_by_user",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_total(self) -> Decimal:
@@ -126,3 +166,16 @@ class OrderItemAddOn(models.Model):
         OrderItem, on_delete=models.CASCADE, related_name="order_item_add_ons"
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class OrderItemAttributeMatrix(models.Model):
+    food_attribute = models.ForeignKey(
+        FoodAttributeMatrix, on_delete=models.CASCADE, null=True
+    )
+    order_item = models.ForeignKey(
+        OrderItem, related_name="attribute_matrix", on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("order_item", "food_attribute")
