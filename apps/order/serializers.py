@@ -1,13 +1,14 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
-from .models import Order, OrderInvite, OrderParticipant
+from apps.order.types import OrderStatusType
+from .models import Order, OrderInvite, OrderItem, OrderItemInvite
 
 
 class OrderInviteSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderInvite
-        fields = ("id", "invited_user", "invited_by", "status", "created_at")
+        fields = ("id", "invited_user", "invited_by", "order", "status", "created_at")
         read_only_fields = ("id", "invited_by", "status", "created_at")
 
     def create(self, validated_data):
@@ -36,7 +37,7 @@ class OrderInviteSerializer(serializers.ModelSerializer):
         if validated_data.get("status") == 1:
             # Accepts
             order = instance.order
-            OrderParticipant.objects.create(order=order, user=current_user)
+            order.order_participants.add(current_user)
             instance.status = 1
             instance.save()
             # Send necessary signals
@@ -45,6 +46,78 @@ class OrderInviteSerializer(serializers.ModelSerializer):
             instance.save()
 
         return instance
+
+
+class OrderItemInviteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItemInvite
+        fields = (
+            "id",
+            "invited_user",
+            "invited_by",
+            "order_item",
+            "status",
+            "created_at",
+        )
+        read_only_fields = ("id", "invited_by", "status", "created_at")
+
+    def create(self, validated_data):
+        if (
+            OrderItemInvite.can_send_invite(
+                to_user=validated_data.get("invited_user"),
+                order_item=validated_data.get("order_item"),
+            )
+            is False
+        ):
+            raise ValidationError({"invited_user": ["User can not be invited."]})
+        else:
+            return OrderItemInvite.objects.create(**validated_data, status=0)
+
+    def update(self, instance: OrderItemInvite, validated_data):
+        """
+        Update should only be used by the invited user to accept or reject the request.
+        """
+        current_user = self.context["request"].user
+        if instance.invited_user != current_user or instance.status != 0:
+            raise PermissionDenied
+
+        if validated_data.get("status") == 1:
+            # Accepts
+            order_item = instance.order_item
+            order_item.shared_with.add(current_user)
+            instance.status = 1
+            instance.save()
+            # Send necessary signals
+        else:
+            instance.status = 2
+            instance.save()
+
+        return instance
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = (
+            "id",
+            "food_item",
+            "quantity",
+            "status",
+            "shared_with",
+            "added_by",
+            "created_at",
+        )
+        read_only_fields = ("id", "added_by", "created_at")
+
+    def create(self, validated_data):
+        order = validated_data.get("order")
+
+        if order.status == OrderStatusType.OPEN:
+            return Order.objects.create(**validated_data)
+        else:
+            return ValidationError(
+                {"non_field_errors": ["This order has been closed."]}
+            )
 
 
 class OrderSerializer(serializers.ModelSerializer):

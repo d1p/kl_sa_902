@@ -3,32 +3,15 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-
+from .types import OrderType, OrderItemStatusType, OrderStatusType
 from apps.account.models import User
 from apps.account.restaurant.models import RestaurantTable
 from apps.food.models import FoodItem, FoodAddOn, FoodAttributeMatrix
 
 
 class Order(models.Model):
-    STATUS_NEW = 0
-    STATUS_PENDING = 1
-    STATUS_Confirmed = 2
-    STATUS_PAID = 3
-    STATUS_ON_PROCESS = 4
-    STATUS_CLOSED = 5
-    STATUS_CHOICES = (
-        (STATUS_NEW, _("New")),
-        (STATUS_PENDING, _("Pending")),
-        (STATUS_Confirmed, _("Confirmed")),
-        (STATUS_PAID, _("Paid")),
-        (STATUS_CLOSED, _("Closed")),
-    )
-    TYPE_PICKUP = 0
-    TYPE_IN_HOUSE = 1
-    TYPE_CHOICES = ((TYPE_PICKUP, _("Pick Up")), (TYPE_IN_HOUSE, _("In House")))
-
     order_type = models.SmallIntegerField(
-        choices=TYPE_CHOICES,
+        choices=OrderType.CHOICES,
         help_text=_("Indicates weather the order is a Pick up order or In House "),
     )
     restaurant = models.ForeignKey(
@@ -49,6 +32,12 @@ class Order(models.Model):
         help_text=_("The user that initialed the order."),
     )
 
+    status = models.SmallIntegerField(
+        choices=OrderStatusType.CHOICES, default=OrderStatusType.OPEN
+    )
+
+    fully_paid = models.BooleanField(default=False, db_index=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_total(self) -> Decimal:
@@ -58,7 +47,9 @@ class Order(models.Model):
         total = 0.0
         items = OrderItem.objects.filter(order=self)
         for i in items:
-            add_ons = OrderItemAddOn.objects.filter(order_item=i)
+            add_ons = OrderItemAddOn.objects.filter(
+                order_item=i, order_item__status=OrderItemStatusType.CONFIRMED
+            )
             for a in add_ons:
                 total += (
                     a.food_add_on.price * a.quantity * i.quantity
@@ -71,7 +62,9 @@ class Order(models.Model):
         Get total payable by each user.
         """
         total = 0.0
-        order_items = OrderItem.objects.filter(order=self)
+        order_items = OrderItem.objects.filter(
+            order=self, order_item__status=OrderItemStatusType.CONFIRMED
+        )
         items = order_items.filter(Q(added_by=user) | Q(shared_with__exact=user))
         for i in items:
             add_ons = OrderItemAddOn.objects.filter(order_item=i)
@@ -126,13 +119,16 @@ class OrderInvite(models.Model):
 
 
 class OrderItem(models.Model):
-    STATUS_CHOICES = ((0, _("Unconfirmed")), (1, _("Confirmed")), (2, _("Canceled")))
     food_item = models.ForeignKey(FoodItem, on_delete=models.SET_NULL, null=True)
     quantity = models.PositiveIntegerField(default=1)
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, related_name="order_items"
     )
-    status = models.SmallIntegerField(choices=STATUS_CHOICES, default=0, db_index=True)
+    status = models.SmallIntegerField(
+        choices=OrderItemStatusType.CHOICES,
+        default=OrderItemStatusType.UNCONFIRMED,
+        db_index=True,
+    )
     shared_with = models.ManyToManyField(
         User, related_name="order_item_shared_with_users"
     )
@@ -179,3 +175,34 @@ class OrderItemAttributeMatrix(models.Model):
 
     class Meta:
         unique_together = ("order_item", "food_attribute")
+
+
+class OrderItemInvite(models.Model):
+    STATUSES = ((0, _("Pending")), (1, _("Accepted")), (2, _("Rejected")))
+    order_item = models.ForeignKey(
+        OrderItem,
+        on_delete=models.SET_NULL,
+        db_index=True,
+        related_name="restaurant_order_item_invites",
+        null=True,
+    )
+    invited_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, db_index=True, related_name="order_item_invited_user"
+    )
+    invited_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name="order_item_invited_by_user",
+    )
+
+    status = models.SmallIntegerField(choices=STATUSES, default=0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @staticmethod
+    def can_send_invite(to_user: User, order_item: OrderItem) -> bool:
+        return (
+            order_item.order.order_participants.filter(id=to_user).exists()
+            and order_item.shared_with.filter(id=to_user).exists() is False
+        )
