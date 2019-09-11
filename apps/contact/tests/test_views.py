@@ -32,7 +32,6 @@ class TestSyncContacts:
         for a in active_contacts:
             a.user.groups.add(groups)
         ids = [contact.user.phone_number for contact in active_contacts]
-        print(ids)
         factory = APIRequestFactory()
         request = factory.post("/", data={"contacts": ids})
         force_authenticate(request, customer.user)
