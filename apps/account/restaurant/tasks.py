@@ -16,11 +16,11 @@ def generate_table_qr_code(table_id: int):
         box_size=10,
         border=4,
     )
-    qr.add_data(table.id)
+    data = {"restaurant_id": table.user.id, "table_id": table.id}
+    qr.add_data(data)
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
-
     thumb_io = BytesIO()
     img.save(thumb_io, img.format, quality=100)
 
