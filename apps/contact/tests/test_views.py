@@ -22,12 +22,17 @@ class TestSyncContacts:
         return mixer.blend("customer.Customer")
 
     def test_sync_contacts(self, groups, customer):
-        active_contacts = mixer.cycle(10).blend("customer.Customer")
-        inactive_contacts = mixer.cycle(2).blend("customer.Customer")
+        active_contacts = []
+        for i in range(0, 9):
+            active_contacts.append(
+                mixer.blend("customer.Customer", user__phone_number=f"+88018763662{i}")
+            )
+        mixer.cycle(2).blend("customer.Customer")
 
         for a in active_contacts:
             a.user.groups.add(groups)
         ids = [contact.user.phone_number for contact in active_contacts]
+        print(ids)
         factory = APIRequestFactory()
         request = factory.post("/", data={"contacts": ids})
         force_authenticate(request, customer.user)
@@ -39,7 +44,7 @@ class TestSyncContacts:
         ), "Should return http response 200"
         response.render()
         content = json.loads(response.content)
-        assert len(content) == 10, "Should return 10 contacts"
+        assert len(content) == 9, "Should return 9 contacts"
 
 
 class TestGroupViewSet:
@@ -103,7 +108,9 @@ class TestGroupViewSet:
         contact: Customer = mixer.blend("customer.Customer")
         contact.user.groups.add(groups)
 
-        contactGroup: ContactGroup = mixer.blend("contact.ContactGroup", user=customer.user)
+        contactGroup: ContactGroup = mixer.blend(
+            "contact.ContactGroup", user=customer.user
+        )
 
         request = factory.post("/", data={"id": contact.user.id})
 
@@ -131,4 +138,3 @@ class TestGroupViewSet:
             response.status_code == status.HTTP_204_NO_CONTENT
         ), "Should remove the contact from the group"
         assert contactGroup.contacts.count() == 0, "Should have a single contact"
-
