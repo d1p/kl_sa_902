@@ -31,5 +31,10 @@ class ContactGroupSerializer(serializers.ModelSerializer):
         except IntegrityError:
             raise ValidationError({"name": "Name already exists."})
 
+
+class IdListSerializer(serializers.Serializer):
+    ids = serializers.ListField(child=serializers.IntegerField())
+
+
 class IdSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)

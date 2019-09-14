@@ -36,9 +36,15 @@ class Order(models.Model):
         choices=OrderStatusType.CHOICES, default=OrderStatusType.OPEN
     )
 
-    fully_paid = models.BooleanField(default=False, db_index=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_active(self) -> bool:
+        return (
+            OrderItem.objects.filter(
+                order=self, status=OrderItemStatusType.CONFIRMED
+            ).exists()
+            and self.status == OrderStatusType.OPEN
+        )
 
     def get_total(self) -> Decimal:
         """
@@ -187,7 +193,10 @@ class OrderItemInvite(models.Model):
         null=True,
     )
     invited_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, db_index=True, related_name="order_item_invited_user"
+        User,
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name="order_item_invited_user",
     )
     invited_by = models.ForeignKey(
         User,

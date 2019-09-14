@@ -1,17 +1,18 @@
+from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from django.conf import settings
+
 from apps.account.models import User
 from apps.contact.models import ContactGroup
 from .serializers import (
     ContactListSyncSerializer,
     ContactUserSerializer,
     ContactGroupSerializer,
-    IdSerializer,
+    IdListSerializer,
 )
 
 
@@ -52,12 +53,14 @@ class ContactGroupViewSet(ModelViewSet):
     ```{"id": "User not found."}``` WITH HTTP STATUS 404
 
     """
+
     serializer_class = ContactGroupSerializer
     lookup_field = "id"
 
     def get_serializer_class(self):
         if self.action == "contacts":
-            return IdSerializer
+            return IdListSerializer
+
         return ContactGroupSerializer
 
     def get_queryset(self):
@@ -78,21 +81,38 @@ class ContactGroupViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
-            try:
-                user = User.objects.get(id=serializer.validated_data.get("id"))
-                if user.groups.filter(name="Customer").exists() is False:
-                    return Response(
-                        {"id": "User not found."}, status=status.HTTP_404_NOT_FOUND
-                    )
-            except User.DoesNotExist:
-                return Response(
-                    {"id": "User not found."}, status=status.HTTP_404_NOT_FOUND
-                )
-
+            contact_ids = serializer.validated_data.get("ids")
             if request.method == "POST":
-                if group.contacts.filter(id=user.id).exists() is False:
-                    group.contacts.add(user)
+                for contact_id in contact_ids:
+                    try:
+                        user = User.objects.get(id=contact_id)
+                        if user.groups.filter(name="Customer").exists() is False:
+                            return Response(
+                                {"id": "User not found."},
+                                status=status.HTTP_404_NOT_FOUND,
+                            )
+                    except User.DoesNotExist:
+                        return Response(
+                            {"id": "User not found."}, status=status.HTTP_404_NOT_FOUND
+                        )
+
+                    if group.contacts.filter(id=user.id).exists() is False:
+                        group.contacts.add(user)
                 return Response({"success": True}, status.HTTP_201_CREATED)
             else:
-                group.contacts.filter(id=user.id).delete()
+                for contact_id in contact_ids:
+                    try:
+                        user = User.objects.get(id=contact_id)
+                        if user.groups.filter(name="Customer").exists() is False:
+                            return Response(
+                                {"id": "User not found."},
+                                status=status.HTTP_404_NOT_FOUND,
+                            )
+                    except User.DoesNotExist:
+                        return Response(
+                            {"id": "User not found."}, status=status.HTTP_404_NOT_FOUND
+                        )
+
+                    if group.contacts.filter(id=user.id).exists():
+                        group.contacts.filter(id=contact_id).delete()
                 return Response({"success": True}, status.HTTP_204_NO_CONTENT)

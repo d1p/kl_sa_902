@@ -111,7 +111,7 @@ class TestGroupViewSet:
             "contact.ContactGroup", user=customer.user
         )
 
-        request = factory.post("/", data={"id": contact.user.id})
+        request = factory.post("/", data={"ids": [contact.user.id]})
 
         force_authenticate(request, customer.user)
 
@@ -125,7 +125,7 @@ class TestGroupViewSet:
 
         assert contactGroup.contacts.count() == 1, "Should have a single contact"
 
-        request = factory.delete("/", data={"id": contact.user.id})
+        request = factory.delete("/", data={"ids": [contact.user.id]})
 
         force_authenticate(request, customer.user)
 
