@@ -56,7 +56,7 @@ class RestaurantTable(models.Model):
     user = models.ForeignKey(User, db_index=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     qr_code = models.ImageField(upload_to=RandomFileName("user/restaurant/table"))
-    active = models.BooleanField(default=True, db_index=True)
+    public = models.BooleanField(default=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True, db_index=True)
 
