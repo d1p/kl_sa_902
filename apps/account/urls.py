@@ -25,12 +25,12 @@ router = DefaultRouter()
 router.register("account/fcm", FCMDeviceAuthorizedViewSet, basename="fcm")
 
 router.register("account/customer", CustomerViewSet, basename="customer")
-router.register("account/restaurant", RestaurantViewSet, basename="restaurant")
 router.register(
     r"account/restaurant/category",
     RestaurantCategoryViewSet,
     base_name="restaurant-category",
 )
+router.register("account/restaurant", RestaurantViewSet, basename="restaurant")
 router.register(
     r"restaurant-table", RestaurantTableViewSet, base_name="restaurant-table"
 )

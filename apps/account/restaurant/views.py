@@ -21,7 +21,6 @@ class RestaurantCategoryViewSet(ReadOnlyModelViewSet):
     """
     Return restaurant categories in ascending order.
     """
-
     permission_classes = [AllowAny]
     serializer_class = CategorySerializer
     queryset = Category.objects.all().order_by("name")
