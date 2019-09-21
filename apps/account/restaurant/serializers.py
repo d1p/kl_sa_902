@@ -79,7 +79,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class RestaurantTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantTable
-        fields = ("id", "name", "qr_code", "user",)
+        fields = ("id", "name", "qr_code", "active", "user",)
         read_only_fields = ("id", "qr_code", "user", )
 
     def create(self, validated_data):
@@ -89,6 +89,7 @@ class RestaurantTableSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        instance.name = validated_data.get("name")
+        instance.name = validated_data.get("name", instance.name)
+        instance.active = validated_data.get("active", instance.active)
         instance.save()
         return instance

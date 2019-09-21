@@ -4,26 +4,18 @@ from .models import FoodAddOn, FoodItem, FoodAttribute
 
 
 class FoodItemFilter(filters.FilterSet):
-    name = filters.CharFilter(lookup_expr="icontains", field_name="name")
-    category = filters.NumberFilter(lookup_expr="exact", field_name="category__id")
-    user = filters.NumberFilter(lookup_expr="exact", field_name="user__id")
-
     class Meta:
         model = FoodItem
-        fields = ("name", "category", "user")
+        fields = {"name": ["icontains"], "category": ["exact"], "user": ["exact"]}
 
 
 class FoodAddOnFilter(filters.FilterSet):
-    food = filters.NumberFilter(lookup_expr="exact", field_name="food__id")
-
     class Meta:
         model = FoodAddOn
-        fields = ("food",)
+        fields = {"food": ["exact"]}
 
 
 class FoodAttributeFilter(filters.FilterSet):
-    food = filters.NumberFilter(lookup_expr="exact", field_name="food__id")
-
     class Meta:
         model = FoodAttribute
-        fields = ("food",)
+        fields = {"food": ["exact"]}

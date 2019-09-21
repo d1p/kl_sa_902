@@ -52,7 +52,7 @@ CORE_APPS = [
     "apps.ticket",
     "apps.contact",
     "apps.food",
-    #"apps.order",
+    "apps.order",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + CORE_APPS

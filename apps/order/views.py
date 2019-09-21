@@ -45,7 +45,7 @@ class OrderViewSet(
     GenericViewSet,
 ):
     serializer_class = OrderSerializer
-    filter_backends = DjangoFilterBackend
+    filter_backends = [DjangoFilterBackend]
     filterset_class = OrderFilter
 
     def get_queryset(self):
@@ -77,7 +77,7 @@ class OrderItemViewSet(
     GenericViewSet,
 ):
     serializer_class = OrderItemSerializer
-    filter_backends = DjangoFilterBackend
+    filter_backends = [DjangoFilterBackend]
     filterset_class = OrderItemFilter
 
     def get_queryset(self):

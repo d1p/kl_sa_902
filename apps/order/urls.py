@@ -13,7 +13,6 @@ router = DefaultRouter()
 router.register("order", OrderViewSet, base_name="order")
 router.register("order/item", OrderItemViewSet, base_name="order-item")
 router.register("order/invite", OrderInviteViewSet, base_name="order-invite")
-router.register("order/item", OrderItemViewSet, base_name="order-item")
 router.register(
     "order/item/invite", OrderItemInviteViewSet, base_name="order-item-invite"
 )
