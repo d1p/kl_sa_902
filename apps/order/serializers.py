@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
+from apps.account.models import User
+from apps.contact.models import ContactGroup
+from apps.order.tasks import send_order_invite_notification
 from apps.order.types import OrderStatusType
 from .models import Order, OrderInvite, OrderItem, OrderItemInvite
 
@@ -24,7 +27,13 @@ class OrderInviteSerializer(serializers.ModelSerializer):
                 {"non_field_errors": ["Maximum number of invite exceeded."]}
             )
         else:
-            return OrderInvite.objects.create(**validated_data, status=0)
+            invite = OrderInvite.objects.create(**validated_data, status=0)
+            send_order_invite_notification(
+                from_user=validated_data.get("invited_by"),
+                to_user=validated_data.get("invited_user"),
+                invite_id=invite.id,
+            )
+            return invite
 
     def update(self, instance: OrderInvite, validated_data):
         """
@@ -124,3 +133,42 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("id", "order_type", "restaurant", "table", "created_by", "created_at")
+
+
+class OrderGroupInviteSerializer(serializers.Serializer):
+    group_id = serializers.IntegerField(required=True)
+    order_id = serializers.IntegerField(required=True)
+
+    def create(self, validated_data):
+        current_user: User = self.context["request"].user
+
+        try:
+            order = Order.objects.get(id=validated_data.get("order_id"))
+        except Order.DoesNotExist:
+            raise ValidationError({"id": ["Invalid order id"]})
+
+        if order.user != current_user:
+            raise PermissionDenied
+
+        try:
+            contact_group = ContactGroup.objects.get(id=validated_data.get("group_id"))
+        except ContactGroup.DoesNotExist:
+            raise ValidationError({"id": ["Invalid group id"]})
+
+        if contact_group.user != current_user:
+            raise PermissionDenied
+
+        order_participants = order.order_participants.all().only("user")
+        order_participants_users = [x.user for x in order_participants]
+
+        for contact in contact_group.contacts:
+            if contact not in order_participants_users:
+                invite = OrderInvite.objects.create(
+                    order=order, invited_user=contact, invited_by=current_user, status=0
+                )
+                send_order_invite_notification(
+                    from_user=current_user, to_user=contact, invite_id=invite.id
+                )
+
+    def update(self, instance, validated_data):
+        pass

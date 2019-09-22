@@ -32,7 +32,9 @@ class PublicRestaurantSerializer(serializers.ModelSerializer):
 
 class RestaurantSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=True)
-    restaurant_type = CategorySerializer(required=False)
+    restaurant_type_details = CategorySerializer(
+        required=False, read_only=True, source="restaurant_type"
+    )
 
     class Meta:
         model = Restaurant
@@ -44,8 +46,9 @@ class RestaurantSerializer(serializers.ModelSerializer):
             "lat",
             "lng",
             "online",
+            "restaurant_type_details",
         )
-        read_only_fields = ("lat", "lng")
+        read_only_fields = ("lat", "lng", "restaurant_type_details")
 
     def create(self, validated_data):
         user = register_basic_user("Restaurant", validated_data.pop("user", {}))
@@ -62,7 +65,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
                 instance.cover_picture = validated_data.get(
                     "cover_picture", instance.cover_picture
                 )
-
+            print(validated_data.get("restaurant_type"))
             instance.restaurant_type = validated_data.get(
                 "restaurant_type", instance.restaurant_type
             )
@@ -79,8 +82,8 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class RestaurantTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantTable
-        fields = ("id", "name", "qr_code", "public", "user",)
-        read_only_fields = ("id", "qr_code", "user", )
+        fields = ("id", "name", "qr_code", "public", "user")
+        read_only_fields = ("id", "qr_code", "user")
 
     def create(self, validated_data):
         instance = RestaurantTable.objects.create(**validated_data)

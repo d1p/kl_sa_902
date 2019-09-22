@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.viewsets import GenericViewSet
-
+from rest_framework.permissions import IsAdminUser
 from apps.account.types import ProfileType
 from utils.permission import IsCustomer
 from .filters import OrderFilter, OrderItemFilter
@@ -13,18 +13,40 @@ from .serializers import (
     OrderSerializer,
     OrderItemSerializer,
     OrderItemInviteSerializer,
+    OrderGroupInviteSerializer,
 )
 
 
 class OrderInviteViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericViewSet
 ):
+    """
+    Returns HTTP 201 on successful invites. Upon validation errors it returns normal drf field errors.
+    Custom Errors:
+    Upon exceeding maximum invite request limit to a individual user it will return validation error with this message.
+    ```json
+    {"non_field_errors": ["Maximum number of invite exceeded."]}
+    ```
+    """
+
     serializer_class = OrderInviteSerializer
     queryset = OrderInvite.objects.all()
-    permission_classes = [IsCustomer]
 
     def perform_create(self, serializer):
+        current_user = self.request
+        if current_user.profile_type != ProfileType.CUSTOMER:
+            raise PermissionDenied
         serializer.save(invited_by=self.request.user)
+
+
+class OrderGroupInviteViewSet(mixins.CreateModelMixin, GenericViewSet):
+    serializer_class = OrderGroupInviteSerializer
+
+    def perform_create(self, serializer):
+        current_user = self.request
+        if current_user.profile_type != ProfileType.CUSTOMER:
+            raise PermissionDenied
+        serializer.save()
 
 
 class OrderItemInviteViewSet(
@@ -32,9 +54,12 @@ class OrderItemInviteViewSet(
 ):
     serializer_class = OrderItemInviteSerializer
     queryset = OrderItemInvite.objects.all()
-    permission_classes = [IsCustomer]
+    permission_classes = [IsCustomer, IsAdminUser]
 
     def perform_create(self, serializer):
+        current_user = self.request
+        if current_user.profile_type != ProfileType.CUSTOMER:
+            raise PermissionDenied
         serializer.save(invited_by=self.request.user)
 
 
