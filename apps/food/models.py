@@ -34,10 +34,16 @@ class FoodItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.name} by {self.user.name}"
+
 
 class FoodAttribute(models.Model):
     name = models.CharField(max_length=144)
-    food = models.ForeignKey(FoodItem, on_delete=models.CASCADE, related_name="attributes")
+    food = models.ForeignKey(
+        FoodItem, on_delete=models.CASCADE, related_name="attributes"
+    )
+    position = models.PositiveIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
@@ -46,12 +52,16 @@ class FoodAttribute(models.Model):
         ordering = ("name",)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
 
 class FoodAttributeMatrix(models.Model):
     name = models.CharField(max_length=144)
-    attribute = models.ForeignKey(FoodAttribute, on_delete=models.CASCADE, related_name="attribute_matrix")
+    attribute = models.ForeignKey(
+        FoodAttribute, on_delete=models.CASCADE, related_name="attribute_matrix"
+    )
+    position = models.PositiveIntegerField(blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
@@ -60,7 +70,7 @@ class FoodAttributeMatrix(models.Model):
         ordering = ("name",)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
 
 class FoodAddOn(models.Model):
@@ -69,10 +79,11 @@ class FoodAddOn(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    position = models.PositiveIntegerField(blank=True, null=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         ordering = ("name",)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"

@@ -24,21 +24,20 @@ class FoodCategoryAdmin(OnlyRestaurantInUserAdmin):
 
 class FoodAddOnInline(NestedTabularInline):
     model = FoodAddOn
-    classes = "collapse"
-    fields = ("name", "price")
-    sortable_field_name = "name"
+    sortable_field_name = "position"
 
 
 class FoodAttributeMatrixInline(NestedTabularInline):
     model = FoodAttributeMatrix
-    sortable_field_name = "name"
+    sortable_field_name = "position"
+    hiddel_fiels
     extra = 2
 
 
 class FoodAttributeInline(NestedTabularInline):
     model = FoodAttribute
     inlines = [FoodAttributeMatrixInline]
-    sortable_field_name = "name"
+    sortable_field_name = "position"
     extra = 1
 
 
@@ -55,7 +54,7 @@ class FoodItemAdmin(NestedModelAdmin, OnlyRestaurantInUserAdmin):
     list_filter = ("category", "created_at", "price")
     search_fields = ("user", "name")
     date_hierarchy = "created_at"
-    inlines = [FoodAddOnInline, FoodAttributeInline]
+    inlines = [FoodAttributeInline, FoodAddOnInline]
 
 
 admin.site.register(FoodItem, FoodItemAdmin)
