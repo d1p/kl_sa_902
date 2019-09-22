@@ -65,7 +65,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
                 instance.cover_picture = validated_data.get(
                     "cover_picture", instance.cover_picture
                 )
-            print(validated_data.get("restaurant_type"))
+
             instance.restaurant_type = validated_data.get(
                 "restaurant_type", instance.restaurant_type
             )
