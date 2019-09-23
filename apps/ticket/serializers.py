@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.account.serializers import PublicUserSerializer
-from .models import Ticket, Message, PreBackedTicketTopic
+from .models import Ticket, Message, PreBackedTicketTopic, ReportIssue
 from .tasks import send_message_notification
 
 
@@ -10,6 +10,28 @@ class PreBackedTicketTopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = PreBackedTicketTopic
         fields = ("text", "text_in_ar")
+
+
+class ReportIssueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportIssue
+        fields = ("created_by", "order", "topic", "description")
+        read_only_fields = ("created_by", )
+
+    def create(self, validated_data):
+        if (
+            validated_data.get("order")
+            .order_participants.filter(user=validated_data.get("created_by"))
+            .exists()
+            is False
+        ):
+            raise PermissionDenied
+        return ReportIssue.objects.create(
+            created_by=validated_data.get("created_by"),
+            topic=validated_data.get("topic"),
+            order=validated_data.get("order"),
+            description=validated_data.get("description"),
+        )
 
 
 class TicketSerializer(serializers.ModelSerializer):

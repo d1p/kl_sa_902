@@ -1,12 +1,14 @@
 from decimal import Decimal
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from .types import OrderType, OrderItemStatusType, OrderStatusType
+
 from apps.account.models import User
 from apps.account.restaurant.models import RestaurantTable
 from apps.food.models import FoodItem, FoodAddOn, FoodAttributeMatrix
+from .types import OrderType, OrderItemStatusType, OrderStatusType
 
 
 class Order(models.Model):
@@ -38,12 +40,15 @@ class Order(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return str(self.id)
+
     def is_active(self) -> bool:
         return (
-            OrderItem.objects.filter(
-                order=self, status=OrderItemStatusType.CONFIRMED
-            ).exists()
-            and self.status == OrderStatusType.OPEN
+                OrderItem.objects.filter(
+                    order=self, status=OrderItemStatusType.CONFIRMED
+                ).exists()
+                and self.status == OrderStatusType.OPEN
         )
 
     def get_total(self) -> Decimal:
@@ -58,7 +63,7 @@ class Order(models.Model):
             )
             for a in add_ons:
                 total += (
-                    a.food_add_on.price * a.quantity * i.quantity
+                        a.food_add_on.price * a.quantity * i.quantity
                 )  # Number of add on * Number of item * price of add ons
             total += i.food_item.price * i.quantity
         return Decimal(total)
@@ -76,7 +81,7 @@ class Order(models.Model):
             add_ons = OrderItemAddOn.objects.filter(order_item=i)
             for a in add_ons:
                 total += (
-                    a.food_add_on.price * a.quantity * i.quantity
+                        a.food_add_on.price * a.quantity * i.quantity
                 )  # Number of add on * Number of item * price of add ons
             total += i.food_item.price * i.quantity
         return Decimal(total)
@@ -117,10 +122,10 @@ class OrderInvite(models.Model):
     def can_send_invite(from_user: User, to_user: User, order: Order) -> bool:
         max_number = settings.MAX_NUMBER_OF_ORDER_INVITE_TRY
         return (
-            OrderInvite.objects.filter(
-                invited_user=to_user, invited_by=from_user, order=order
-            ).count()
-            <= max_number
+                OrderInvite.objects.filter(
+                    invited_user=to_user, invited_by=from_user, order=order
+                ).count()
+                <= max_number
         )
 
 
@@ -155,7 +160,7 @@ class OrderItem(models.Model):
         add_ons = OrderItemAddOn.objects.filter(order_item=self)
         for a in add_ons:
             total += (
-                a.food_add_on.price * a.quantity * self.quantity
+                    a.food_add_on.price * a.quantity * self.quantity
             )  # Number of add on * Number of item * price of add ons
         total += self.food_item.price * self.quantity
         return Decimal(total)
@@ -212,6 +217,6 @@ class OrderItemInvite(models.Model):
     @staticmethod
     def can_send_invite(to_user: User, order_item: OrderItem) -> bool:
         return (
-            order_item.order.order_participants.filter(id=to_user).exists()
-            and order_item.shared_with.filter(id=to_user).exists() is False
+                order_item.order.order_participants.filter(id=to_user).exists()
+                and order_item.shared_with.filter(id=to_user).exists() is False
         )

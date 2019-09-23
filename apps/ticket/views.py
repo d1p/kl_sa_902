@@ -1,12 +1,18 @@
 from rest_framework import mixins
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from .models import Ticket, Message, PreBackedTicketTopic
-from .serializers import TicketSerializer, MessageSerializer, PreBackedTicketTopicSerializer
+from apps.account.types import ProfileType
+from .models import Ticket, Message, PreBackedTicketTopic, ReportIssue
+from .serializers import (
+    TicketSerializer,
+    MessageSerializer,
+    PreBackedTicketTopicSerializer,
+    ReportIssueSerializer,
+)
 from .tasks import send_new_ticket_notification
 
 
@@ -15,6 +21,16 @@ class PreBackedTicketTopicViewSet(ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
     queryset = PreBackedTicketTopic.objects.all()
     page_size = 100
+
+
+class ReportIssueViewSet(GenericViewSet, mixins.CreateModelMixin):
+    queryset = ReportIssue.objects.all()
+    serializer_class = ReportIssueSerializer
+
+    def perform_create(self, serializer):
+        if self.request.user.profile_type != ProfileType.CUSTOMER:
+            raise PermissionDenied
+        serializer.save(created_by=self.request.user)
 
 
 class TicketViewSet(
