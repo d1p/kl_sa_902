@@ -4,7 +4,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from apps.account.types import ProfileType
 from utils.permission import IsRestaurantOwnerOrReadOnly
-from .filters import FoodItemFilter, FoodAddOnFilter, FoodAttributeFilter
+from .filters import FoodItemFilter, FoodAddOnFilter, FoodAttributeFilter, FoodCategoryFilter
 from .models import FoodCategory, FoodItem, FoodAddOn, FoodAttributeMatrix, FoodAttribute
 from .serializers import FoodCategorySerializer, FoodItemSerializer, FoodAddOnSerializer, FoodAttributeSerializer, FoodAttributeMatrixSerializer
 
@@ -13,6 +13,7 @@ class FoodCategoryViewSet(ModelViewSet):
     serializer_class = FoodCategorySerializer
     queryset = FoodCategory.objects.filter(is_deleted=False)
     filter_backends = [DjangoFilterBackend]
+    filterset_class = FoodCategoryFilter
     permission_classes = [IsRestaurantOwnerOrReadOnly]
 
     def perform_create(self, serializer):
