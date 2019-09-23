@@ -43,7 +43,6 @@ class FoodAttribute(models.Model):
     food = models.ForeignKey(
         FoodItem, on_delete=models.CASCADE, related_name="attributes"
     )
-    position = models.PositiveIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
@@ -60,8 +59,6 @@ class FoodAttributeMatrix(models.Model):
     attribute = models.ForeignKey(
         FoodAttribute, on_delete=models.CASCADE, related_name="attribute_matrix"
     )
-    position = models.PositiveIntegerField(blank=True, null=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
@@ -79,7 +76,6 @@ class FoodAddOn(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    position = models.PositiveIntegerField(blank=True, null=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
 
     class Meta:

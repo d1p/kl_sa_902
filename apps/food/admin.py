@@ -24,19 +24,19 @@ class FoodCategoryAdmin(OnlyRestaurantInUserAdmin):
 
 class FoodAddOnInline(NestedTabularInline):
     model = FoodAddOn
-    sortable_field_name = "position"
+    sortable_field_name = None
 
 
 class FoodAttributeMatrixInline(NestedTabularInline):
     model = FoodAttributeMatrix
-    sortable_field_name = "position"
+    sortable_field_name = None
     extra = 2
 
 
 class FoodAttributeInline(NestedTabularInline):
     model = FoodAttribute
     inlines = [FoodAttributeMatrixInline]
-    sortable_field_name = "position"
+    sortable_field_name = None
 
     extra = 1
 
