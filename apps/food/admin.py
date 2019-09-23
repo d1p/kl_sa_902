@@ -30,7 +30,6 @@ class FoodAddOnInline(NestedTabularInline):
 class FoodAttributeMatrixInline(NestedTabularInline):
     model = FoodAttributeMatrix
     sortable_field_name = "position"
-    hiddel_fiels
     extra = 2
 
 
@@ -38,6 +37,7 @@ class FoodAttributeInline(NestedTabularInline):
     model = FoodAttribute
     inlines = [FoodAttributeMatrixInline]
     sortable_field_name = "position"
+
     extra = 1
 
 
