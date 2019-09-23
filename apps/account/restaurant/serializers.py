@@ -75,7 +75,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
             )
 
             instance.online = validated_data.get("online", instance.online)
-
+            instance.save()
             return instance
 
 

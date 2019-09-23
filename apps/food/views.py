@@ -4,9 +4,26 @@ from rest_framework.viewsets import ModelViewSet
 
 from apps.account.types import ProfileType
 from utils.permission import IsRestaurantOwnerOrReadOnly
-from .filters import FoodItemFilter, FoodAddOnFilter, FoodAttributeFilter, FoodCategoryFilter
-from .models import FoodCategory, FoodItem, FoodAddOn, FoodAttributeMatrix, FoodAttribute
-from .serializers import FoodCategorySerializer, FoodItemSerializer, FoodAddOnSerializer, FoodAttributeSerializer, FoodAttributeMatrixSerializer
+from .filters import (
+    FoodItemFilter,
+    FoodAddOnFilter,
+    FoodAttributeFilter,
+    FoodCategoryFilter,
+)
+from .models import (
+    FoodCategory,
+    FoodItem,
+    FoodAddOn,
+    FoodAttributeMatrix,
+    FoodAttribute,
+)
+from .serializers import (
+    FoodCategorySerializer,
+    FoodItemSerializer,
+    FoodAddOnSerializer,
+    FoodAttributeSerializer,
+    FoodAttributeMatrixSerializer,
+)
 
 
 class FoodCategoryViewSet(ModelViewSet):
@@ -33,6 +50,7 @@ class FoodItemViewSet(ModelViewSet):
     """
     The user field is read only, automatically filled from the request context.
     """
+
     permission_classes = [IsRestaurantOwnerOrReadOnly]
     serializer_class = FoodItemSerializer
 
