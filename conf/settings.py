@@ -2,6 +2,8 @@ import os
 from datetime import timedelta
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
+
 import environ
 from django.utils.translation import ugettext_lazy as _
 
@@ -206,7 +208,8 @@ BROKER_TRANSPORT_OPTIONS = {"max_connections": 2}
 if DEBUG is False:
     UNIT_TESTING = False
     sentry_sdk.init(
-        env.str("RAVEN_DSN", default=""), integrations=[DjangoIntegration()]
+        env.str("RAVEN_DSN", default=""),
+        integrations=[DjangoIntegration(), CeleryIntegration()],
     )
 
 LOGIN_URL = "/admin/"
