@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from .models import FoodAddOn, FoodItem, FoodAttribute
+from .models import FoodAddOn, FoodItem, FoodAttribute, FoodCategory
 
 
 class FoodItemFilter(filters.FilterSet):
@@ -19,3 +19,9 @@ class FoodAttributeFilter(filters.FilterSet):
     class Meta:
         model = FoodAttribute
         fields = {"food": ["exact"]}
+
+
+class FoodCategoryFilter(filters.FilterSet):
+    class Meta:
+        model = FoodCategory
+        fields = {"user": ["exact"]}
