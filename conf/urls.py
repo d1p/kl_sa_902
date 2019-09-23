@@ -15,9 +15,9 @@ from apps.order.urls import urlpatterns as order_urls
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Kole API",
+        title="Kol API",
         default_version="a1",
-        description="API For Kole application",
+        description="API For Kol application",
         terms_of_service="https://kl-sa-902.herokuapp.com/terms-of-service/",
         contact=openapi.Contact(email="nihan.dip@gmail.com"),
         license=openapi.License(name="Commercial"),
@@ -27,9 +27,9 @@ schema_view = get_schema_view(
 )
 
 # Admin panel changes
-admin.site.index_title = _("Kole")
-admin.site.site_header = _("Kole Administration")
-admin.site.site_title = _("Kole Management")
+admin.site.index_title = _("Kol")
+admin.site.site_header = _("Kol Administration")
+admin.site.site_title = _("Kol Management")
 
 urlpatterns = [
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
