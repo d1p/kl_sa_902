@@ -2,15 +2,15 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from .views import (
-    TicketViewSet,
-    MessageListCreate,
+    RestaurantTicketViewSet,
+    RestaurantMessageListCreate,
     PreBackedTicketTopicViewSet,
     ReportIssueViewSet,
 )
 
 router = DefaultRouter()
 
-router.register("ticket", TicketViewSet, base_name="ticket")
+router.register("restaurant-ticket", RestaurantTicketViewSet, base_name="ticket")
 router.register("report-issue", ReportIssueViewSet, base_name="report-issue")
 
 router.register(
@@ -18,7 +18,9 @@ router.register(
 )
 urlpatterns = [
     path(
-        "api/message/<str:ticket>/", MessageListCreate.as_view(), name="ticket-message"
+        "api/restaurant-ticket-message/<str:ticket>/",
+        RestaurantMessageListCreate.as_view(),
+        name="restaurant-ticket-message",
     ),
     path("api/", include(router.urls)),
 ]

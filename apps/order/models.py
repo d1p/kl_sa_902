@@ -14,7 +14,7 @@ from .types import OrderType, OrderItemStatusType, OrderStatusType
 class Order(models.Model):
     order_type = models.SmallIntegerField(
         choices=OrderType.CHOICES,
-        help_text=_("Indicates weather the order is a Pick up order or In House "),
+        help_text=_("Indicates weather the order is a Pick up (0) order or In House (1)"),
     )
     restaurant = models.ForeignKey(
         User,
@@ -23,9 +23,11 @@ class Order(models.Model):
         null=True,
         related_name="order_restaurants",
     )
+
     table = models.ForeignKey(
         RestaurantTable, on_delete=models.SET_NULL, db_index=True, null=True
     )
+
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -114,7 +116,7 @@ class OrderInvite(models.Model):
         related_name="order_invited_by_user",
     )
 
-    status = models.SmallIntegerField(choices=STATUSES, default=0)
+    status = models.SmallIntegerField(choices=STATUSES, default=0, help_text=_("Invite status, 0: Pending, 1: Accep"))
 
     created_at = models.DateTimeField(auto_now_add=True)
 

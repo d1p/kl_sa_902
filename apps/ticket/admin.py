@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from .models import Ticket, ReportIssue
+from .models import RestaurantTicket, ReportIssue
 
 
-@admin.register(Ticket)
-class TicketAdmin(admin.ModelAdmin):
+@admin.register(RestaurantTicket)
+class RestaurantTicketAdmin(admin.ModelAdmin):
     list_display = ("id", "created_by", "topic", "created_at", "last_updated", "status")
-    list_filter = ("status", "created_by__groups")
+    list_filter = ("status", )
 
     search_fields = ("created_by__name",)
 

@@ -88,7 +88,7 @@ class OrderViewSet(
         return queryset
 
     def perform_create(self, serializer):
-        current_user = self.request
+        current_user = self.request.user
         if current_user.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
         serializer.save(created_by=current_user)

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.account.serializers import PublicUserSerializer
-from .models import Ticket, Message, PreBackedTicketTopic, ReportIssue
+from .models import RestaurantTicket, RestaurantMessage, PreBackedTicketTopic, ReportIssue
 from .tasks import send_message_notification
 
 
@@ -34,20 +34,20 @@ class ReportIssueSerializer(serializers.ModelSerializer):
         )
 
 
-class TicketSerializer(serializers.ModelSerializer):
+class RestaurantTicketSerializer(serializers.ModelSerializer):
     created_by = PublicUserSerializer(required=False)
 
     class Meta:
-        model = Ticket
+        model = RestaurantTicket
         fields = ("id", "created_by", "topic", "description", "status")
         read_only_fields = ("id", "created_at", "created_by", "status")
 
 
-class MessageSerializer(serializers.ModelSerializer):
+class RestaurantMessageSerializer(serializers.ModelSerializer):
     sender = PublicUserSerializer(read_only=True)
 
     class Meta:
-        model = Message
+        model = RestaurantMessage
         fields = ("id", "sender", "ticket", "text", "created_at")
         read_only_fields = ("id", "sender", "ticket", "created_at")
 
@@ -58,11 +58,11 @@ class MessageSerializer(serializers.ModelSerializer):
         if sender.is_staff is False and sender.id != ticket.created_by.id:
             raise PermissionDenied
 
-        if ticket.status == Ticket.CLOSED:
+        if ticket.status == RestaurantTicket.CLOSED:
             raise ValidationError(
                 {"non_field_errors": ["This ticket has been closed."]}
             )
 
-        message = Message.objects.create(**validated_data)
+        message = RestaurantMessage.objects.create(**validated_data)
         send_message_notification.delay(message.id)
         return message

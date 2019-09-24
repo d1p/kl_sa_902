@@ -18,7 +18,7 @@ class PreBackedTicketTopic(models.Model):
         return f"{self.text}"
 
 
-class Ticket(models.Model):
+class RestaurantTicket(models.Model):
     OPEN = 0
     CLOSED = 1
 
@@ -36,23 +36,23 @@ class Ticket(models.Model):
 
     class Meta:
         ordering = ("-last_updated",)
-        verbose_name = _("Ticket")
-        verbose_name_plural = _("Tickets")
+        verbose_name = _("Restaurant Ticket")
+        verbose_name_plural = _("Restaurant Tickets")
 
     def __str__(self):
         return f"{self.created_by}: {self.topic}"
 
 
-class Message(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, db_index=True)
+class RestaurantMessage(models.Model):
+    ticket = models.ForeignKey(RestaurantTicket, on_delete=models.CASCADE, db_index=True)
     sender = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     text = models.TextField(max_length=5000)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ("-created_at",)
-        verbose_name = _("Message")
-        verbose_name_plural = _("Messages")
+        verbose_name = _("Restaurant Message")
+        verbose_name_plural = _("Restaurant Messages")
 
     def __str__(self):
         return f"{self.ticket}: {self.text} at {self.created_at}"

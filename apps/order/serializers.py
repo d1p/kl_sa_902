@@ -133,6 +133,12 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("id", "order_type", "restaurant", "table", "created_by", "created_at")
+        read_only_fields = ("id", "created_by", "created_at")
+
+    def create(self, validated_data):
+        order = Order.objects.create(**validated_data)
+        order.order_participants.create(user=order.created_by)
+        return order
 
 
 class OrderGroupInviteSerializer(serializers.Serializer):

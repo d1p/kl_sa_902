@@ -1,6 +1,6 @@
 from conf.celery import app
 from utils.fcm import send_push_notification
-from .models import Message
+from .models import RestaurantMessage
 
 
 @app.task
@@ -10,7 +10,7 @@ def send_new_ticket_notification():
 
 @app.task
 def send_message_notification(message_id: int):
-    message = Message.objects.get(id=message_id)
+    message = RestaurantMessage.objects.get(id=message_id)
     if message.sender.is_staff is False and message.sender.is_superuser is False:
         # This is a real user, send a push notification to the users device.
         data = {
