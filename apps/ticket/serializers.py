@@ -2,7 +2,13 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.account.serializers import PublicUserSerializer
-from .models import RestaurantTicket, RestaurantMessage, PreBackedTicketTopic, ReportIssue
+from .models import (
+    RestaurantTicket,
+    RestaurantMessage,
+    PreBackedTicketTopic,
+    ReportIssue,
+    CustomerTicketTopic,
+    CustomerTicket)
 from .tasks import send_message_notification
 
 
@@ -12,11 +18,26 @@ class PreBackedTicketTopicSerializer(serializers.ModelSerializer):
         fields = ("text", "text_in_ar")
 
 
+class CustomerTicketTopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomerTicketTopic
+        fields = ("id", "text", "text_in_ar")
+
+
+class CustomerTicketSerializer(serializers.ModelSerializer):
+    created_by = PublicUserSerializer(required=False)
+
+    class Meta:
+        model = CustomerTicket
+        fields = ("id", "created_by", "topic", "sub_topic", "description")
+        read_only_fields = ("id", "created_at", "created_by")
+
+
 class ReportIssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportIssue
         fields = ("created_by", "order", "topic", "description")
-        read_only_fields = ("created_by", )
+        read_only_fields = ("created_by",)
 
     def create(self, validated_data):
         if (

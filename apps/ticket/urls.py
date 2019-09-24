@@ -6,15 +6,25 @@ from .views import (
     RestaurantMessageListCreate,
     PreBackedTicketTopicViewSet,
     ReportIssueViewSet,
+    CustomerTicketTopicViewSet,
+    CustomerTicketViewSet,
 )
 
 router = DefaultRouter()
+router.register(
+    "customer-ticket-topics",
+    CustomerTicketTopicViewSet,
+    base_name="customer-ticket-topic",
+)
+router.register("customer-ticket", CustomerTicketViewSet, base_name="ticket")
 
 router.register("restaurant-ticket", RestaurantTicketViewSet, base_name="ticket")
 router.register("report-issue", ReportIssueViewSet, base_name="report-issue")
 
 router.register(
-    "pre-ticket-topics", PreBackedTicketTopicViewSet, base_name="pre-ticket-topic"
+    "restaurant-pre-ticket-topics",
+    PreBackedTicketTopicViewSet,
+    base_name="restaurant-pre-ticket-topic",
 )
 urlpatterns = [
     path(

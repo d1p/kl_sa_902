@@ -6,12 +6,16 @@ from rest_framework import status
 from rest_framework.test import force_authenticate, APIRequestFactory
 
 from ..models import RestaurantTicket
-from ..views import RestaurantTicketViewSet, RestaurantMessageListCreate
+from ..views import (
+    RestaurantTicketViewSet,
+    RestaurantMessageListCreate,
+    CustomerTicketViewSet,
+)
 
 pytestmark = pytest.mark.django_db
 
 
-class TestTicketViewSet:
+class TestRestaurantTicketViewSet:
     @pytest.fixture
     def group(self):
         return mixer.blend("auth.Group", name="Restaurant")
@@ -114,3 +118,35 @@ class TestTicketViewSet:
         response.render()
         content = json.loads(response.content)
         assert content["count"] == 10, "Should have 10 results in total."
+
+
+class TestCustomerTicketViewSet:
+    @pytest.fixture
+    def group(self):
+        return mixer.blend("auth.Group", name="Customer")
+
+    @pytest.fixture
+    def customer(self, group):
+        user = mixer.blend("account.User")
+        user.groups.add(group)
+        user.save()
+        return mixer.blend("customer.Customer", user=user)
+
+    @pytest.fixture
+    def topic(self):
+        return mixer.blend("ticket.CustomerTicketTopic")
+
+    def test_create_ticket_success(self, customer, topic):
+        factory = APIRequestFactory()
+        data = {
+            "topic": topic.id,
+            "sub_topic": "something",
+            "description": "Lorem torem insum",
+        }
+        request = factory.post("/", data=data)
+        force_authenticate(request, customer.user)
+        response = CustomerTicketViewSet.as_view({"post": "create"})(request)
+
+        assert (
+            response.status_code == status.HTTP_201_CREATED
+        ), "Should create a new ticket"

@@ -6,12 +6,21 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from apps.account.types import ProfileType
-from .models import RestaurantTicket, RestaurantMessage, PreBackedTicketTopic, ReportIssue
+from .models import (
+    RestaurantTicket,
+    RestaurantMessage,
+    PreBackedTicketTopic,
+    ReportIssue,
+    CustomerTicketTopic,
+    CustomerTicket,
+)
 from .serializers import (
     RestaurantTicketSerializer,
     RestaurantMessageSerializer,
     PreBackedTicketTopicSerializer,
     ReportIssueSerializer,
+    CustomerTicketTopicSerializer,
+    CustomerTicketSerializer,
 )
 from .tasks import send_new_ticket_notification
 
@@ -21,6 +30,33 @@ class PreBackedTicketTopicViewSet(ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
     queryset = PreBackedTicketTopic.objects.all()
     page_size = 100
+
+
+class CustomerTicketTopicViewSet(ReadOnlyModelViewSet):
+    serializer_class = CustomerTicketTopicSerializer
+    permission_classes = [AllowAny]
+    queryset = CustomerTicketTopic.objects.all()
+    page_size = 100
+
+
+class CustomerTicketViewSet(
+    GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+):
+    serializer_class = CustomerTicketSerializer
+    lookup_field = "id"
+
+    def get_queryset(self):
+        return CustomerTicket.objects.filter(created_by=self.request.user)
+
+    def perform_create(self, serializer):
+        if self.request.user.profile_type != ProfileType.CUSTOMER:
+            raise PermissionDenied
+
+        serializer.save(created_by=self.request.user)
+        send_new_ticket_notification.delay()
 
 
 class ReportIssueViewSet(GenericViewSet, mixins.CreateModelMixin):
