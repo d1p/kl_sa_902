@@ -14,7 +14,7 @@ admin.site.register(CustomerTicketTopic)
 
 
 @admin.register(CustomerTicket)
-class RestaurantTicketAdmin(admin.ModelAdmin):
+class CustomerTicketAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "created_by",

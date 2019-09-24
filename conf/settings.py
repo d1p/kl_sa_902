@@ -149,7 +149,7 @@ AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY", default="")
 AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME", default="")
 AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", default="")
 AWS_LOCATION = env.str("AWS_LOCATION", default="")
-AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+AWS_QUERYSTRING_AUTH = False
 AWS_DEFAULT_ACL = "public-read"
 
 if DEBUG is False:
