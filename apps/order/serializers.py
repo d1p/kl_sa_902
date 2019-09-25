@@ -2,10 +2,11 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from apps.account.models import User
+from apps.account.serializers import PrivateUserSerializer
 from apps.contact.models import ContactGroup
 from apps.order.tasks import send_order_invite_notification
 from apps.order.types import OrderStatusType
-from .models import Order, OrderInvite, OrderItem, OrderItemInvite
+from .models import Order, OrderInvite, OrderItem, OrderItemInvite, OrderParticipant
 
 
 class OrderInviteSerializer(serializers.ModelSerializer):
@@ -178,3 +179,11 @@ class OrderGroupInviteSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         pass
+
+
+class OrderParticipantSerializer(serializers.ModelSerializer):
+    user = PrivateUserSerializer()
+
+    class Meta:
+        model = OrderParticipant
+        fields = ("user", "created_at")

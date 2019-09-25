@@ -1,9 +1,12 @@
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins
+from rest_framework import mixins, status
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
+
 from apps.account.types import ProfileType
 from utils.permission import IsCustomer
 from .filters import OrderFilter, OrderItemFilter
@@ -14,6 +17,7 @@ from .serializers import (
     OrderItemSerializer,
     OrderItemInviteSerializer,
     OrderGroupInviteSerializer,
+    OrderParticipantSerializer,
 )
 
 
@@ -69,6 +73,11 @@ class OrderViewSet(
     mixins.ListModelMixin,
     GenericViewSet,
 ):
+    """
+    Use `participants` to get participants of an order.
+    it will return an array of public user information.
+    such as Name, Profile Picture, ID
+    """
     serializer_class = OrderSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = OrderFilter
@@ -92,6 +101,20 @@ class OrderViewSet(
         if current_user.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
         serializer.save(created_by=current_user)
+
+    @action(detail=True, methods=["GET"])
+    def participants(self, request, pk):
+        order = self.get_object()
+        if order.order_participants.filter(user=request.user).exists() is False:
+            return Response(
+                {"detail": "You do not have permission to view this."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        participants = order.order_participants.all()
+
+        serializer = OrderParticipantSerializer(participants, many=True)
+        return Response(serializer.data)
 
 
 class OrderItemViewSet(

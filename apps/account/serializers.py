@@ -17,6 +17,13 @@ class PublicUserSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "name", "profile_picture")
 
 
+class PrivateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "name", "phone_number", "profile_picture")
+        read_only_fields = ("id", "name", "phone_number", "profile_picture")
+
+
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={"input_type": "password"}, write_only=True, required=False, min_length=8
