@@ -37,7 +37,7 @@ class OrderInviteViewSet(
     queryset = OrderInvite.objects.all()
 
     def perform_create(self, serializer):
-        current_user = self.request
+        current_user = self.request.user
         if current_user.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
         serializer.save(invited_by=self.request.user)
