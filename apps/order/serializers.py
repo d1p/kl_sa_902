@@ -5,23 +5,19 @@ from apps.account.models import User
 from apps.account.serializers import PrivateUserSerializer
 from apps.contact.models import ContactGroup
 from apps.order.tasks import send_order_invite_notification
-from apps.order.types import OrderStatusType
+from apps.order.types import OrderStatusType, OrderInviteStatusType
 from .models import Order, OrderInvite, OrderItem, OrderItemInvite, OrderParticipant
 
 
-class BulkOrderInviteSerializer(serializers.ModelSerializer):
+class BulkOrderInviteSerializer(serializers.Serializer):
     invited_users = serializers.ListField(child=serializers.IntegerField())
-
-    class Meta:
-        model = OrderInvite
-        fields = ("invited_users", "order", "status")
-        read_only_fields = ("id", "invited_by", "status", "created_at")
+    order = serializers.IntegerField()
 
 
 class OrderInviteSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderInvite
-        fields = ("invited_users", "invited_user", "order", "status")
+        fields = ("invited_user", "order", "status")
         read_only_fields = ("id", "invited_by", "status", "created_at")
 
     def update(self, instance: OrderInvite, validated_data):

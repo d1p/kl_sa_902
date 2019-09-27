@@ -6,10 +6,11 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from apps.order.tasks import send_order_invite_notification
 
 from apps.account.models import User
 from apps.account.types import ProfileType
+from apps.order.tasks import send_order_invite_notification
+from apps.order.types import OrderInviteStatusType
 from utils.permission import IsCustomer
 from .filters import OrderFilter, OrderItemFilter
 from .models import OrderInvite, Order, OrderItem, OrderItemInvite
@@ -56,6 +57,15 @@ class OrderInviteViewSet(
 
         invited_users = validated_data.get("invited_users")
 
+        try:
+            order = Order.objects.get(id=validated_data.get("order"))
+        except Order.DoesNotExist:
+            return Response(
+                {"order": "Invalid Order id"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        if order.order_participants.filter(user=invited_by).exists() is False:
+            return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
         for i_user in invited_users:
             try:
                 user = User.objects.get(id=i_user)
@@ -66,15 +76,15 @@ class OrderInviteViewSet(
 
             if (
                 OrderInvite.can_send_invite(
-                    invited_by, user, validated_data.get("order")
+                    invited_by, user, order
                 )
                 is True
             ):
                 invite = OrderInvite.objects.create(
-                    order=validated_data.get("order"),
+                    order=order,
                     invited_user=user,
                     invited_by=invited_by,
-                    status=0,
+                    status=OrderInviteStatusType.PENDING,
                 )
                 send_order_invite_notification.delay(
                     from_user=invite.invited_by_id,

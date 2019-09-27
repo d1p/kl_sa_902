@@ -25,3 +25,15 @@ class OrderItemStatusType:
     CONFIRMED = 1
 
     CHOICES = ((UNCONFIRMED, _("Unconfirmed")), (CONFIRMED, _("Confirmed")))
+
+
+class OrderInviteStatusType:
+    PENDING = 0
+    ACCEPTED = 1
+    REJECTED = 2
+
+    CHOICES = (
+        (PENDING, _("Pending")),
+        (ACCEPTED, _("Accepted")),
+        (REJECTED, _("Rejected"))
+    )

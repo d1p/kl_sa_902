@@ -46,9 +46,12 @@ class TOrderFixtures:
 
     @pytest.fixture
     def order(self, customer, restaurant):
-        return mixer.blend(
+        order = mixer.blend(
             "order.Order", user=customer.user, restaurant=restaurant.user
         )
+        order.order_participants.create(user=customer.user)
+        order.refresh_from_db()
+        return order
 
 
 class TestOrder(TOrderFixtures):
@@ -59,8 +62,6 @@ class TestOrder(TOrderFixtures):
         )
         force_authenticate(request, customer.user)
         response = OrderViewSet.as_view({"post": "create"})(request)
-        response.render()
-        print(response.content)
         assert (
             response.status_code == status.HTTP_201_CREATED
         ), "Should create an order."
@@ -73,6 +74,8 @@ class TestOrder(TOrderFixtures):
         )
         force_authenticate(request, customer.user)
         response = OrderInviteViewSet.as_view({"post": "create"})(request)
+        response.render()
+        print(response.content)
         assert (
             response.status_code == status.HTTP_201_CREATED
         ), "Should invite the users"
