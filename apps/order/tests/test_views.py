@@ -55,10 +55,12 @@ class TestOrder(TOrderFixtures):
     def test_place_pickup_order(self, restaurant, customer):
         factory = APIRequestFactory()
         request = factory.post(
-            "/", data={"restaurant": restaurant.id, "order_type": OrderType.PICK_UP}
+            "/", data={"restaurant": restaurant.user.id, "order_type": OrderType.PICK_UP}
         )
         force_authenticate(request, customer.user)
         response = OrderViewSet.as_view({"post": "create"})(request)
+        response.render()
+        print(response.content)
         assert (
             response.status_code == status.HTTP_201_CREATED
         ), "Should create an order."
