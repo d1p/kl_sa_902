@@ -9,32 +9,20 @@ from apps.order.types import OrderStatusType
 from .models import Order, OrderInvite, OrderItem, OrderItemInvite, OrderParticipant
 
 
+class BulkOrderInviteSerializer(serializers.ModelSerializer):
+    invited_users = serializers.ListField(child=serializers.IntegerField())
+
+    class Meta:
+        model = OrderInvite
+        fields = ("invited_users", "order", "status")
+        read_only_fields = ("id", "invited_by", "status", "created_at")
+
+
 class OrderInviteSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderInvite
-        fields = ("id", "invited_user", "invited_by", "order", "status", "created_at")
+        fields = ("invited_users", "invited_user", "order", "status")
         read_only_fields = ("id", "invited_by", "status", "created_at")
-
-    def create(self, validated_data):
-        if (
-            OrderInvite.can_send_invite(
-                from_user=validated_data.get("invited_by"),
-                to_user=validated_data.get("invited_user"),
-                order=validated_data.get("order"),
-            )
-            is False
-        ):
-            raise ValidationError(
-                {"non_field_errors": ["Maximum number of invite exceeded."]}
-            )
-        else:
-            invite = OrderInvite.objects.create(**validated_data, status=0)
-            send_order_invite_notification(
-                from_user=validated_data.get("invited_by"),
-                to_user=validated_data.get("invited_user"),
-                invite_id=invite.id,
-            )
-            return invite
 
     def update(self, instance: OrderInvite, validated_data):
         """

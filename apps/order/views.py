@@ -6,7 +6,9 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from apps.order.tasks import send_order_invite_notification
 
+from apps.account.models import User
 from apps.account.types import ProfileType
 from utils.permission import IsCustomer
 from .filters import OrderFilter, OrderItemFilter
@@ -18,6 +20,7 @@ from .serializers import (
     OrderItemInviteSerializer,
     OrderGroupInviteSerializer,
     OrderParticipantSerializer,
+    BulkOrderInviteSerializer,
 )
 
 
@@ -33,14 +36,52 @@ class OrderInviteViewSet(
     ```
     """
 
+    def get_serializer_class(self):
+        if self.action == "create":
+            return BulkOrderInviteSerializer
+        else:
+            return OrderInviteSerializer
+
     serializer_class = OrderInviteSerializer
     queryset = OrderInvite.objects.all()
 
-    def perform_create(self, serializer):
-        current_user = self.request.user
-        if current_user.profile_type != ProfileType.CUSTOMER:
+    def create(self, request, *args, **kwargs):
+        invited_by = self.request.user
+        if invited_by.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
-        serializer.save(invited_by=self.request.user)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        invited_users = validated_data.get("invited_users")
+
+        for i_user in invited_users:
+            try:
+                user = User.objects.get(id=i_user)
+                if user.profile_type != ProfileType.CUSTOMER:
+                    continue
+            except User.DoesNotExist:
+                continue
+
+            if (
+                OrderInvite.can_send_invite(
+                    invited_by, user, validated_data.get("order")
+                )
+                is True
+            ):
+                invite = OrderInvite.objects.create(
+                    order=validated_data.get("order"),
+                    invited_user=user,
+                    invited_by=invited_by,
+                    status=0,
+                )
+                send_order_invite_notification.delay(
+                    from_user=invite.invited_by_id,
+                    to_user=invite.invited_user_id,
+                    invite_id=invite.id,
+                )
+        return Response({"status": "success"}, status=status.HTTP_201_CREATED)
 
 
 class OrderGroupInviteViewSet(mixins.CreateModelMixin, GenericViewSet):
@@ -78,6 +119,7 @@ class OrderViewSet(
     it will return an array of public user information.
     such as Name, Profile Picture, ID
     """
+
     serializer_class = OrderSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = OrderFilter
