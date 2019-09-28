@@ -106,7 +106,6 @@ class TestOrder(TOrderFixtures):
                 dict(food_attribute_matrix=attribute_matrix.id),
                 dict(food_attribute_matrix=attribute_matrix.id),
             ],
-            "attribute_matrix": [],
         }
         request = factory.post("/", json.dumps(data), content_type="application/json")
         force_authenticate(request, customer.user)
