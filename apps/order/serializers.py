@@ -102,7 +102,7 @@ class OrderItemInviteSerializer(serializers.ModelSerializer):
 
 
 class OrderItemAddOnSerializer(serializers.ModelSerializer):
-    food_add_on_details = FoodAddOnSerializer(source="food_add_on")
+    food_add_on_details = FoodAddOnSerializer(source="food_add_on", read_only=True)
 
     class Meta:
         model = OrderItemAddOn
@@ -112,7 +112,7 @@ class OrderItemAddOnSerializer(serializers.ModelSerializer):
 
 class OrderItemAttributeMatrixSerializer(serializers.ModelSerializer):
     food_attribute_matrix_details = FoodAttributeMatrixSerializer(
-        source="food_attribute_matrix"
+        source="food_attribute_matrix", read_only=True
     )
 
     class Meta:
@@ -123,12 +123,7 @@ class OrderItemAttributeMatrixSerializer(serializers.ModelSerializer):
             "food_attribute_matrix_details",
             "created_at",
         )
-        read_only_fields = (
-            "id",
-            "food_attribute_matrix",
-            "food_attribute_matrix_details",
-            "created_at",
-        )
+        read_only_fields = ("id", "food_attribute_matrix_details", "created_at")
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -175,7 +170,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
                     OrderItemAddOn.objects.create(
                         order_item=order_item, food_add_on=add_on
                     )
+
             for order_attribute_matrix in order_item_attribute_matrices:
+                print(order_attribute_matrix)
                 attribute_matrix = order_attribute_matrix["food_attribute_matrix"]
                 if (
                     OrderItemAttributeMatrix.objects.filter(
@@ -195,10 +192,19 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Order
-        fields = ("id", "order_type", "restaurant", "table", "created_by", "created_at")
-        read_only_fields = ("id", "created_by", "created_at")
+        fields = (
+            "id",
+            "order_type",
+            "restaurant",
+            "table",
+            "order_item_set",
+            "created_by",
+            "created_at",
+        )
+        read_only_fields = ("id", "created_by", "created_at", "order_item_set")
 
     def create(self, validated_data):
         order = Order.objects.create(**validated_data)

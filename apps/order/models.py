@@ -144,7 +144,7 @@ class OrderItem(models.Model):
 
     quantity = models.PositiveIntegerField(default=1)
     order = models.ForeignKey(
-        Order, on_delete=models.CASCADE, related_name="order_items"
+        Order, on_delete=models.CASCADE, related_name="order_item_set"
     )
     status = models.SmallIntegerField(
         choices=OrderItemStatusType.CHOICES,

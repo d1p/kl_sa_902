@@ -51,9 +51,10 @@ class TOrderFixtures:
     def addon(self, food) -> FoodAddOn:
         return mixer.blend("food.FoodAddOn", food=food)
 
+    @pytest.fixture
     def attribute_matrix(self, food) -> FoodAttributeMatrix:
         attribute = mixer.blend("food.FoodAttribute", food=food)
-        return mixer.blend("food.FoodAttributeMartix", attribute=attribute)
+        return mixer.blend("food.FoodAttributeMatrix", attribute=attribute)
 
     @pytest.fixture
     def order(self, customer, restaurant) -> Order:
@@ -89,18 +90,25 @@ class TestOrder(TOrderFixtures):
             response.status_code == status.HTTP_201_CREATED
         ), "Should invite the users"
 
-    def test_add_item_in_order(self, customer, restaurant, order, food, addon):
+    def test_add_item_in_order(
+        self, customer, restaurant, order, food, addon, attribute_matrix
+    ):
         factory = APIRequestFactory()
         data = {
             "order": order.id,
             "food_item": food.id,
             "quantity": 1,
-            "order_item_add_ons": [dict(food_add_on=addon.id), dict(food_add_on=addon.id)],
+            "order_item_add_ons": [
+                dict(food_add_on=addon.id),
+                dict(food_add_on=addon.id),
+            ],
+            "order_item_attribute_matrices": [
+                dict(food_attribute_matrix=attribute_matrix.id),
+                dict(food_attribute_matrix=attribute_matrix.id),
+            ],
             "attribute_matrix": [],
         }
-        request = factory.post(
-            "/", json.dumps(data), content_type='application/json'
-        )
+        request = factory.post("/", json.dumps(data), content_type="application/json")
         force_authenticate(request, customer.user)
         response = OrderItemViewSet.as_view({"post": "create"})(request)
         response.render()

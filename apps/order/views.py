@@ -117,6 +117,7 @@ class OrderViewSet(
     serializer_class = OrderSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = OrderFilter
+    lookup_field = "pk"
 
     def get_queryset(self):
         current_user = self.request.user
