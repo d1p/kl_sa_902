@@ -141,8 +141,10 @@ class OrderViewSet(
 
     @action(detail=True, methods=["GET"])
     def participants(self, request, pk):
-        order = self.get_object()
-        print(order)
+        try:
+            order = Order.objects.get(pk=pk)
+        except Order.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         if order.order_participants.filter(user=request.user).exists() is False:
             return Response(
                 {"detail": "You do not have permission to view this."},
