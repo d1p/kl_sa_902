@@ -19,7 +19,6 @@ from .serializers import (
     OrderSerializer,
     OrderItemSerializer,
     OrderItemInviteSerializer,
-    OrderGroupInviteSerializer,
     OrderParticipantSerializer,
     BulkOrderInviteSerializer,
 )
@@ -74,12 +73,7 @@ class OrderInviteViewSet(
             except User.DoesNotExist:
                 continue
 
-            if (
-                OrderInvite.can_send_invite(
-                    invited_by, user, order
-                )
-                is True
-            ):
+            if OrderInvite.can_send_invite(invited_by, user, order) is True:
                 invite = OrderInvite.objects.create(
                     order=order,
                     invited_user=user,
@@ -92,16 +86,6 @@ class OrderInviteViewSet(
                     invite_id=invite.id,
                 )
         return Response({"status": "success"}, status=status.HTTP_201_CREATED)
-
-
-class OrderGroupInviteViewSet(mixins.CreateModelMixin, GenericViewSet):
-    serializer_class = OrderGroupInviteSerializer
-
-    def perform_create(self, serializer):
-        current_user = self.request
-        if current_user.profile_type != ProfileType.CUSTOMER:
-            raise PermissionDenied
-        serializer.save()
 
 
 class OrderItemInviteViewSet(
@@ -157,6 +141,7 @@ class OrderViewSet(
     @action(detail=True, methods=["GET"])
     def participants(self, request, pk):
         order = self.get_object()
+        print(order)
         if order.order_participants.filter(user=request.user).exists() is False:
             return Response(
                 {"detail": "You do not have permission to view this."},
@@ -194,7 +179,7 @@ class OrderItemViewSet(
         return queryset
 
     def perform_create(self, serializer):
-        current_user = self.request
+        current_user = self.request.user
         if current_user.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
         serializer.save(added_by=current_user)

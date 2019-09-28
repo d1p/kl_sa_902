@@ -141,6 +141,7 @@ class OrderInvite(models.Model):
 
 class OrderItem(models.Model):
     food_item = models.ForeignKey(FoodItem, on_delete=models.SET_NULL, null=True)
+
     quantity = models.PositiveIntegerField(default=1)
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, related_name="order_items"
@@ -186,16 +187,16 @@ class OrderItemAddOn(models.Model):
 
 
 class OrderItemAttributeMatrix(models.Model):
-    food_attribute = models.ForeignKey(
+    food_attribute_matrix = models.ForeignKey(
         FoodAttributeMatrix, on_delete=models.CASCADE, null=True
     )
     order_item = models.ForeignKey(
-        OrderItem, related_name="attribute_matrix", on_delete=models.CASCADE
+        OrderItem, related_name="order_item_attribute_matrix", on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("order_item", "food_attribute")
+        unique_together = ("order_item", "food_attribute_matrix")
 
 
 class OrderItemInvite(models.Model):

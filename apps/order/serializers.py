@@ -1,17 +1,29 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
-from apps.account.models import User
 from apps.account.serializers import PrivateUserSerializer
-from apps.contact.models import ContactGroup
-from apps.order.tasks import send_order_invite_notification
-from apps.order.types import OrderStatusType, OrderInviteStatusType
-from .models import Order, OrderInvite, OrderItem, OrderItemInvite, OrderParticipant
+from apps.food.serializers import FoodAttributeMatrixSerializer, FoodAddOnSerializer
+from apps.order.types import OrderStatusType
+from .models import (
+    Order,
+    OrderInvite,
+    OrderItem,
+    OrderItemInvite,
+    OrderParticipant,
+    OrderItemAddOn,
+    OrderItemAttributeMatrix,
+)
 
 
 class BulkOrderInviteSerializer(serializers.Serializer):
     invited_users = serializers.ListField(child=serializers.IntegerField())
     order = serializers.IntegerField()
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
 
 
 class OrderInviteSerializer(serializers.ModelSerializer):
@@ -89,25 +101,93 @@ class OrderItemInviteSerializer(serializers.ModelSerializer):
         return instance
 
 
+class OrderItemAddOnSerializer(serializers.ModelSerializer):
+    food_add_on_details = FoodAddOnSerializer(source="food_add_on")
+
+    class Meta:
+        model = OrderItemAddOn
+        fields = ("id", "food_add_on", "food_add_on_details", "created_at")
+        read_only_fields = ("id", "food_add_on_details", "created_at")
+
+
+class OrderItemAttributeMatrixSerializer(serializers.ModelSerializer):
+    food_attribute_matrix_details = FoodAttributeMatrixSerializer(
+        source="food_attribute_matrix"
+    )
+
+    class Meta:
+        model = OrderItemAttributeMatrix
+        fields = (
+            "id",
+            "food_attribute_matrix",
+            "food_attribute_matrix_details",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "food_attribute_matrix",
+            "food_attribute_matrix_details",
+            "created_at",
+        )
+
+
 class OrderItemSerializer(serializers.ModelSerializer):
+    order_item_add_ons = OrderItemAddOnSerializer(many=True, required=False)
+    order_item_attribute_matrices = OrderItemAttributeMatrixSerializer(
+        many=True, required=False
+    )
+
     class Meta:
         model = OrderItem
         fields = (
             "id",
+            "order",
             "food_item",
             "quantity",
+            "order_item_add_ons",
+            "order_item_attribute_matrices",
             "status",
             "shared_with",
             "added_by",
             "created_at",
         )
-        read_only_fields = ("id", "added_by", "created_at")
+        read_only_fields = ("id", "added_by", "shared_with", "created_at")
 
     def create(self, validated_data):
         order = validated_data.get("order")
 
         if order.status == OrderStatusType.OPEN:
-            return Order.objects.create(**validated_data)
+            order_item_addons = validated_data.pop("order_item_add_ons")
+            order_item_attribute_matrices = validated_data.pop(
+                "order_item_attribute_matrices"
+            )
+
+            order_item = OrderItem.objects.create(**validated_data)
+
+            for order_addon in order_item_addons:
+                add_on = order_addon["food_add_on"]
+                if (
+                    OrderItemAddOn.objects.filter(
+                        order_item=order_item, food_add_on=add_on
+                    ).exists()
+                    is False
+                ):
+                    OrderItemAddOn.objects.create(
+                        order_item=order_item, food_add_on=add_on
+                    )
+            for order_attribute_matrix in order_item_attribute_matrices:
+                attribute_matrix = order_attribute_matrix["food_attribute_matrix"]
+                if (
+                    OrderItemAttributeMatrix.objects.filter(
+                        order_item=order_item, food_attribute_matrix=attribute_matrix
+                    ).exists()
+                    is False
+                ):
+                    OrderItemAttributeMatrix.objects.create(
+                        order_item=order_item, food_attribute_matrix=attribute_matrix
+                    )
+            order_item.refresh_from_db()
+            return order_item
         else:
             return ValidationError(
                 {"non_field_errors": ["This order has been closed."]}
@@ -124,45 +204,6 @@ class OrderSerializer(serializers.ModelSerializer):
         order = Order.objects.create(**validated_data)
         order.order_participants.create(user=order.created_by)
         return order
-
-
-class OrderGroupInviteSerializer(serializers.Serializer):
-    group_id = serializers.IntegerField(required=True)
-    order_id = serializers.IntegerField(required=True)
-
-    def create(self, validated_data):
-        current_user: User = self.context["request"].user
-
-        try:
-            order = Order.objects.get(id=validated_data.get("order_id"))
-        except Order.DoesNotExist:
-            raise ValidationError({"id": ["Invalid order id"]})
-
-        if order.user != current_user:
-            raise PermissionDenied
-
-        try:
-            contact_group = ContactGroup.objects.get(id=validated_data.get("group_id"))
-        except ContactGroup.DoesNotExist:
-            raise ValidationError({"id": ["Invalid group id"]})
-
-        if contact_group.user != current_user:
-            raise PermissionDenied
-
-        order_participants = order.order_participants.all().only("user")
-        order_participants_users = [x.user for x in order_participants]
-
-        for contact in contact_group.contacts:
-            if contact not in order_participants_users:
-                invite = OrderInvite.objects.create(
-                    order=order, invited_user=contact, invited_by=current_user, status=0
-                )
-                send_order_invite_notification(
-                    from_user=current_user, to_user=contact, invite_id=invite.id
-                )
-
-    def update(self, instance, validated_data):
-        pass
 
 
 class OrderParticipantSerializer(serializers.ModelSerializer):

@@ -6,7 +6,6 @@ from .views import (
     OrderItemViewSet,
     OrderInviteViewSet,
     OrderItemInviteViewSet,
-    OrderGroupInviteViewSet,
 )
 
 router = DefaultRouter()
@@ -16,9 +15,7 @@ router.register(
 )
 router.register("order-item", OrderItemViewSet, base_name="order-item")
 router.register("order-invite", OrderInviteViewSet, base_name="order-invite")
-router.register(
-    "order-group-invite", OrderGroupInviteViewSet, base_name="order-group-invite"
-)
+
 
 router.register("order", OrderViewSet, base_name="order")
 
