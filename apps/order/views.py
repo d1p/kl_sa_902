@@ -10,7 +10,6 @@ from apps.account.models import User
 from apps.account.types import ProfileType
 from apps.order.tasks import send_order_invite_notification
 from apps.order.types import OrderInviteStatusType, OrderStatusType
-from utils.permission import IsCustomer
 from .filters import OrderFilter, OrderItemFilter, OrderParticipantFilter
 from .models import OrderInvite, Order, OrderItem, OrderItemInvite, OrderParticipant
 from .serializers import (
@@ -149,7 +148,7 @@ class OrderViewSet(
     """
 
     def get_serializer_class(self):
-        if action == "leave":
+        if self.action == "leave":
             return ConfirmSerializer
         return OrderSerializer
 
@@ -162,7 +161,7 @@ class OrderViewSet(
         if current_user.profile_type == ProfileType.CUSTOMER:
             queryset = Order.objects.filter(
                 Q(created_by=current_user)
-                | Q(restaurant_order_invites__invited_user__exact=current_user)
+                | Q(order_participants__user=current_user)
             )
         elif current_user.profile_type == ProfileType.RESTAURANT:
             queryset = Order.objects.filter(restaurant=current_user)
@@ -184,6 +183,8 @@ class OrderViewSet(
         order = self.get_object()
         if order.order_participants.filter(user=request.user).exists() is True:
             OrderParticipant.objects.filter(order=order, user=request.user).delete()
+            request.user.misc.last_order = None
+            request.user.misc.save()
             if order.order_participants.all().count() == 0:
                 order.status = OrderStatusType.CANCELED
                 order.save()

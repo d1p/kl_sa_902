@@ -10,7 +10,7 @@ from apps.account.customer.models import Customer
 from apps.account.restaurant.models import Restaurant
 from apps.food.models import FoodAddOn, FoodItem, FoodAttributeMatrix
 from apps.order.models import Order
-from ..types import OrderType
+from ..types import OrderType, OrderStatusType
 from ..views import OrderViewSet, OrderInviteViewSet, OrderItemViewSet
 
 pytestmark = pytest.mark.django_db
@@ -112,8 +112,20 @@ class TestOrder(TOrderFixtures):
         request = factory.post("/", json.dumps(data), content_type="application/json")
         force_authenticate(request, customer.user)
         response = OrderItemViewSet.as_view({"post": "create"})(request)
-        response.render()
-        print(response.content)
         assert (
             response.status_code == status.HTTP_201_CREATED
         ), "Should add item in the order"
+
+    def test_leave_order(self, customer, order, other_customer):
+        factory = APIRequestFactory()
+        request = factory.delete("/", data={"sure": True})
+        force_authenticate(request, customer.user)
+        response = OrderViewSet.as_view({"delete": "leave"})(request, pk=order.id)
+        assert (
+            response.status_code == status.HTTP_204_NO_CONTENT
+        ), "Should remove the user from order."
+        order.refresh_from_db()
+        assert (
+            order.order_participants.all().count() == 0
+        ), "Should have zero participant"
+        assert order.status == OrderStatusType.CANCELED, "Order should be cancelled."
