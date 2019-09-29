@@ -35,12 +35,14 @@ class TOrderFixtures:
     def customer(self, customer_group) -> Customer:
         r = mixer.blend("customer.Customer")
         r.user.groups.add(customer_group)
+        mixer.blend("customer.Misc", user=r.user)
         return r
 
     @pytest.fixture
     def other_customer(self, customer_group) -> Customer:
         r = mixer.blend("customer.Customer")
         r.user.groups.add(customer_group)
+        mixer.blend("customer.Misc", user=r.user)
         return r
 
     @pytest.fixture

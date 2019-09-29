@@ -225,10 +225,9 @@ class OrderItemViewSet(
 
 class OrderParticipantViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = OrderParticipantSerializer
-    queryset = OrderParticipant.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class = OrderParticipantFilter
 
     def get_queryset(self):
-        order = Order.objects.filter(order_participants=self.request.user)
+        order = Order.objects.filter(order_participants__user=self.request.user)
         return OrderParticipant.objects.filter(order__in=order)

@@ -22,6 +22,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 
         with transaction.atomic():
             user = register_basic_user("Customer", user_data)
+            Misc.objects.create(user=user)
             customer = Customer.objects.create(user=user)
             user.is_active = False
             user.save()
