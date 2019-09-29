@@ -1,7 +1,6 @@
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
-from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -19,7 +18,6 @@ from .serializers import (
     OrderSerializer,
     OrderItemSerializer,
     OrderItemInviteSerializer,
-    OrderParticipantSerializer,
     BulkOrderInviteSerializer,
 )
 
@@ -138,23 +136,6 @@ class OrderViewSet(
         if current_user.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
         serializer.save(created_by=current_user)
-
-    @action(detail=True, methods=["GET"])
-    def participants(self, request, pk):
-        try:
-            order = Order.objects.get(pk=pk)
-        except Order.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        if order.order_participants.filter(user=request.user).exists() is False:
-            return Response(
-                {"detail": "You do not have permission to view this."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        participants = order.order_participants.all()
-
-        serializer = OrderParticipantSerializer(participants, many=True)
-        return Response(serializer.data)
 
 
 class OrderItemViewSet(

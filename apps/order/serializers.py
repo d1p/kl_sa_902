@@ -191,7 +191,18 @@ class OrderItemSerializer(serializers.ModelSerializer):
             )
 
 
+class OrderParticipantSerializer(serializers.ModelSerializer):
+    user = PrivateUserSerializer()
+
+    class Meta:
+        model = OrderParticipant
+        fields = ("user", "created_at")
+
+
 class OrderSerializer(serializers.ModelSerializer):
+    order_participants = OrderParticipantSerializer(
+        required=False, read_only=True, many=True
+    )
 
     class Meta:
         model = Order
@@ -201,6 +212,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "restaurant",
             "table",
             "order_item_set",
+            "order_participants",
             "created_by",
             "created_at",
         )
@@ -210,11 +222,3 @@ class OrderSerializer(serializers.ModelSerializer):
         order = Order.objects.create(**validated_data)
         order.order_participants.create(user=order.created_by)
         return order
-
-
-class OrderParticipantSerializer(serializers.ModelSerializer):
-    user = PrivateUserSerializer()
-
-    class Meta:
-        model = OrderParticipant
-        fields = ("user", "created_at")
