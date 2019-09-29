@@ -54,6 +54,17 @@ class OrderInviteSerializer(serializers.ModelSerializer):
         return instance
 
 
+class BulkOrderItemInviteSerializer(serializers.Serializer):
+    invited_users = serializers.ListField(child=serializers.IntegerField())
+    order_item = serializers.IntegerField()
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+
 class OrderItemInviteSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItemInvite
@@ -66,18 +77,6 @@ class OrderItemInviteSerializer(serializers.ModelSerializer):
             "created_at",
         )
         read_only_fields = ("id", "invited_by", "status", "created_at")
-
-    def create(self, validated_data):
-        if (
-            OrderItemInvite.can_send_invite(
-                to_user=validated_data.get("invited_user"),
-                order_item=validated_data.get("order_item"),
-            )
-            is False
-        ):
-            raise ValidationError({"invited_user": ["User can not be invited."]})
-        else:
-            return OrderItemInvite.objects.create(**validated_data, status=0)
 
     def update(self, instance: OrderItemInvite, validated_data):
         """
@@ -172,7 +171,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
                     )
 
             for order_attribute_matrix in order_item_attribute_matrices:
-                print(order_attribute_matrix)
                 attribute_matrix = order_attribute_matrix["food_attribute_matrix"]
                 if (
                     OrderItemAttributeMatrix.objects.filter(
@@ -196,7 +194,7 @@ class OrderParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderParticipant
-        fields = ("user", "created_at")
+        fields = ("user", "created_at", "order")
 
 
 class OrderSerializer(serializers.ModelSerializer):

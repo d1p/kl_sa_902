@@ -3,7 +3,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -12,7 +11,7 @@ from apps.account.types import ProfileType
 from apps.order.tasks import send_order_invite_notification
 from apps.order.types import OrderInviteStatusType, OrderStatusType
 from utils.permission import IsCustomer
-from .filters import OrderFilter, OrderItemFilter
+from .filters import OrderFilter, OrderItemFilter, OrderParticipantFilter
 from .models import OrderInvite, Order, OrderItem, OrderItemInvite, OrderParticipant
 from .serializers import (
     OrderInviteSerializer,
@@ -20,8 +19,8 @@ from .serializers import (
     OrderItemSerializer,
     OrderItemInviteSerializer,
     BulkOrderInviteSerializer,
-    ConfirmSerializer,
-)
+    BulkOrderItemInviteSerializer,
+    ConfirmSerializer, OrderParticipantSerializer)
 
 
 class OrderInviteViewSet(
@@ -42,7 +41,6 @@ class OrderInviteViewSet(
         else:
             return OrderInviteSerializer
 
-    serializer_class = OrderInviteSerializer
     queryset = OrderInvite.objects.all()
 
     def create(self, request, *args, **kwargs):
@@ -91,15 +89,51 @@ class OrderInviteViewSet(
 class OrderItemInviteViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericViewSet
 ):
-    serializer_class = OrderItemInviteSerializer
-    queryset = OrderItemInvite.objects.all()
-    permission_classes = [IsCustomer, IsAdminUser]
+    def get_serializer_class(self):
+        if self.action == "create":
+            return BulkOrderItemInviteSerializer
+        return OrderItemInviteSerializer
 
-    def perform_create(self, serializer):
-        current_user = self.request
-        if current_user.profile_type != ProfileType.CUSTOMER:
+    queryset = OrderItemInvite.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        invited_by = self.request.user
+        if invited_by.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
-        serializer.save(invited_by=self.request.user)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+        invited_users = validated_data.get("invited_users")
+
+        try:
+            order_item = OrderItem.objects.get(id=validated_data.get("order_item"))
+        except Order.DoesNotExist:
+            return Response(
+                {"order_item": "Invalid Order Item id"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        for i_user in invited_users:
+            try:
+                user = User.objects.get(id=i_user)
+                if user.profile_type != ProfileType.CUSTOMER:
+                    continue
+            except User.DoesNotExist:
+                continue
+            if (
+                OrderItemInvite.can_send_invite(
+                    to_user=user, order_item=validated_data.get("order_item")
+                )
+                is True
+            ):
+                OrderItemInvite.objects.create(
+                    to_user=user,
+                    order_item=order_item,
+                    invited_by=self.request.user,
+                    status=0,
+                )
+        return Response({"status": "success"}, status=status.HTTP_201_CREATED)
 
 
 class OrderViewSet(
@@ -187,3 +221,14 @@ class OrderItemViewSet(
         if current_user.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
         serializer.save(added_by=current_user)
+
+
+class OrderParticipantViewSet(mixins.ListModelMixin, GenericViewSet):
+    serializer_class = OrderParticipantSerializer
+    queryset = OrderParticipant.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = OrderParticipantFilter
+
+    def get_queryset(self):
+        order = Order.objects.filter(order_participants=self.request.user)
+        return OrderParticipant.objects.filter(order__in=order)

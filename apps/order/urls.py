@@ -6,12 +6,15 @@ from .views import (
     OrderItemViewSet,
     OrderInviteViewSet,
     OrderItemInviteViewSet,
-)
+    OrderParticipantViewSet)
 
 router = DefaultRouter()
 
 router.register(
     "order-item-invite", OrderItemInviteViewSet, base_name="order-item-invite"
+)
+router.register(
+    "order-participant", OrderParticipantViewSet, base_name="order-participant"
 )
 router.register("order-item", OrderItemViewSet, base_name="order-item")
 router.register("order-invite", OrderInviteViewSet, base_name="order-invite")

@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from .models import Order, OrderItem
+from .models import Order, OrderItem, OrderParticipant
 
 
 class OrderFilter(filters.FilterSet):
@@ -27,3 +27,9 @@ class OrderItemFilter(filters.FilterSet):
             "status": ["exact"],
             "added_by": ["exact"],
         }
+
+
+class OrderParticipantFilter(filters.FilterSet):
+    class Meta:
+        model = OrderParticipant
+        fields = {"order": ["exact"]}
