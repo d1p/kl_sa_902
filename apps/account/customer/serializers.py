@@ -53,5 +53,5 @@ class CustomerSerializer(serializers.ModelSerializer):
 class MiscSerializer(serializers.ModelSerializer):
     class Meta:
         model = Misc
-        field = ("last_order",)
+        fields = ("last_order",)
         read_only_field = ("last_order",)
