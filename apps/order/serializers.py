@@ -44,6 +44,8 @@ class OrderInviteSerializer(serializers.ModelSerializer):
             # Accepts
             order = instance.order
             order.order_participants.add(current_user)
+            current_user.misc.last_order = order
+            current_user.misc.save()
             instance.status = 1
             instance.save()
             # Send necessary signals
@@ -219,6 +221,8 @@ class OrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         order = Order.objects.create(**validated_data)
         order.order_participants.create(user=order.created_by)
+        order.created_by.misc.last_order = order
+        order.created_by.misc.save()
         return order
 
 
