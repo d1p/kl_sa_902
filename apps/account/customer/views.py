@@ -1,9 +1,9 @@
 from rest_framework import mixins
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
 
 from utils.permission import IsAuthenticatedOrCreateOnly
-from .models import Customer
-from .serializers import CustomerSerializer
+from .models import Customer, Misc
+from .serializers import CustomerSerializer, MiscSerializer
 
 
 class CustomerViewSet(
@@ -16,3 +16,10 @@ class CustomerViewSet(
     queryset = Customer.objects.all()
     lookup_field = "user"
     serializer_class = CustomerSerializer
+
+
+class MiscViewSet(ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Misc.objects.filter(user=self.request.user)
+
+    serializer_class = MiscSerializer

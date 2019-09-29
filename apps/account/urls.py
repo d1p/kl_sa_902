@@ -3,7 +3,7 @@ from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
 from rest_framework.routers import DefaultRouter
 
 from rest_framework_simplejwt.views import TokenRefreshView
-from .customer.views import CustomerViewSet
+from .customer.views import CustomerViewSet, MiscViewSet
 from .restaurant.views import (
     RestaurantViewSet,
     RestaurantCategoryViewSet,
@@ -25,6 +25,7 @@ router = DefaultRouter()
 router.register("account/fcm", FCMDeviceAuthorizedViewSet, basename="fcm")
 
 router.register("account/customer", CustomerViewSet, basename="customer")
+router.register("account/customer-misc", MiscViewSet, base_name="customer-misc")
 router.register(
     r"account/restaurant/category",
     RestaurantCategoryViewSet,

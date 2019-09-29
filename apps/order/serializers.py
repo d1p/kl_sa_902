@@ -222,3 +222,7 @@ class OrderSerializer(serializers.ModelSerializer):
         order = Order.objects.create(**validated_data)
         order.order_participants.create(user=order.created_by)
         return order
+
+
+class ConfirmSerializer(serializers.Serializer):
+    sure = serializers.BooleanField(required=True)

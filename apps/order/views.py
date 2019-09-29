@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -9,16 +10,17 @@ from rest_framework.viewsets import GenericViewSet
 from apps.account.models import User
 from apps.account.types import ProfileType
 from apps.order.tasks import send_order_invite_notification
-from apps.order.types import OrderInviteStatusType
+from apps.order.types import OrderInviteStatusType, OrderStatusType
 from utils.permission import IsCustomer
 from .filters import OrderFilter, OrderItemFilter
-from .models import OrderInvite, Order, OrderItem, OrderItemInvite
+from .models import OrderInvite, Order, OrderItem, OrderItemInvite, OrderParticipant
 from .serializers import (
     OrderInviteSerializer,
     OrderSerializer,
     OrderItemSerializer,
     OrderItemInviteSerializer,
     BulkOrderInviteSerializer,
+    ConfirmSerializer,
 )
 
 
@@ -112,7 +114,11 @@ class OrderViewSet(
     such as Name, Profile Picture, ID
     """
 
-    serializer_class = OrderSerializer
+    def get_serializer_class(self):
+        if action == "leave":
+            return ConfirmSerializer
+        return OrderSerializer
+
     filter_backends = [DjangoFilterBackend]
     filterset_class = OrderFilter
     lookup_field = "pk"
@@ -136,6 +142,20 @@ class OrderViewSet(
         if current_user.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
         serializer.save(created_by=current_user)
+
+    @action(detail=True, methods=["delete"])
+    def leave(self, request, pk):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        order = self.get_object()
+        if order.order_participants.filter(user=request.user).exists() is True:
+            OrderParticipant.objects.filter(order=order, user=request.user).delete()
+            if order.order_participants.all().count() == 0:
+                order.status = OrderStatusType.CANCELED
+                order.save()
+            return Response({"status": "success"}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"status": "failed"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OrderItemViewSet(

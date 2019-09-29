@@ -3,10 +3,10 @@ from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from twilio.base.exceptions import TwilioRestException
 
-from apps.account.customer.models import Customer
+from apps.account.customer.models import Customer, Misc
 from apps.account.serializers import UserSerializer
-from ..utils import register_basic_user, save_user_information
 from ..models import VerifyPhoneToken
+from ..utils import register_basic_user, save_user_information
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -48,3 +48,10 @@ class CustomerSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             save_user_information(instance.user, user_data)
         return instance
+
+
+class MiscSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Misc
+        field = ("last_order",)
+        read_only_field = ("last_order",)
