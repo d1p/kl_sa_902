@@ -60,7 +60,7 @@ class RestaurantTicketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RestaurantTicket
-        fields = ("id", "created_by", "topic", "description", "status")
+        fields = ("id", "created_by", "topic", "description", "status", "created_at")
         read_only_fields = ("id", "created_at", "created_by", "status")
 
 
