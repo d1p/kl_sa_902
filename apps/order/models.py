@@ -206,7 +206,7 @@ class OrderItemInvite(models.Model):
         OrderItem,
         on_delete=models.SET_NULL,
         db_index=True,
-        related_name="restaurant_order_item_invites",
+        related_name="order_item_invites",
         null=True,
     )
     invited_user = models.ForeignKey(

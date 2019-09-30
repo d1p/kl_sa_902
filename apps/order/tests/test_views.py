@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from mixer.backend.django import mixer
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
-
+from fcm_django.models import FCMDevice
 from apps.account.customer.models import Customer
 from apps.account.restaurant.models import Restaurant
 from apps.food.models import FoodAddOn, FoodItem, FoodAttributeMatrix
@@ -36,6 +36,13 @@ class TOrderFixtures:
         r = mixer.blend("customer.Customer")
         r.user.groups.add(customer_group)
         mixer.blend("customer.Misc", user=r.user)
+        FCMDevice.objects.create(
+            device_id="2A03D654-BD82-44E5-8DB5-2785A8B65CFD",
+            registration_id="fANMb_C4ufk:APA91bHhZxTDsrLneF3RIawHORLnFgX5f69MEMR1YUvPvmSJGOz3NXMiSCXXkM65g4Czrvce3bICmX08_xBU03T9I-G067aoAzsDAvr6GjIs3Xrd1WLDRh-XpTE0WEwRYGzzF5-iC1eX",
+            active=True,
+            type="ios",
+            user=r.user,
+        )
         return r
 
     @pytest.fixture
@@ -43,6 +50,13 @@ class TOrderFixtures:
         r = mixer.blend("customer.Customer")
         r.user.groups.add(customer_group)
         mixer.blend("customer.Misc", user=r.user)
+        FCMDevice.objects.create(
+            device_id="2A03D654-BD82-44E5-8DB5-2785A8B65CFD",
+            registration_id="fANMb_C4ufk:APA91bHhZxTDsrLneF3RIawHORLnFgX5f69MEMR1YUvPvmSJGOz3NXMiSCXXkM65g4Czrvce3bICmX08_xBU03T9I-G067aoAzsDAvr6GjIs3Xrd1WLDRh-XpTE0WEwRYGzzF5-iC1eX",
+            active=True,
+            type="ios",
+            user=r.user,
+        )
         return r
 
     @pytest.fixture
@@ -110,8 +124,10 @@ class TestOrder(TOrderFixtures):
         assert response.status_code == status.HTTP_200_OK, "Should accept the invite"
 
     def test_add_item_in_order(
-        self, customer, restaurant, order, food, addon, attribute_matrix
+        self, customer, restaurant, order, food, addon, attribute_matrix, other_customer
     ):
+        order.order_participants.create(user=other_customer.user)
+        order.refresh_from_db()
         factory = APIRequestFactory()
         data = {
             "order": order.id,

@@ -9,15 +9,16 @@ class OrderType:
 
 
 class OrderStatusType:
-    CLOSED = 0
     OPEN = 1
     CANCELED = 2
-    CHECKOUT = 3
-    COMPLETED = 4
+    CONFIRMED = 3
+    CHECKOUT = 4
+    COMPLETED = 5
 
     CHOICES = (
-        (CLOSED, _("Closed")),
-        (OPEN, _("Open"))
+        (CANCELED, _("Canceled")),
+        (OPEN, _("Open")),
+
     )
 
 

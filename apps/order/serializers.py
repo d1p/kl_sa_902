@@ -1,9 +1,14 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
+from apps.account.models import User
 from apps.account.serializers import PrivateUserSerializer
 from apps.food.serializers import FoodAttributeMatrixSerializer, FoodAddOnSerializer
-from apps.order.tasks import send_order_invitation_accept_notification
+from apps.order.tasks import (
+    send_order_invitation_accept_notification,
+    send_new_order_in_cart_notification,
+    send_order_item_invite_notification,
+)
 from apps.order.types import OrderStatusType, OrderInviteStatusType
 from .models import (
     Order,
@@ -134,6 +139,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
     order_item_attribute_matrices = OrderItemAttributeMatrixSerializer(
         many=True, required=False
     )
+    invited_users = serializers.ListField(
+        child=serializers.IntegerField(), required=False
+    )
 
     class Meta:
         model = OrderItem
@@ -144,6 +152,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "quantity",
             "order_item_add_ons",
             "order_item_attribute_matrices",
+            "invited_users",
             "status",
             "shared_with",
             "added_by",
@@ -155,9 +164,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
         order = validated_data.get("order")
 
         if order.status == OrderStatusType.OPEN:
-            order_item_addons = validated_data.pop("order_item_add_ons")
+            order_item_addons = validated_data.pop("order_item_add_ons", [])
             order_item_attribute_matrices = validated_data.pop(
-                "order_item_attribute_matrices"
+                "order_item_attribute_matrices", []
             )
 
             order_item = OrderItem.objects.create(**validated_data)
@@ -186,6 +195,27 @@ class OrderItemSerializer(serializers.ModelSerializer):
                         order_item=order_item, food_attribute_matrix=attribute_matrix
                     )
             order_item.refresh_from_db()
+
+            send_new_order_in_cart_notification.delay(
+                added_by=order_item.added_by.id,
+                order_id=order.id,
+                order_item_id=order_item.id,
+            )
+            invited_users = validated_data.pop("invited_users", [])
+
+            for i_user in invited_users:
+                try:
+                    user = User.objects.get(id=i_user)
+                    invite = order_item.order_item_invites.create(user=user)
+                    send_order_item_invite_notification.delay(
+                        from_user=order_item.added_by.id,
+                        to_user=user.id,
+                        invite_id=invite.id,
+                        item_id=order_item.id,
+                    )
+                except User.DoesNotExist:
+                    pass
+
             return order_item
         else:
             return ValidationError(
