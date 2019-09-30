@@ -176,8 +176,6 @@ class OrderViewSet(
 
     @action(detail=True, methods=["delete"])
     def leave(self, request, pk):
-        print(request.data)
-        print(Order.objects.get(id=pk))
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = self.get_object()

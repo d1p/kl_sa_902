@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from apps.account.serializers import PrivateUserSerializer
 from apps.food.serializers import FoodAttributeMatrixSerializer, FoodAddOnSerializer
+from apps.order.tasks import send_order_invitation_accept_notification
 from apps.order.types import OrderStatusType, OrderInviteStatusType
 from .models import (
     Order,
@@ -39,7 +40,6 @@ class OrderInviteSerializer(serializers.ModelSerializer):
         current_user = self.context["request"].user
         if instance.invited_user != current_user or instance.status != 0:
             raise PermissionDenied
-        print(validated_data)
         if validated_data.get("status") == 1:
             # Accepts
             order = instance.order
@@ -48,7 +48,9 @@ class OrderInviteSerializer(serializers.ModelSerializer):
             current_user.misc.save()
             instance.status = OrderInviteStatusType.ACCEPTED
             instance.save()
-            # Send necessary signals
+            send_order_invitation_accept_notification.delay(
+                from_user=current_user.id, order_id=order.id
+            )
         else:
             instance.status = OrderInviteStatusType.REJECTED
             instance.save()
