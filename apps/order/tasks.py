@@ -21,11 +21,9 @@ def send_order_invite_notification(from_user: int, to_user: int, invite_id: int)
         data = {
             "title": title,
             "body": body,
-            "from_user": {
-                "id": from_user,
-                "name": f_user.name,
-                "profile_picture": f_user.profile_picture.url,
-            },
+            "from_user_id": from_user,
+            "from_user_name": f_user.name,
+            "from_user_profile_picture": f_user.profile_picture.url,
             "to_user": to_user,
             "invite_id": invite_id,
             "notification_id": 1,
@@ -39,7 +37,9 @@ def send_order_invite_notification(from_user: int, to_user: int, invite_id: int)
 
 
 @app.task
-def send_order_item_invite_notification(from_user: int, to_user: int, invite_id: int, item_id: int):
+def send_order_item_invite_notification(
+        from_user: int, to_user: int, invite_id: int, item_id: int
+):
     try:
         t_user = User.objects.get(id=to_user)
         f_user = User.objects.get(id=from_user)
@@ -51,19 +51,15 @@ def send_order_item_invite_notification(from_user: int, to_user: int, invite_id:
         data = {
             "title": title,
             "body": body,
-            "from_user": {
-                "name": f_user.name,
-                "phone_number": f_user.phone_number,
-                "profile_picture": f_user.profile_picture.url,
-            },
-            "item": {
-                "id": order_item.id,
-                "name": order_item.food_item.name,
-                "price": order_item.food_item.price,
-                "calorie": order_item.food_item.calorie,
-                "picture": order_item.food_item.picture.url,
-                "quantity": order_item.quantity,
-            },
+            "from_user_name": f_user.name,
+            "from_user_phone_number": f_user.phone_number,
+            "from_user_profile_picture": f_user.profile_picture.url,
+            "item_id": order_item.id,
+            "item_name": order_item.food_item.name,
+            "item_price": order_item.food_item.price,
+            "item_calorie": order_item.food_item.calorie,
+            "item_picture": order_item.food_item.picture.url,
+            "item_quantity": order_item.quantity,
             "to_user": to_user,
             "invite_id": invite_id,
             "notification_id": 4,
@@ -103,7 +99,7 @@ def send_order_invitation_accept_notification(from_user: int, order_id: int):
 
 @app.task
 def send_new_order_in_cart_notification(
-    added_by: int, order_id: int, order_item_id: int
+        added_by: int, order_id: int, order_item_id: int
 ):
     added_by_name = User.objects.get(id=added_by).name
 
