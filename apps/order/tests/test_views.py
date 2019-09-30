@@ -92,6 +92,23 @@ class TestOrder(TOrderFixtures):
             response.status_code == status.HTTP_201_CREATED
         ), "Should invite the users"
 
+    def test_accept_order_invite(self, other_customer, restaurant, order):
+        factory = APIRequestFactory()
+        request = factory.patch(
+            "/", data={"invited_user": other_customer.user.id, "status": 1}
+        )
+        force_authenticate(request, other_customer.user)
+
+        invite = mixer.blend(
+            "order.OrderInvite", order=order, invited_user=other_customer.user
+        )
+
+        response = OrderInviteViewSet.as_view({"patch": "update"})(
+            request, pk=invite.id
+        )
+
+        assert response.status_code == status.HTTP_200_OK, "Should accept the invite"
+
     def test_add_item_in_order(
         self, customer, restaurant, order, food, addon, attribute_matrix
     ):
