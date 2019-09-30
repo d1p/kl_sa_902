@@ -123,7 +123,8 @@ class OrderInvite(models.Model):
     )
 
     status = models.SmallIntegerField(
-        choices=OrderInviteStatusType.CHOICES, default=OrderInviteStatusType.PENDING
+        choices=OrderInviteStatusType.CHOICES, default=OrderInviteStatusType.PENDING,
+        help_text="PENDING = 0, ACCEPTED = 1, REJECTED = 2"
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

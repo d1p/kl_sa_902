@@ -159,8 +159,7 @@ class OrderViewSet(
     def get_queryset(self):
         current_user = self.request.user
         if current_user.profile_type == ProfileType.CUSTOMER:
-            queryset = Order.objects.filter(
-                Q(created_by=current_user) | Q(order_participants__user=current_user)
+            queryset = Order.objects.filter(order_participants__user=current_user
             )
         elif current_user.profile_type == ProfileType.RESTAURANT:
             queryset = Order.objects.filter(restaurant=current_user)
@@ -177,6 +176,8 @@ class OrderViewSet(
 
     @action(detail=True, methods=["delete"])
     def leave(self, request, pk):
+        print(request.data)
+        print(Order.objects.get(id=pk))
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = self.get_object()
