@@ -15,7 +15,8 @@ admin.site.register(Order)
 
 @admin.register(OrderInvite)
 class OrderInviteAdmin(admin.ModelAdmin):
-    list_display = ("id", "invited_user", "invited_by", "order", "status" ,"created_at")
+    list_display = ("id", "invited_user", "invited_by", "order", "status", "created_at")
+    list_display_links = ("invited_user", "invited_by", "order")
 
 
 @admin.register(OrderParticipant)

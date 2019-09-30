@@ -33,9 +33,21 @@ class BulkOrderInviteSerializer(serializers.Serializer):
 
 
 class OrderInviteSerializer(serializers.ModelSerializer):
+    restaurant_id = serializers.IntegerField(
+        source="order.restaurant.id", read_only=True
+    )
+
     class Meta:
         model = OrderInvite
-        fields = ("invited_user", "order", "status")
+        fields = (
+            "id",
+            "invited_user",
+            "order",
+            "status",
+            "restaurant_id",
+            "invited_by",
+            "created_at",
+        )
         read_only_fields = ("id", "invited_by", "created_at")
 
     def update(self, instance: OrderInvite, validated_data):
