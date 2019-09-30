@@ -19,7 +19,9 @@ from .serializers import (
     OrderItemInviteSerializer,
     BulkOrderInviteSerializer,
     BulkOrderItemInviteSerializer,
-    ConfirmSerializer, OrderParticipantSerializer)
+    ConfirmSerializer,
+    OrderParticipantSerializer,
+)
 
 
 class OrderInviteViewSet(
@@ -63,25 +65,25 @@ class OrderInviteViewSet(
             return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         for i_user in invited_users:
+            print(i_user)
             try:
                 user = User.objects.get(id=i_user)
                 if user.profile_type != ProfileType.CUSTOMER:
                     continue
             except User.DoesNotExist:
                 continue
-
-            if OrderInvite.can_send_invite(invited_by, user, order) is True:
-                invite = OrderInvite.objects.create(
-                    order=order,
-                    invited_user=user,
-                    invited_by=invited_by,
-                    status=OrderInviteStatusType.PENDING,
-                )
-                send_order_invite_notification.delay(
-                    from_user=invite.invited_by_id,
-                    to_user=invite.invited_user_id,
-                    invite_id=invite.id,
-                )
+            print(user)
+            invite = OrderInvite.objects.create(
+                order=order,
+                invited_user=user,
+                invited_by=invited_by,
+                status=OrderInviteStatusType.PENDING,
+            )
+            send_order_invite_notification.delay(
+                from_user=invite.invited_by.id,
+                to_user=invite.invited_user.id,
+                invite_id=invite.id,
+            )
         return Response({"status": "success"}, status=status.HTTP_201_CREATED)
 
 
@@ -160,8 +162,7 @@ class OrderViewSet(
         current_user = self.request.user
         if current_user.profile_type == ProfileType.CUSTOMER:
             queryset = Order.objects.filter(
-                Q(created_by=current_user)
-                | Q(order_participants__user=current_user)
+                Q(created_by=current_user) | Q(order_participants__user=current_user)
             )
         elif current_user.profile_type == ProfileType.RESTAURANT:
             queryset = Order.objects.filter(restaurant=current_user)

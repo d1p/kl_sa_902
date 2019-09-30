@@ -4,7 +4,7 @@ from apps.account.models import User
 from conf.celery import app
 from utils.fcm import send_push_notification
 
-_ = translation.ugettext_lazy
+_ = translation.ugettext
 
 
 @app.task
