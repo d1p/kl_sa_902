@@ -65,14 +65,12 @@ class OrderInviteViewSet(
             return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         for i_user in invited_users:
-            print(i_user)
             try:
                 user = User.objects.get(id=i_user)
                 if user.profile_type != ProfileType.CUSTOMER:
                     continue
             except User.DoesNotExist:
                 continue
-            print(user)
             invite = OrderInvite.objects.create(
                 order=order,
                 invited_user=user,
