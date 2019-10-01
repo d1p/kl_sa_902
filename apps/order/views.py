@@ -187,6 +187,7 @@ class OrderViewSet(
 
     @action(detail=True, methods=["delete"])
     def leave(self, request, pk):
+        print("leave started")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = self.get_object()
@@ -200,8 +201,10 @@ class OrderViewSet(
             if order.order_participants.all().count() == 0:
                 order.status = OrderStatusType.CANCELED
                 order.save()
+            print("send response")
             return Response({"status": "success"}, status=status.HTTP_204_NO_CONTENT)
         else:
+            print("Send response")
             return Response({"status": "failed"}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=["POST"])
