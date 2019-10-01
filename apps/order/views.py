@@ -171,7 +171,8 @@ class OrderViewSet(
     def get_queryset(self):
         current_user = self.request.user
         if current_user.profile_type == ProfileType.CUSTOMER:
-            queryset = Order.objects.filter(order_participants__user=current_user).distinct("id")
+            queryset = Order.objects.filter(order_participants__user=current_user)
+            print(queryset)
         elif current_user.profile_type == ProfileType.RESTAURANT:
             queryset = Order.objects.filter(restaurant=current_user, confirmed=True)
         else:
