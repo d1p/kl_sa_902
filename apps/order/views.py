@@ -181,7 +181,7 @@ class OrderViewSet(
             OrderParticipant.objects.filter(order=order, user=request.user).delete()
             request.user.misc.last_order = None
             request.user.misc.save()
-            send_order_left_push_notification.delay(order_id=order.id, left_user=request.user.id)
+            send_order_left_push_notification.delay(order_id=order.id, from_user=request.user.id)
             if order.order_participants.all().count() == 0:
                 order.status = OrderStatusType.CANCELED
                 order.save()
