@@ -96,6 +96,30 @@ def send_order_invitation_accept_notification(from_user: int, order_id: int):
     except:
         pass
 
+@app.task
+def send_order_left_push_notification(order_id: int, from_user: int):
+    try:
+        left_user = User.objects.get(id=from_user).name
+        order = Order.objects.get(id=order_id)
+        notification_users = order.order_participants.all()
+
+        for participant_user in notification_users:
+            translation.activate(participant_user.user.locale)
+            title = _(f"{left_user} has left the order")
+            body = _("Tap to get started")
+            data = {
+                "notification_id": 5,
+                "notification_action": "ORDER_LEFT",
+                "title": title,
+                "body": body,
+                "left_user_id": from_user,
+                "left_user_name": left_user,
+                "order_id": order_id,
+            }
+            send_push_notification(participant_user.user, title, body, data)
+            translation.deactivate()
+    except:
+        pass
 
 @app.task
 def send_new_order_in_cart_notification(
@@ -121,3 +145,6 @@ def send_new_order_in_cart_notification(
         }
         send_push_notification(participant_user.user, title, body, data)
         translation.deactivate()
+
+
+

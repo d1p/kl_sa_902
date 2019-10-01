@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
@@ -8,8 +7,8 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.account.models import User
 from apps.account.types import ProfileType
-from apps.order.tasks import send_order_invite_notification
-from apps.order.types import OrderInviteStatusType, OrderStatusType
+from apps.order.tasks import send_order_invite_notification, send_order_left_push_notification
+from apps.order.types import OrderInviteStatusType, OrderStatusType, OrderItemStatusType
 from .filters import OrderFilter, OrderItemFilter, OrderParticipantFilter
 from .models import OrderInvite, Order, OrderItem, OrderItemInvite, OrderParticipant
 from .serializers import (
@@ -159,8 +158,7 @@ class OrderViewSet(
     def get_queryset(self):
         current_user = self.request.user
         if current_user.profile_type == ProfileType.CUSTOMER:
-            queryset = Order.objects.filter(order_participants__user=current_user
-            )
+            queryset = Order.objects.filter(order_participants__user=current_user)
         elif current_user.profile_type == ProfileType.RESTAURANT:
             queryset = Order.objects.filter(restaurant=current_user)
         else:
@@ -183,6 +181,7 @@ class OrderViewSet(
             OrderParticipant.objects.filter(order=order, user=request.user).delete()
             request.user.misc.last_order = None
             request.user.misc.save()
+            send_order_left_push_notification.delay(order_id=order.id, left_user=request.user.id)
             if order.order_participants.all().count() == 0:
                 order.status = OrderStatusType.CANCELED
                 order.save()
@@ -198,6 +197,13 @@ class OrderItemViewSet(
     mixins.DestroyModelMixin,
     GenericViewSet,
 ):
+    """
+    delete: Response examples {"status": "failed"}, status=status.HTTP_403_FORBIDDEN on invalid participant trying to
+    delete order. {"status": "failed", "message": "Food item is already processing."},
+    status=status.HTTP_400_BAD_REQUEST on food item that has already been confirmed order_item.delete() return
+    {"status": "success"}, status=status.HTTP_204_NO_CONTENT, On successfully deleting the food item from order
+    """
+
     serializer_class = OrderItemSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = OrderItemFilter
@@ -208,8 +214,8 @@ class OrderItemViewSet(
             queryset = OrderItem.objects.filter(order__restaurant=current_user)
         elif current_user.profile_type == ProfileType.CUSTOMER:
             queryset = OrderItem.objects.filter(
-                added_by=current_user
-            ) | OrderItem.objects.filter(shared_with=current_user)
+                order__order_participants__user=current_user
+            )
         else:
             queryset = OrderItem.objects.all()
 
@@ -220,6 +226,19 @@ class OrderItemViewSet(
         if current_user.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
         serializer.save(added_by=current_user)
+
+    def destroy(self, request, *args, **kwargs):
+        user = request.user
+        order_item: OrderItem = self.get_object()
+        if order_item.order.order_participants.filter(user=user).exists() is False:
+            return Response({"status": "failed"}, status=status.HTTP_403_FORBIDDEN)
+        if order_item.status == OrderItemStatusType.CONFIRMED:
+            return Response(
+                {"status": "failed", "message": "Food item is already processing."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        order_item.delete()
+        return Response({"status": "success"}, status=status.HTTP_204_NO_CONTENT)
 
 
 class OrderParticipantViewSet(mixins.ListModelMixin, GenericViewSet):

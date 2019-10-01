@@ -2,10 +2,11 @@ import json
 
 import pytest
 from django.contrib.auth.models import Group
+from fcm_django.models import FCMDevice
 from mixer.backend.django import mixer
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
-from fcm_django.models import FCMDevice
+
 from apps.account.customer.models import Customer
 from apps.account.restaurant.models import Restaurant
 from apps.food.models import FoodAddOn, FoodItem, FoodAttributeMatrix
@@ -148,6 +149,19 @@ class TestOrder(TOrderFixtures):
         assert (
             response.status_code == status.HTTP_201_CREATED
         ), "Should add item in the order"
+
+    def test_delete_food_item_from_order(self, restaurant, order, customer, food):
+        order_item = mixer.blend("order.OrderItem", order=order, quantity=2)
+        print(order_item)
+        factory = APIRequestFactory()
+        request = factory.delete("/")
+        force_authenticate(request, customer.user)
+        response = OrderItemViewSet.as_view({"delete": "destroy"})(
+            request, pk=order_item.id
+        )
+        assert (
+            response.status_code == status.HTTP_204_NO_CONTENT
+        ), "Should remove item from order"
 
     def test_leave_order(self, customer, order, other_customer):
         factory = APIRequestFactory()
