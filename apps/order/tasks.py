@@ -147,4 +147,25 @@ def send_new_order_in_cart_notification(
         translation.deactivate()
 
 
+@app.task
+def send_order_item_removed_notification(from_user: int, order_id: int, order_item_id: int):
+    removed_by_name = User.objects.get(id=from_user).name
+
+    order = Order.objects.get(id=order_id)
+    notification_users = order.order_participants.all().exclude(user__id=from_user)
+
+    for participant_user in notification_users:
+        translation.activate(participant_user.user.locale)
+        title = _(f"{removed_by_name} has removed a item")
+        body = _("Tap to see")
+        data = {
+            "notification_id": 6,
+            "notification_action": "REMOVED_ITEM",
+            "title": title,
+            "body": body,
+            "order_item_id": order_item_id,
+            "order_id": order_id,
+        }
+        send_push_notification(participant_user.user, title, body, data)
+        translation.deactivate()
 

@@ -7,7 +7,11 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.account.models import User
 from apps.account.types import ProfileType
-from apps.order.tasks import send_order_invite_notification, send_order_left_push_notification
+from apps.order.tasks import (
+    send_order_invite_notification,
+    send_order_left_push_notification,
+    send_order_item_removed_notification,
+)
 from apps.order.types import OrderInviteStatusType, OrderStatusType, OrderItemStatusType
 from .filters import OrderFilter, OrderItemFilter, OrderParticipantFilter
 from .models import OrderInvite, Order, OrderItem, OrderItemInvite, OrderParticipant
@@ -181,7 +185,9 @@ class OrderViewSet(
             OrderParticipant.objects.filter(order=order, user=request.user).delete()
             request.user.misc.last_order = None
             request.user.misc.save()
-            send_order_left_push_notification.delay(order_id=order.id, from_user=request.user.id)
+            send_order_left_push_notification.delay(
+                order_id=order.id, from_user=request.user.id
+            )
             if order.order_participants.all().count() == 0:
                 order.status = OrderStatusType.CANCELED
                 order.save()
@@ -230,6 +236,8 @@ class OrderItemViewSet(
     def destroy(self, request, *args, **kwargs):
         user = request.user
         order_item: OrderItem = self.get_object()
+        order_id = order_item.order.id
+
         if order_item.order.order_participants.filter(user=user).exists() is False:
             return Response({"status": "failed"}, status=status.HTTP_403_FORBIDDEN)
         if order_item.status == OrderItemStatusType.CONFIRMED:
@@ -238,6 +246,9 @@ class OrderItemViewSet(
                 status=status.HTTP_400_BAD_REQUEST,
             )
         order_item.delete()
+        send_order_item_removed_notification.delay(
+            from_user=user.id, order_id=order_id, order_item_id=order_item.id
+        )
         return Response({"status": "success"}, status=status.HTTP_204_NO_CONTENT)
 
 
