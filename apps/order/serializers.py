@@ -225,7 +225,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
             for i_user in invited_users:
                 try:
                     user = User.objects.get(id=i_user)
-                    invite = order_item.order_item_invites.create(user=user)
+                    invite = order_item.order_item_invites.create(invited_user=user, invited_by=validated_data.get("added_by"))
                     send_order_item_invite_notification.delay(
                         from_user=order_item.added_by.id,
                         to_user=user.id,
