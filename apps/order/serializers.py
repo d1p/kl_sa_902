@@ -186,6 +186,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
             order_item_attribute_matrices = validated_data.pop(
                 "order_item_attribute_matrices", []
             )
+            invited_users = validated_data.pop("invited_users", [])
 
             order_item = OrderItem.objects.create(**validated_data)
 
@@ -220,7 +221,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
                 order_id=order.id,
                 order_item_id=order_item.id,
             )
-            invited_users = validated_data.pop("invited_users", [])
 
             for i_user in invited_users:
                 try:

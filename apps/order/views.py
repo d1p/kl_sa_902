@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
@@ -243,6 +245,19 @@ class OrderViewSet(
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @action(detail=True, methods=["GET"])
+    def bill(self, request, pk):
+        order: Order = self.get_object()
+        e_bill = {
+            "total": Decimal(0.0)
+        }
+        for participant in order.order_participants.all():
+            total = 0
+            for item in OrderItem.objects.filter(shared_with=participant.user):
+                item.food_
+            e_bill[participant.user_id] = {
+                ""
+            }
 
 class OrderItemViewSet(
     mixins.CreateModelMixin,
