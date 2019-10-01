@@ -11,8 +11,15 @@ from apps.order.tasks import (
     send_order_invite_notification,
     send_order_left_push_notification,
     send_order_item_removed_notification,
+    send_new_order_items_confirmed_notification,
+    send_update_order_items_confirmed_notification,
 )
-from apps.order.types import OrderInviteStatusType, OrderStatusType, OrderItemStatusType
+from apps.order.types import (
+    OrderInviteStatusType,
+    OrderStatusType,
+    OrderItemStatusType,
+    OrderType,
+)
 from .filters import OrderFilter, OrderItemFilter, OrderParticipantFilter
 from .models import OrderInvite, Order, OrderItem, OrderItemInvite, OrderParticipant
 from .serializers import (
@@ -164,7 +171,7 @@ class OrderViewSet(
         if current_user.profile_type == ProfileType.CUSTOMER:
             queryset = Order.objects.filter(order_participants__user=current_user)
         elif current_user.profile_type == ProfileType.RESTAURANT:
-            queryset = Order.objects.filter(restaurant=current_user)
+            queryset = Order.objects.filter(restaurant=current_user, confirmed=True)
         else:
             queryset = Order.objects.all()
 
@@ -194,6 +201,47 @@ class OrderViewSet(
             return Response({"status": "success"}, status=status.HTTP_204_NO_CONTENT)
         else:
             return Response({"status": "failed"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=["POST"])
+    def confirm_current_items(self, request, pk):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid()
+
+        if serializer.validated_data.get("sure") is False:
+            return Response({"status": "failed"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        order: Order = self.get_object()
+
+        order_items = order.order_item_set.filter(
+            status=OrderItemStatusType.UNCONFIRMED
+        )
+        if order_items.count() > 0:
+            order_items.update(status=OrderItemStatusType.CONFIRMED)
+
+            if order.order_type == OrderType.PICK_UP:
+                if order.confirmed is True:
+                    return Response(status=status.HTTP_410_GONE)
+                else:
+                    return Response(
+                        {"success": True, "message": "Please pay the bill."},
+                        status=status.HTTP_201_CREATED,
+                    )
+            else:
+                if order.confirmed is False:
+                    # Change status and send notification to the restaurant
+                    order.confirmed = True
+                    order.save()
+                    send_new_order_items_confirmed_notification.delay(order_id=order.id)
+                else:
+                    send_update_order_items_confirmed_notification.delay(
+                        order_id=order.id
+                    )
+            return Response({"status": "success"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                {"status": "failed", "message": "No new item to confirm in the order"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class OrderItemViewSet(

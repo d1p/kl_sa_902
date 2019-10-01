@@ -152,7 +152,6 @@ class TestOrder(TOrderFixtures):
 
     def test_delete_food_item_from_order(self, restaurant, order, customer, food):
         order_item = mixer.blend("order.OrderItem", order=order, quantity=2)
-        print(order_item)
         factory = APIRequestFactory()
         request = factory.delete("/")
         force_authenticate(request, customer.user)

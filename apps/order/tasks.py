@@ -38,7 +38,7 @@ def send_order_invite_notification(from_user: int, to_user: int, invite_id: int)
 
 @app.task
 def send_order_item_invite_notification(
-        from_user: int, to_user: int, invite_id: int, item_id: int
+    from_user: int, to_user: int, invite_id: int, item_id: int
 ):
     try:
         t_user = User.objects.get(id=to_user)
@@ -96,6 +96,7 @@ def send_order_invitation_accept_notification(from_user: int, order_id: int):
     except:
         pass
 
+
 @app.task
 def send_order_left_push_notification(order_id: int, from_user: int):
     try:
@@ -121,9 +122,10 @@ def send_order_left_push_notification(order_id: int, from_user: int):
     except:
         pass
 
+
 @app.task
 def send_new_order_in_cart_notification(
-        added_by: int, order_id: int, order_item_id: int
+    added_by: int, order_id: int, order_item_id: int
 ):
     added_by_name = User.objects.get(id=added_by).name
 
@@ -148,7 +150,9 @@ def send_new_order_in_cart_notification(
 
 
 @app.task
-def send_order_item_removed_notification(from_user: int, order_id: int, order_item_id: int):
+def send_order_item_removed_notification(
+    from_user: int, order_id: int, order_item_id: int
+):
     removed_by_name = User.objects.get(id=from_user).name
 
     order = Order.objects.get(id=order_id)
@@ -169,3 +173,68 @@ def send_order_item_removed_notification(from_user: int, order_id: int, order_it
         send_push_notification(participant_user.user, title, body, data)
         translation.deactivate()
 
+
+@app.task
+def send_order_item_invitation_accept_notification(
+    from_user: int, order_id: int, item_id: int
+):
+    try:
+        joined_user = User.objects.get(id=from_user).name
+        order = Order.objects.get(id=order_id)
+        notification_users = order.order_participants.all().exclude(user__id=from_user)
+        for participant_user in notification_users:
+            translation.activate(participant_user.user.locale)
+            title = _(f"{joined_user} has accepted to share the item.")
+            body = _("Tap to get started")
+            data = {
+                "notification_id": 7,
+                "notification_action": "FOOD_ITEM_INVITATION_ACCEPTED",
+                "title": title,
+                "body": body,
+                "joined_user": from_user,
+                "join_user_name": joined_user,
+                "order_id": order_id,
+            }
+            send_push_notification(participant_user.user, title, body, data)
+            translation.deactivate()
+    except:
+        pass
+
+
+@app.task
+def send_new_order_items_confirmed_notification(order_id: int):
+    try:
+        order = Order.objects.get(id=order_id)
+        translation.activate(order.restaurant.locale)
+        title = _("New order")
+        body = _("See the dashboard for details")
+        data = {
+            "notification_id": 8,
+            "notification_action": "NEW_ORDER",
+            "title": title,
+            "body": body,
+            "order_id": order_id,
+        }
+        send_push_notification(order.restaurant, title, body, data)
+        translation.deactivate()
+    except:
+        pass
+
+@app.task
+def send_update_order_items_confirmed_notification(order_id: int):
+    try:
+        order = Order.objects.get(id=order_id)
+        translation.activate(order.restaurant.locale)
+        title = _("New order")
+        body = _("See the dashboard for details")
+        data = {
+            "notification_id": 8,
+            "notification_action": "NEW_ORDER",
+            "title": title,
+            "body": body,
+            "order_id": order_id,
+        }
+        send_push_notification(order.restaurant, title, body, data)
+        translation.deactivate()
+    except:
+        pass

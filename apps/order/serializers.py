@@ -8,6 +8,7 @@ from apps.order.tasks import (
     send_order_invitation_accept_notification,
     send_new_order_in_cart_notification,
     send_order_item_invite_notification,
+    send_order_item_invitation_accept_notification,
 )
 from apps.order.types import OrderStatusType, OrderInviteStatusType
 from .models import (
@@ -97,7 +98,7 @@ class OrderItemInviteSerializer(serializers.ModelSerializer):
             "status",
             "created_at",
         )
-        read_only_fields = ("id", "invited_by", "status", "created_at")
+        read_only_fields = ("id", "invited_by", "created_at")
 
     def update(self, instance: OrderItemInvite, validated_data):
         """
@@ -114,6 +115,11 @@ class OrderItemInviteSerializer(serializers.ModelSerializer):
             instance.status = 1
             instance.save()
             # Send necessary signals
+            send_order_item_invitation_accept_notification.delay(
+                from_user=current_user.id,
+                order_id=order_item.order.id,
+                item_id=order_item.id,
+            )
         else:
             instance.status = 2
             instance.save()
@@ -206,6 +212,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
                     OrderItemAttributeMatrix.objects.create(
                         order_item=order_item, food_attribute_matrix=attribute_matrix
                     )
+            order_item.shared_with.add(validated_data.get("added_by"))
             order_item.refresh_from_db()
 
             send_new_order_in_cart_notification.delay(
@@ -257,10 +264,17 @@ class OrderSerializer(serializers.ModelSerializer):
             "table",
             "order_item_set",
             "order_participants",
+            "confirmed",
             "created_by",
             "created_at",
         )
-        read_only_fields = ("id", "created_by", "created_at", "order_item_set")
+        read_only_fields = (
+            "id",
+            "created_by",
+            "created_at",
+            "order_item_set",
+            "confirmed",
+        )
 
     def create(self, validated_data):
         order = Order.objects.create(**validated_data)

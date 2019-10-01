@@ -47,6 +47,12 @@ class Order(models.Model):
         choices=OrderStatusType.CHOICES, default=OrderStatusType.OPEN
     )
 
+    confirmed = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text=_("Indicated if an order is confirmed by the users"),
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -123,8 +129,9 @@ class OrderInvite(models.Model):
     )
 
     status = models.SmallIntegerField(
-        choices=OrderInviteStatusType.CHOICES, default=OrderInviteStatusType.PENDING,
-        help_text="PENDING = 0, ACCEPTED = 1, REJECTED = 2"
+        choices=OrderInviteStatusType.CHOICES,
+        default=OrderInviteStatusType.PENDING,
+        help_text="PENDING = 0, ACCEPTED = 1, REJECTED = 2",
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
