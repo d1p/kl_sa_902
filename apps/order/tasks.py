@@ -56,7 +56,7 @@ def send_order_item_invite_notification(
             "from_user_profile_picture": f_user.profile_picture.url,
             "item_id": order_item.id,
             "item_name": order_item.food_item.name,
-            "item_price": order_item.food_item.price,
+            "item_price": str(order_item.food_item.price),
             "item_calorie": order_item.food_item.calorie,
             "item_picture": order_item.food_item.picture.url,
             "item_quantity": order_item.quantity,
