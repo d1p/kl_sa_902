@@ -171,8 +171,7 @@ class OrderViewSet(
     def get_queryset(self):
         current_user = self.request.user
         if current_user.profile_type == ProfileType.CUSTOMER:
-            queryset = Order.objects.filter(order_participants__user=current_user)
-            print(queryset)
+            queryset = Order.objects.filter(order_participants__user=current_user).distinct("id")
         elif current_user.profile_type == ProfileType.RESTAURANT:
             queryset = Order.objects.filter(restaurant=current_user, confirmed=True)
         else:
@@ -188,7 +187,6 @@ class OrderViewSet(
 
     @action(detail=True, methods=["delete"])
     def leave(self, request, pk):
-        print("leave started")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = self.get_object()
@@ -196,16 +194,14 @@ class OrderViewSet(
             OrderParticipant.objects.filter(order=order, user=request.user).delete()
             request.user.misc.last_order = None
             request.user.misc.save()
-            send_order_left_push_notification.delay(
-                order_id=order.id, from_user=request.user.id
-            )
             if order.order_participants.all().count() == 0:
                 order.status = OrderStatusType.CANCELED
                 order.save()
-            print("send response")
-            return Response({"status": "success"}, status=status.HTTP_204_NO_CONTENT)
+            send_order_left_push_notification.delay(
+                order_id=order.id, from_user=request.user.id
+            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            print("Send response")
             return Response({"status": "failed"}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=["POST"])
