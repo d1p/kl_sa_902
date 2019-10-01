@@ -43,7 +43,7 @@ def send_order_item_invite_notification(
     try:
         t_user = User.objects.get(id=to_user)
         f_user = User.objects.get(id=from_user)
-        order_item = OrderItem.objects.get(id=item_id).select_related("food_item")
+        order_item = OrderItem.objects.get(id=item_id)
 
         translation.activate(t_user.locale)
         title = _(f"{t_user.name} has sent you an invitation")
