@@ -66,39 +66,25 @@ class Order(models.Model):
             and self.status == OrderStatusType.OPEN
         )
 
-    def get_total(self) -> Decimal:
+    def total_price(self) -> Decimal:
         """
         calculates orders total amount to be paid.
         """
-        total = 0.0
-        items = OrderItem.objects.filter(order=self)
+        total = Decimal(0.0)
+        items = OrderItem.objects.filter(order=self, status=OrderItemStatusType.CONFIRMED)
         for i in items:
-            add_ons = OrderItemAddOn.objects.filter(
-                order_item=i, order_item__status=OrderItemStatusType.CONFIRMED
-            )
-            for a in add_ons:
-                total += (
-                    a.food_add_on.price * a.quantity * i.quantity
-                )  # Number of add on * Number of item * price of add ons
-            total += i.food_item.price * i.quantity
+            total += i.total_price()
         return Decimal(total)
 
     def get_total_of_user(self, user: User) -> Decimal:
         """
         Get total payable by each user.
         """
-        total = 0.0
-        order_items = OrderItem.objects.filter(
-            order=self, order_item__status=OrderItemStatusType.CONFIRMED
-        )
-        items = order_items.filter(Q(added_by=user) | Q(shared_with__exact=user))
+        total = Decimal(0.0)
+        items = OrderItem.objects.filter(order=self, status=OrderItemStatusType.CONFIRMED, shared_with=user)
+
         for i in items:
-            add_ons = OrderItemAddOn.objects.filter(order_item=i)
-            for a in add_ons:
-                total += (
-                    a.food_add_on.price * a.quantity * i.quantity
-                )  # Number of add on * Number of item * price of add ons
-            total += i.food_item.price * i.quantity
+            total += i.shared_price()
         return Decimal(total)
 
 
@@ -171,18 +157,22 @@ class OrderItem(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def get_total(self) -> Decimal:
+    def total_price(self) -> Decimal:
         """
         calculates items total amount to be paid.
         """
-        total = 0.0
+        total = Decimal(0.0)
         add_ons = OrderItemAddOn.objects.filter(order_item=self)
         for a in add_ons:
             total += (
-                a.food_add_on.price * a.quantity * self.quantity
+                a.food_add_on.price * Decimal(a.quantity) * Decimal(self.quantity)
             )  # Number of add on * Number of item * price of add ons
-        total += self.food_item.price * self.quantity
-        return Decimal(total)
+        total += self.food_item.price * Decimal(self.quantity)
+        return total
+
+    def shared_price(self) -> Decimal:
+        total = self.total_price()
+        return total / Decimal(self.shared_with.count())
 
 
 class OrderItemAddOn(models.Model):

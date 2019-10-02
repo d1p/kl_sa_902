@@ -245,19 +245,17 @@ class OrderViewSet(
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @action(detail=True, methods=["GET"])
-    def bill(self, request, pk):
+    @action(detail=True, methods=["POST"])
+    def make_for_checkout(self, request, pk):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid()
+
+        if serializer.validated_data.get("sure") is False:
+            return Response({"status": "failed"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
         order: Order = self.get_object()
-        e_bill = {
-            "total": Decimal(0.0)
-        }
-        for participant in order.order_participants.all():
-            total = 0
-            for item in OrderItem.objects.filter(shared_with=participant.user):
-                item.food_
-            e_bill[participant.user_id] = {
-                ""
-            }
+        pass
+
 
 class OrderItemViewSet(
     mixins.CreateModelMixin,

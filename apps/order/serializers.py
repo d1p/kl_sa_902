@@ -160,6 +160,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
     invited_users = serializers.ListField(
         child=serializers.IntegerField(), required=False
     )
+    food_item_price = serializers.DecimalField(
+        source="food_item.price", read_only=True, decimal_places=2, max_digits=9
+    )
 
     class Meta:
         model = OrderItem
@@ -167,16 +170,19 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "id",
             "order",
             "food_item",
+            "food_item_price",
             "quantity",
             "order_item_add_ons",
             "order_item_attribute_matrices",
             "invited_users",
             "status",
             "shared_with",
+            "total_price",
+            "shared_price",
             "added_by",
             "created_at",
         )
-        read_only_fields = ("id", "added_by", "shared_with", "created_at")
+        read_only_fields = ("id", "added_by", "shared_with", "created_at", "total_price", "shared_price")
 
     def create(self, validated_data):
         order = validated_data.get("order")
@@ -225,7 +231,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
             for i_user in invited_users:
                 try:
                     user = User.objects.get(id=i_user)
-                    invite = order_item.order_item_invites.create(invited_user=user, invited_by=validated_data.get("added_by"))
+                    invite = order_item.order_item_invites.create(
+                        invited_user=user, invited_by=validated_data.get("added_by")
+                    )
                     send_order_item_invite_notification.delay(
                         from_user=order_item.added_by.id,
                         to_user=user.id,
