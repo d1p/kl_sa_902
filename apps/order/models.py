@@ -189,7 +189,7 @@ class OrderItemAttributeMatrix(models.Model):
         FoodAttributeMatrix, on_delete=models.CASCADE, null=True
     )
     order_item = models.ForeignKey(
-        OrderItem, related_name="order_item_attribute_matrix", on_delete=models.CASCADE
+        OrderItem, related_name="order_item_attribute_matrices", on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
