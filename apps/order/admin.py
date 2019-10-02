@@ -31,8 +31,12 @@ class OrderItemAddOnInline(admin.TabularInline):
 
 class OrderItemMatrixInline(admin.TabularInline):
     model = OrderItemAttributeMatrix
-    readonly_fields = ("food_attribute_matrix",)
+    readonly_fields = ("name", "food_attribute_matrix",)
     extra = 0
+
+    def name(self, obj):
+        return obj.food_attribute_matrix.attribute.name
+
 
     def has_add_permission(self, request, obj=None):
         return False
