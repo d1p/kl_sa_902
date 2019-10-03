@@ -37,6 +37,9 @@ class FoodItem(models.Model):
     def __str__(self):
         return f"{self.name} by {self.user.name}"
 
+    class Meta:
+        ordering = ("-created_at", )
+
 
 class FoodAttribute(models.Model):
     name = models.CharField(max_length=144)

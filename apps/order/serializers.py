@@ -163,6 +163,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
     food_item_price = serializers.DecimalField(
         source="food_item.price", read_only=True, decimal_places=2, max_digits=9
     )
+    food_item_name = serializers.CharField(
+        source="food_item.name", read_only=True
+    )
+    food_item_calorie = serializers.IntegerField(source="food_item.calorie", read_only=True)
 
     class Meta:
         model = OrderItem
@@ -171,6 +175,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "order",
             "food_item",
             "food_item_price",
+            "food_item_name",
+            "food_item_calorie",
             "quantity",
             "order_item_add_ons",
             "order_item_attribute_matrices",

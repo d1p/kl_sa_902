@@ -310,7 +310,7 @@ class OrderItemViewSet(
         send_order_item_removed_notification.delay(
             from_user=user.id, order_id=order_id, order_item_id=order_item.id
         )
-        return Response({"status": "success"}, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class OrderParticipantViewSet(mixins.ListModelMixin, GenericViewSet):
