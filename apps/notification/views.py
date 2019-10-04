@@ -1,3 +1,15 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
-# Create your views here.
+from .models import Action
+from .serializers import ActionSerializer
+
+
+class ActionViewSet(ReadOnlyModelViewSet):
+    """
+    Get the notification static list for notifications page.
+    """
+
+    serializer_class = ActionSerializer
+
+    def get_queryset(self):
+        return Action.objects.filter(user=self.request.user)

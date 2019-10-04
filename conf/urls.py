@@ -7,11 +7,11 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from apps.account.urls import urlpatterns as account_urls
-from apps.ticket.urls import urlpatterns as ticket_urls
 from apps.contact.urls import urlpatterns as contact_urls
 from apps.food.urls import urlpatterns as food_urls
+from apps.notification.urls import urlpatterns as notification_urls
 from apps.order.urls import urlpatterns as order_urls
-
+from apps.ticket.urls import urlpatterns as ticket_urls
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -47,6 +47,7 @@ urlpatterns += ticket_urls
 urlpatterns += contact_urls
 urlpatterns += food_urls
 urlpatterns += order_urls
+urlpatterns += notification_urls
 
 
 urlpatterns += i18n_patterns(

@@ -1,15 +1,22 @@
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from apps.account.models import User
 from django.contrib.postgres.fields import JSONField
+from django.db import models
+
+from apps.account.models import User
+from .types import NotificationActionType
 
 
-class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCASE, db_index=True)
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+class Action(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, db_index=True, related_name="notification_user"
+    )
+    sender = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notification_sender"
+    )
     message = models.CharField(max_length=300)
     message_in_ar = models.CharField(max_length=300)
-    action_type = models.IntegerField()
+    action_type = models.CharField(
+        max_length=100, choices=NotificationActionType.CHOICES
+    )
     extra_data = JSONField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -21,4 +28,3 @@ class Notification(models.Model):
 
     def sender_name(self):
         return self.sender.name
-        
