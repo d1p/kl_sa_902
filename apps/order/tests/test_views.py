@@ -150,6 +150,45 @@ class TestOrder(TOrderFixtures):
             response.status_code == status.HTTP_201_CREATED
         ), "Should add item in the order"
 
+    def test_edit_item_in_order(
+        self, customer, restaurant, order, food, addon, attribute_matrix, other_customer
+    ):
+        order.order_participants.create(user=other_customer.user)
+        order.refresh_from_db()
+
+        order_item = mixer.blend(
+            "order.OrderItem",
+            food_item=food,
+            quantity=3,
+            order=order,
+            added_by=customer.user,
+            shared_with=[customer.user, other_customer.user],
+        )
+
+        factory = APIRequestFactory()
+        data = {
+            "quantity": 4,
+            "order": order.id,
+            "order_item_add_ons": [
+                dict(food_add_on=addon.id),
+                dict(food_add_on=addon.id),
+            ],
+            "order_item_attribute_matrices": [
+                dict(food_attribute_matrix=attribute_matrix.id),
+                dict(food_attribute_matrix=attribute_matrix.id),
+            ],
+        }
+        request = factory.put("/", json.dumps(data), content_type="application/json")
+
+        force_authenticate(request, customer.user)
+
+        response = OrderItemViewSet.as_view({"put": "update"})(
+            request, pk=order_item.id
+        )
+        response.render()
+        print(response.content)
+        assert response.status_code == status.HTTP_200_OK, "Should update the order"
+
     def test_delete_food_item_from_order(self, restaurant, order, customer, food):
         order_item = mixer.blend("order.OrderItem", order=order, quantity=2)
         factory = APIRequestFactory()

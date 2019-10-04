@@ -1,11 +1,9 @@
-from decimal import Decimal
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from apps.account.models import User
 from apps.account.types import ProfileType
@@ -133,10 +131,10 @@ class OrderItemInviteViewSet(
             except User.DoesNotExist:
                 continue
             if (
-                OrderItemInvite.can_send_invite(
-                    to_user=user, order_item=validated_data.get("order_item")
-                )
-                is True
+                    OrderItemInvite.can_send_invite(
+                        to_user=user, order_item=validated_data.get("order_item")
+                    )
+                    is True
             ):
                 OrderItemInvite.objects.create(
                     to_user=user,
@@ -171,7 +169,9 @@ class OrderViewSet(
     def get_queryset(self):
         current_user = self.request.user
         if current_user.profile_type == ProfileType.CUSTOMER:
-            queryset = Order.objects.filter(order_participants__user=current_user).distinct("id")
+            queryset = Order.objects.filter(
+                order_participants__user=current_user
+            ).distinct("id")
         elif current_user.profile_type == ProfileType.RESTAURANT:
             queryset = Order.objects.filter(restaurant=current_user, confirmed=True)
         else:
@@ -257,13 +257,7 @@ class OrderViewSet(
         pass
 
 
-class OrderItemViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.DestroyModelMixin,
-    GenericViewSet,
-):
+class OrderItemViewSet(ModelViewSet):
     """
     delete: Response examples {"status": "failed"}, status=status.HTTP_403_FORBIDDEN on invalid participant trying to
     delete order. {"status": "failed", "message": "Food item is already processing."},
@@ -293,6 +287,12 @@ class OrderItemViewSet(
         if current_user.profile_type != ProfileType.CUSTOMER:
             raise PermissionDenied
         serializer.save(added_by=current_user)
+
+    def perform_update(self, serializer):
+        current_user = self.request.user
+        if current_user.profile_type != ProfileType.CUSTOMER:
+            raise PermissionDenied
+        serializer.save()
 
     def destroy(self, request, *args, **kwargs):
         user = request.user

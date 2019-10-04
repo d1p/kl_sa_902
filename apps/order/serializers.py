@@ -163,10 +163,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
     food_item_price = serializers.DecimalField(
         source="food_item.price", read_only=True, decimal_places=2, max_digits=9
     )
-    food_item_name = serializers.CharField(
-        source="food_item.name", read_only=True
+    food_item_name = serializers.CharField(source="food_item.name", read_only=True)
+    food_item_calorie = serializers.IntegerField(
+        source="food_item.calorie", read_only=True
     )
-    food_item_calorie = serializers.IntegerField(source="food_item.calorie", read_only=True)
 
     class Meta:
         model = OrderItem
@@ -188,7 +188,14 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "added_by",
             "created_at",
         )
-        read_only_fields = ("id", "added_by", "shared_with", "created_at", "total_price", "shared_price")
+        read_only_fields = (
+            "id",
+            "added_by",
+            "shared_with",
+            "created_at",
+            "total_price",
+            "shared_price",
+        )
 
     def create(self, validated_data):
         order = validated_data.get("order")
@@ -254,6 +261,54 @@ class OrderItemSerializer(serializers.ModelSerializer):
             return ValidationError(
                 {"non_field_errors": ["This order has been closed."]}
             )
+
+    def update(self, instance: OrderItem, validated_data):
+        current_user = self.context["request"].user
+
+        if (
+            instance.order.order_participants.filter(user=current_user).exists()
+            is False
+        ):
+            raise PermissionDenied
+
+        validated_data.pop("order")
+        order_item_addons = validated_data.pop("order_item_add_ons", [])
+        order_item_attribute_matrices = validated_data.pop(
+            "order_item_attribute_matrices", []
+        )
+        print(order_item_addons)
+        print(order_item_attribute_matrices)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        OrderItemAddOn.objects.filter(order_item=instance).delete()
+        OrderItemAttributeMatrix.objects.filter(order_item=instance).delete()
+
+        for order_addon in order_item_addons:
+            add_on = order_addon["food_add_on"]
+            if (
+                OrderItemAddOn.objects.filter(
+                    order_item=instance, food_add_on=add_on
+                ).exists()
+                is False
+            ):
+                OrderItemAddOn.objects.create(order_item=instance, food_add_on=add_on)
+
+        for order_attribute_matrix in order_item_attribute_matrices:
+            attribute_matrix = order_attribute_matrix["food_attribute_matrix"]
+            if (
+                OrderItemAttributeMatrix.objects.filter(
+                    order_item=instance, food_attribute_matrix=attribute_matrix
+                ).exists()
+                is False
+            ):
+                OrderItemAttributeMatrix.objects.create(
+                    order_item=instance, food_attribute_matrix=attribute_matrix
+                )
+        instance.refresh_from_db()
+        return instance
 
 
 class OrderParticipantSerializer(serializers.ModelSerializer):
