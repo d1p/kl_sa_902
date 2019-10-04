@@ -264,7 +264,7 @@ class OrderItemViewSet(ModelViewSet):
     status=status.HTTP_400_BAD_REQUEST on food item that has already been confirmed order_item.delete() return
     {"status": "success"}, status=status.HTTP_204_NO_CONTENT, On successfully deleting the food item from order
     update:
-    Add every addons, matrices with the request. 
+    Add every addons, matrices with the request.
     """
 
     serializer_class = OrderItemSerializer
