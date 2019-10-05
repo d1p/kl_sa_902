@@ -185,8 +185,6 @@ class TestOrder(TOrderFixtures):
         response = OrderItemViewSet.as_view({"put": "update"})(
             request, pk=order_item.id
         )
-        response.render()
-        print(response.content)
         assert response.status_code == status.HTTP_200_OK, "Should update the order"
 
     def test_delete_food_item_from_order(self, restaurant, order, customer, food):
