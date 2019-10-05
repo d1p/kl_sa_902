@@ -225,7 +225,7 @@ def send_update_order_items_confirmed_notification(order_id: int):
     try:
         order = Order.objects.get(id=order_id)
         translation.activate(order.restaurant.locale)
-        title = _("New order")
+        title = _("Order has been updated")
         body = _("See the dashboard for details")
         data = {
             "notification_id": 9,
@@ -247,14 +247,13 @@ def send_update_order_items_confirmed_customer_notification(from_user: int, orde
         notification_users = order.order_participants.all().exclude(user__id=from_user)
         for participant_user in notification_users:
             translation.activate(participant_user.user.locale)
-            title = _(f"Orders has been confirmed")
+            title = _(f"Order items has been confirmed")
             body = _("Tap to see more")
             data = {
                 "notification_id": 10,
                 "notification_action": "FOOD_ITEMS_CONFIRMED",
                 "title": title,
                 "body": body,
-                "joined_user": from_user,
                 "order_id": order_id,
             }
             send_push_notification(participant_user.user, title, body, data)
