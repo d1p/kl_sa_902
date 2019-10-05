@@ -228,13 +228,36 @@ def send_update_order_items_confirmed_notification(order_id: int):
         title = _("New order")
         body = _("See the dashboard for details")
         data = {
-            "notification_id": 8,
-            "notification_action": "NEW_ORDER",
+            "notification_id": 9,
+            "notification_action": "UPDATE_ORDER",
             "title": title,
             "body": body,
             "order_id": order_id,
         }
         send_push_notification(order.restaurant, title, body, data)
         translation.deactivate()
+    except:
+        pass
+
+
+@app.task
+def send_update_order_items_confirmed_customer_notification(from_user: int, order_id: int):
+    try:
+        order = Order.objects.get(id=order_id)
+        notification_users = order.order_participants.all().exclude(user__id=from_user)
+        for participant_user in notification_users:
+            translation.activate(participant_user.user.locale)
+            title = _(f"Orders has been confirmed")
+            body = _("Tap to see more")
+            data = {
+                "notification_id": 10,
+                "notification_action": "FOOD_ITEMS_CONFIRMED",
+                "title": title,
+                "body": body,
+                "joined_user": from_user,
+                "order_id": order_id,
+            }
+            send_push_notification(participant_user.user, title, body, data)
+            translation.deactivate()
     except:
         pass

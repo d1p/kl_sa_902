@@ -154,6 +154,8 @@ AWS_LOCATION = env.str("AWS_LOCATION", default="")
 AWS_QUERYSTRING_AUTH = False
 AWS_DEFAULT_ACL = "public-read"
 
+PAYTABS_SECRET_KEY = env.str("PAYTABS_SECRET_KEY", default="")
+
 if DEBUG is False:
     STATIC_URL = "https://%s/%s/" % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
     STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"

@@ -13,6 +13,7 @@ from apps.order.tasks import (
     send_order_item_removed_notification,
     send_new_order_items_confirmed_notification,
     send_update_order_items_confirmed_notification,
+    send_update_order_items_confirmed_customer_notification,
 )
 from apps.order.types import (
     OrderInviteStatusType,
@@ -131,10 +132,10 @@ class OrderItemInviteViewSet(
             except User.DoesNotExist:
                 continue
             if (
-                    OrderItemInvite.can_send_invite(
-                        to_user=user, order_item=validated_data.get("order_item")
-                    )
-                    is True
+                OrderItemInvite.can_send_invite(
+                    to_user=user, order_item=validated_data.get("order_item")
+                )
+                is True
             ):
                 OrderItemInvite.objects.create(
                     to_user=user,
@@ -219,7 +220,9 @@ class OrderViewSet(
         )
         if order_items.count() > 0:
             order_items.update(status=OrderItemStatusType.CONFIRMED)
-
+            send_update_order_items_confirmed_customer_notification.delay(
+                from_user=request.user.id, order_id=order.id
+            )
             if order.order_type == OrderType.PICK_UP:
                 if order.confirmed is True:
                     return Response(status=status.HTTP_410_GONE)
