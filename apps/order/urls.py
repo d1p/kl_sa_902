@@ -1,12 +1,14 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
+from apps.order.invoice.views import InvoiceViewSet, TransactionVerifyViewSet
 from .views import (
     OrderViewSet,
     OrderItemViewSet,
     OrderInviteViewSet,
     OrderItemInviteViewSet,
-    OrderParticipantViewSet)
+    OrderParticipantViewSet,
+)
 
 router = DefaultRouter()
 
@@ -22,4 +24,13 @@ router.register("order-invite", OrderInviteViewSet, base_name="order-invite")
 
 router.register("order", OrderViewSet, base_name="order")
 
-urlpatterns = [path("api/", include(router.urls))]
+router.register("invoice", InvoiceViewSet, base_name="invoice")
+
+urlpatterns = [
+    path("api/", include(router.urls)),
+    path(
+        "api/invoice-transaction-verification/",
+        TransactionVerifyViewSet.as_view(),
+        name="transaction_verification",
+    ),
+]

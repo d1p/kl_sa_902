@@ -1,11 +1,11 @@
 import os
 from datetime import timedelta
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.celery import CeleryIntegration
 
 import environ
+import sentry_sdk
 from django.utils.translation import ugettext_lazy as _
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
 
 env = environ.Env()
 root_path = environ.Path(__file__) - 2
@@ -155,7 +155,8 @@ AWS_QUERYSTRING_AUTH = False
 AWS_DEFAULT_ACL = "public-read"
 
 PAYTABS_SECRET_KEY = env.str("PAYTABS_SECRET_KEY", default="")
-
+PAYTABS_MERCHANT_EMAIL = env.str("PAYTABS_MERCHANT_EMAIL", default="")
+PAYTABS_VERIFY_PAYMENT_URL = "https://www.paytabs.com/apiv2/verify_payment_transaction"
 if DEBUG is False:
     STATIC_URL = "https://%s/%s/" % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
     STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"

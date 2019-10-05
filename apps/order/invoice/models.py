@@ -7,19 +7,25 @@ from django.utils.translation import ugettext_lazy as _
 from apps.account.models import User
 from apps.order.invoice.types import PaymentStatus
 from apps.order.models import Order, OrderItem
+from apps.order.types import OrderItemStatusType
 
 
 class Invoice(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
     def generate_invoice_items(self):
         order: Order = self.order
         participants = order.order_participants.all()
         for participant in participants:
+            print(f"participant: {participant.user_id}")
+
             ordered_items = OrderItem.objects.filter(
-                order=order, shared_with=participant.user
+                order=order, shared_with=participant.user, status=OrderItemStatusType.CONFIRMED
             )
+            print(ordered_items)
+
             if ordered_items.count() > 0:
                 InvoiceItem.objects.create(
                     invoice=self,
@@ -39,14 +45,15 @@ class InvoiceItem(models.Model):
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     invoice_items = models.ManyToManyField(InvoiceItem)
 
     transaction_status = models.IntegerField(
         choices=PaymentStatus.CHOICES, default=PaymentStatus.PENDING, db_index=True
     )
 
-    order_id = models.CharField(max_length=32, unique=True)
-    transaction_id = models.CharField(max_length=12, unique=True, null=True, blank=True)
+    pt_order_id = models.CharField(max_length=32, unique=True)
+    pt_transaction_id = models.CharField(max_length=12, unique=True, null=True, blank=True)
     currency = models.CharField(max_length=3, default="SAR")
     amount = models.DecimalField(max_digits=10, decimal_places=3)
 
