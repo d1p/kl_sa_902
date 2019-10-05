@@ -56,6 +56,7 @@ CORE_APPS = [
     "apps.food",
     "apps.order",
     "apps.notification",
+    "apps.order.invoice",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + CORE_APPS
