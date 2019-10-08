@@ -241,7 +241,7 @@ class OrderViewSet(
                     send_update_order_items_confirmed_notification.delay(
                         order_id=order.id
                     )
-            return Response({"status": "success"}, status=status.HTTP_201_CREATED)
+                return Response({"status": "success"}, status=status.HTTP_201_CREATED)
         else:
             return Response(
                 {"status": "failed", "message": "No new item to confirm in the order"},
