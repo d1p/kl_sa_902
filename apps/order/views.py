@@ -225,7 +225,10 @@ class OrderViewSet(
             )
             if order.order_type == OrderType.PICK_UP:
                 if order.confirmed is True:
-                    return Response(status=status.HTTP_410_GONE)
+                    return Response(
+                        {"success": True, "message": "Please pay the bill."},
+                        status=status.HTTP_201_CREATED,
+                    )
                 else:
                     return Response(
                         {"success": True, "message": "Please pay the bill."},
