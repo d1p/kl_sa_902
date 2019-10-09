@@ -6,14 +6,16 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('order', '0012_auto_20191001_0810'),
-    ]
+    dependencies = [("order", "0012_auto_20191001_0810")]
 
     operations = [
         migrations.AlterField(
-            model_name='orderitemattributematrix',
-            name='order_item',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order_item_attribute_matrices', to='order.OrderItem'),
-        ),
+            model_name="orderitemattributematrix",
+            name="order_item",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="order_item_attribute_matrices",
+                to="order.OrderItem",
+            ),
+        )
     ]

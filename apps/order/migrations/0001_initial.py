@@ -11,75 +11,249 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('restaurant', '0006_auto_20190815_2009'),
-        ('food', '0013_remove_foodattribute_price'),
+        ("restaurant", "0006_auto_20190815_2009"),
+        ("food", "0013_remove_foodattribute_price"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order_type', models.SmallIntegerField(choices=[(0, 'Pick Up'), (1, 'In House')], help_text='Indicates weather the order is a Pick up order or In House ')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('created_by', models.ForeignKey(help_text='The user that initialed the order.', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
-                ('restaurant', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='order_restaurants', to=settings.AUTH_USER_MODEL)),
-                ('table', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='restaurant.RestaurantTable')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "order_type",
+                    models.SmallIntegerField(
+                        choices=[(0, "Pick Up"), (1, "In House")],
+                        help_text="Indicates weather the order is a Pick up order or In House ",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        help_text="The user that initialed the order.",
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "restaurant",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="order_restaurants",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "table",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="restaurant.RestaurantTable",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OrderItem',
+            name="OrderItem",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveIntegerField(default=1)),
-                ('status', models.SmallIntegerField(choices=[(0, 'Unconfirmed'), (1, 'Confirmed'), (2, 'Canceled')], db_index=True, default=0)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('added_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='order_item_added_by_user', to=settings.AUTH_USER_MODEL)),
-                ('food_item', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='food.FoodItem')),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order_items', to='order.Order')),
-                ('shared_with', models.ManyToManyField(related_name='order_item_shared_with_users', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.PositiveIntegerField(default=1)),
+                (
+                    "status",
+                    models.SmallIntegerField(
+                        choices=[(0, "Unconfirmed"), (1, "Confirmed"), (2, "Canceled")],
+                        db_index=True,
+                        default=0,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "added_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="order_item_added_by_user",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "food_item",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="food.FoodItem",
+                    ),
+                ),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="order_items",
+                        to="order.Order",
+                    ),
+                ),
+                (
+                    "shared_with",
+                    models.ManyToManyField(
+                        related_name="order_item_shared_with_users",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OrderParticipant',
+            name="OrderParticipant",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order_participants', to='order.Order')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="order_participants",
+                        to="order.Order",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OrderItemAddOn',
+            name="OrderItemAddOn",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveIntegerField(default=1)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('food_add_on', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='food.FoodAddOn')),
-                ('order_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order_item_add_ons', to='order.OrderItem')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.PositiveIntegerField(default=1)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "food_add_on",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="food.FoodAddOn",
+                    ),
+                ),
+                (
+                    "order_item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="order_item_add_ons",
+                        to="order.OrderItem",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OrderInvite',
+            name="OrderInvite",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.SmallIntegerField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('invited_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order_invited_by_user', to=settings.AUTH_USER_MODEL)),
-                ('invited_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order_invited_user', to=settings.AUTH_USER_MODEL)),
-                ('order', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='restaurant_order_invites', to='order.Order')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("status", models.SmallIntegerField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "invited_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="order_invited_by_user",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "invited_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="order_invited_user",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "order",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="restaurant_order_invites",
+                        to="order.Order",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OrderItemAttributeMatrix',
+            name="OrderItemAttributeMatrix",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('food_attribute', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='food.FoodAttributeMatrix')),
-                ('order_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='attribute_matrix', to='order.OrderItem')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "food_attribute",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="food.FoodAttributeMatrix",
+                    ),
+                ),
+                (
+                    "order_item",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="attribute_matrix",
+                        to="order.OrderItem",
+                    ),
+                ),
             ],
-            options={
-                'unique_together': {('order_item', 'food_attribute')},
-            },
+            options={"unique_together": {("order_item", "food_attribute")}},
         ),
     ]

@@ -6,14 +6,16 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('food', '0008_auto_20190830_0652'),
-    ]
+    dependencies = [("food", "0008_auto_20190830_0652")]
 
     operations = [
         migrations.AlterField(
-            model_name='foodaddon',
-            name='food',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='addons', to='food.FoodItem'),
-        ),
+            model_name="foodaddon",
+            name="food",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="addons",
+                to="food.FoodItem",
+            ),
+        )
     ]

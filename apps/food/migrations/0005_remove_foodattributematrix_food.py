@@ -5,13 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('food', '0004_foodattributematrix_food'),
-    ]
+    dependencies = [("food", "0004_foodattributematrix_food")]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='foodattributematrix',
-            name='food',
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name="foodattributematrix", name="food")]

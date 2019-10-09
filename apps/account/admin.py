@@ -56,7 +56,7 @@ class CustomUserAdmin(UserAdmin):
         "is_superuser",
         "profile_type",
     )
-    search_fields = ("id", "email", "phone_number", "name",)
+    search_fields = ("id", "email", "phone_number", "name")
     ordering = ("id", "is_staff", "is_superuser")
     extra = 0
 

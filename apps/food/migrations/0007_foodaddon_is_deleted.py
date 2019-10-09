@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('food', '0006_auto_20190829_0809'),
-    ]
+    dependencies = [("food", "0006_auto_20190829_0809")]
 
     operations = [
         migrations.AddField(
-            model_name='foodaddon',
-            name='is_deleted',
+            model_name="foodaddon",
+            name="is_deleted",
             field=models.BooleanField(db_index=True, default=False),
-        ),
+        )
     ]

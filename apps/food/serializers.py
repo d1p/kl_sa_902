@@ -36,7 +36,6 @@ class FoodAddOnSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class FoodAttributeMatrixSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodAttributeMatrix
@@ -85,7 +84,6 @@ class FoodAttributeSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
-
 
 
 class FoodCategorySerializer(serializers.ModelSerializer):

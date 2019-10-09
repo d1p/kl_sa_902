@@ -10,7 +10,7 @@ class ContactGroup(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("user", "name",)
+        unique_together = ("user", "name")
 
     def __str__(self):
         return f"{self.user.name}s group containing {self.contacts.count()} members."

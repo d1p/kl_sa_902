@@ -6,19 +6,24 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('order', '0010_auto_20190930_0347'),
-    ]
+    dependencies = [("order", "0010_auto_20190930_0347")]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='status',
-            field=models.SmallIntegerField(choices=[(2, 'Canceled'), (1, 'Open')], default=1),
+            model_name="order",
+            name="status",
+            field=models.SmallIntegerField(
+                choices=[(2, "Canceled"), (1, "Open")], default=1
+            ),
         ),
         migrations.AlterField(
-            model_name='orderiteminvite',
-            name='order_item',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='order_item_invites', to='order.OrderItem'),
+            model_name="orderiteminvite",
+            name="order_item",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="order_item_invites",
+                to="order.OrderItem",
+            ),
         ),
     ]

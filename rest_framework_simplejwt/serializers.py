@@ -9,10 +9,10 @@ from .tokens import RefreshToken, SlidingToken, UntypedToken
 
 class PasswordField(serializers.CharField):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('style', {})
+        kwargs.setdefault("style", {})
 
-        kwargs['style']['input_type'] = 'password'
-        kwargs['write_only'] = True
+        kwargs["style"]["input_type"] = "password"
+        kwargs["write_only"] = True
 
         super().__init__(*args, **kwargs)
 
@@ -21,22 +21,22 @@ class TokenObtainSerializer(serializers.Serializer):
     username_field = User.USERNAME_FIELD
 
     default_error_messages = {
-        'no_active_account': _('No active account found with the given credentials')
+        "no_active_account": _("No active account found with the given credentials")
     }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields[self.username_field] = serializers.CharField()
-        self.fields['password'] = PasswordField()
+        self.fields["password"] = PasswordField()
 
     def validate(self, attrs):
         authenticate_kwargs = {
             self.username_field: attrs[self.username_field],
-            'password': attrs['password'],
+            "password": attrs["password"],
         }
         try:
-            authenticate_kwargs['request'] = self.context['request']
+            authenticate_kwargs["request"] = self.context["request"]
         except KeyError:
             pass
 
@@ -51,15 +51,16 @@ class TokenObtainSerializer(serializers.Serializer):
         # sensible backwards compatibility with older Django versions.
         if self.user is None or not self.user.is_active:
             raise exceptions.AuthenticationFailed(
-                self.error_messages['no_active_account'],
-                'no_active_account',
+                self.error_messages["no_active_account"], "no_active_account"
             )
 
         return {}
 
     @classmethod
     def get_token(cls, user):
-        raise NotImplementedError('Must implement `get_token` method for `TokenObtainSerializer` subclasses')
+        raise NotImplementedError(
+            "Must implement `get_token` method for `TokenObtainSerializer` subclasses"
+        )
 
 
 class TokenObtainPairSerializer(TokenObtainSerializer):
@@ -72,8 +73,8 @@ class TokenObtainPairSerializer(TokenObtainSerializer):
 
         refresh = self.get_token(self.user)
 
-        data['refresh'] = str(refresh)
-        data['access'] = str(refresh.access_token)
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
 
         return data
 
@@ -88,7 +89,7 @@ class TokenObtainSlidingSerializer(TokenObtainSerializer):
 
         token = self.get_token(self.user)
 
-        data['token'] = str(token)
+        data["token"] = str(token)
 
         return data
 
@@ -97,9 +98,9 @@ class TokenRefreshSerializer(serializers.Serializer):
     refresh = serializers.CharField()
 
     def validate(self, attrs):
-        refresh = RefreshToken(attrs['refresh'])
+        refresh = RefreshToken(attrs["refresh"])
 
-        data = {'access': str(refresh.access_token)}
+        data = {"access": str(refresh.access_token)}
 
         if api_settings.ROTATE_REFRESH_TOKENS:
             if api_settings.BLACKLIST_AFTER_ROTATION:
@@ -114,7 +115,7 @@ class TokenRefreshSerializer(serializers.Serializer):
             refresh.set_jti()
             refresh.set_exp()
 
-            data['refresh'] = str(refresh)
+            data["refresh"] = str(refresh)
 
         return data
 
@@ -123,7 +124,7 @@ class TokenRefreshSlidingSerializer(serializers.Serializer):
     token = serializers.CharField()
 
     def validate(self, attrs):
-        token = SlidingToken(attrs['token'])
+        token = SlidingToken(attrs["token"])
 
         # Check that the timestamp in the "refresh_exp" claim has not
         # passed
@@ -132,13 +133,13 @@ class TokenRefreshSlidingSerializer(serializers.Serializer):
         # Update the "exp" claim
         token.set_exp()
 
-        return {'token': str(token)}
+        return {"token": str(token)}
 
 
 class TokenVerifySerializer(serializers.Serializer):
     token = serializers.CharField()
 
     def validate(self, attrs):
-        UntypedToken(attrs['token'])
+        UntypedToken(attrs["token"])
 
         return {}

@@ -17,5 +17,5 @@ class NotificationActionType:
         (RESTAURANT_CHECKOUT_FROM_ORDER, _("Checkout From Order")),
         (RESTAURANT_RECEIVED_PAYMENT_FOR_ORDER, _("Received Payment For Order")),
         (RESTAURANT_TICKET_RESPONSE_FROM_ADMIN, _("Ticket Response From Admin")),
-        (RESTAURANT_TICKET_CLOSED_BY_ADMIN, _("Ticket Closed By Admin"))
+        (RESTAURANT_TICKET_CLOSED_BY_ADMIN, _("Ticket Closed By Admin")),
     )

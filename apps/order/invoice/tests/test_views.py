@@ -16,7 +16,9 @@ pytestmark = pytest.mark.django_db
 
 
 class TestInvoice(TOrderFixtures):
-    def test_generate_invoice(self, customer, other_customer, food, addon, attribute_matrix, order):
+    def test_generate_invoice(
+        self, customer, other_customer, food, addon, attribute_matrix, order
+    ):
         order.order_participants.create(user=other_customer.user)
         order.refresh_from_db()
 
@@ -27,20 +29,22 @@ class TestInvoice(TOrderFixtures):
             order=order,
             added_by=customer.user,
             shared_with=[customer.user, other_customer.user],
-            status=OrderItemStatusType.CONFIRMED
+            status=OrderItemStatusType.CONFIRMED,
         )
 
         factory = APIRequestFactory()
-        request = factory.post("/", data={
-            "order": order.id,
-        })
+        request = factory.post("/", data={"order": order.id})
 
         force_authenticate(request, customer.user)
 
         response = InvoiceViewSet.as_view({"post": "create"})(request)
         order.refresh_from_db()
 
-        assert response.status_code == status.HTTP_201_CREATED, "Should create an invoice instance"
+        assert (
+            response.status_code == status.HTTP_201_CREATED
+        ), "Should create an invoice instance"
         assert Invoice.objects.all().count() == 1, "Should have an invoice"
-        assert InvoiceItem.objects.all().count() == 2, "Should have 2 invoice items for 2 participant"
+        assert (
+            InvoiceItem.objects.all().count() == 2
+        ), "Should have 2 invoice items for 2 participant"
         assert order.status == OrderStatusType.CHECKOUT, "Should be in checkout stage"

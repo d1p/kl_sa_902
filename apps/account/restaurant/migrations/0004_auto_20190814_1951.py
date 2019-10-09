@@ -5,19 +5,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('restaurant', '0003_auto_20190814_1936'),
-    ]
+    dependencies = [("restaurant", "0003_auto_20190814_1936")]
 
     operations = [
         migrations.AlterField(
-            model_name='restaurant',
-            name='lat',
+            model_name="restaurant",
+            name="lat",
             field=models.FloatField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='restaurant',
-            name='lng',
+            model_name="restaurant",
+            name="lng",
             field=models.FloatField(blank=True, null=True),
         ),
     ]

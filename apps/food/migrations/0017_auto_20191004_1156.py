@@ -5,13 +5,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('food', '0016_auto_20190923_1542'),
-    ]
+    dependencies = [("food", "0016_auto_20190923_1542")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='fooditem',
-            options={'ordering': ('-created_at',)},
-        ),
+            name="fooditem", options={"ordering": ("-created_at",)}
+        )
     ]

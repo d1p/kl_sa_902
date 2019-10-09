@@ -17,7 +17,7 @@ admin.register(OrderItemAddOn)
 
 class OrderItemAddOnInline(admin.TabularInline):
     model = OrderItemAddOn
-    readonly_fields = ("food_add_on", "quantity",)
+    readonly_fields = ("food_add_on", "quantity")
     extra = 0
 
     def has_add_permission(self, request, obj=None):
@@ -29,15 +29,15 @@ class OrderItemAddOnInline(admin.TabularInline):
     def has_change_permission(self, request, obj=None):
         return False
 
+
 class OrderItemMatrixInline(admin.TabularInline):
     model = OrderItemAttributeMatrix
-    readonly_fields = ("name", "food_attribute_matrix",)
+    readonly_fields = ("name", "food_attribute_matrix")
     extra = 0
 
     def name(self, obj):
         return obj.food_attribute_matrix.attribute.name
 
-
     def has_add_permission(self, request, obj=None):
         return False
 
@@ -46,7 +46,6 @@ class OrderItemMatrixInline(admin.TabularInline):
 
     def has_change_permission(self, request, obj=None):
         return False
-
 
 
 @admin.register(OrderInvite)
@@ -62,8 +61,8 @@ class OrderParticipantAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ("id", "order", "quantity", "total_price",)
-    list_display_links = ("id", "order",)
+    list_display = ("id", "order", "quantity", "total_price")
+    list_display_links = ("id", "order")
     inlines = [OrderItemAddOnInline, OrderItemMatrixInline]
 
     def has_add_permission(self, request):

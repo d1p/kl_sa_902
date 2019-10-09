@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('restaurant', '0006_auto_20190815_2009'),
-    ]
+    dependencies = [("restaurant", "0006_auto_20190815_2009")]
 
     operations = [
         migrations.AddField(
-            model_name='restauranttable',
-            name='public',
+            model_name="restauranttable",
+            name="public",
             field=models.BooleanField(db_index=True, default=True),
-        ),
+        )
     ]

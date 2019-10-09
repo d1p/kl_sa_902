@@ -8,24 +8,26 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('ticket', '0004_reportissue'),
+        ("ticket", "0004_reportissue"),
     ]
 
     operations = [
-        migrations.RenameModel(
-            old_name='Message',
-            new_name='RestaurantMessage',
-        ),
-        migrations.RenameModel(
-            old_name='Ticket',
-            new_name='RestaurantTicket',
+        migrations.RenameModel(old_name="Message", new_name="RestaurantMessage"),
+        migrations.RenameModel(old_name="Ticket", new_name="RestaurantTicket"),
+        migrations.AlterModelOptions(
+            name="restaurantmessage",
+            options={
+                "ordering": ("-created_at",),
+                "verbose_name": "Restaurant Message",
+                "verbose_name_plural": "Restaurant Messages",
+            },
         ),
         migrations.AlterModelOptions(
-            name='restaurantmessage',
-            options={'ordering': ('-created_at',), 'verbose_name': 'Restaurant Message', 'verbose_name_plural': 'Restaurant Messages'},
-        ),
-        migrations.AlterModelOptions(
-            name='restaurantticket',
-            options={'ordering': ('-last_updated',), 'verbose_name': 'Restaurant Ticket', 'verbose_name_plural': 'Restaurant Tickets'},
+            name="restaurantticket",
+            options={
+                "ordering": ("-last_updated",),
+                "verbose_name": "Restaurant Ticket",
+                "verbose_name_plural": "Restaurant Tickets",
+            },
         ),
     ]

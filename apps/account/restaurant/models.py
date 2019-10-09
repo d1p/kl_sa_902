@@ -32,7 +32,7 @@ class Restaurant(models.Model):
     restaurant_type = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
-    full_address = models.TextField(max_length=800, db_index=True, blank=True,)
+    full_address = models.TextField(max_length=800, db_index=True, blank=True)
     geolocation = PointField(
         spatial_index=True, srid=4326, null=True, blank=True, editable=False
     )  # Srid 4326 is compatible with google maps.

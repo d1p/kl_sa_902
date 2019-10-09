@@ -18,7 +18,7 @@ class OrderStatusType:
         (CANCELED, _("Canceled")),
         (OPEN, _("Open")),
         (CHECKOUT, _("Checkout")),
-        (COMPLETED, _("Completed"))
+        (COMPLETED, _("Completed")),
     )
 
 
@@ -37,5 +37,5 @@ class OrderInviteStatusType:
     CHOICES = (
         (PENDING, _("Pending")),
         (ACCEPTED, _("Accepted")),
-        (REJECTED, _("Rejected"))
+        (REJECTED, _("Rejected")),
     )

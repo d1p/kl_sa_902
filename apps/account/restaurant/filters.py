@@ -12,9 +12,7 @@ class RestaurantFilter(filters.FilterSet):
 
 
 class RestaurantTableFilter(filters.FilterSet):
-    user = filters.NumberFilter(
-        lookup_expr="exact", field_name="user__id"
-    )
+    user = filters.NumberFilter(lookup_expr="exact", field_name="user__id")
 
     class Meta:
         model = RestaurantTable

@@ -8,7 +8,8 @@ from .models import (
     PreBackedTicketTopic,
     ReportIssue,
     CustomerTicketTopic,
-    CustomerTicket)
+    CustomerTicket,
+)
 from .tasks import send_message_notification
 
 

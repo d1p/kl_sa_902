@@ -12,12 +12,11 @@ class TokenViewBase(generics.GenericAPIView):
 
     serializer_class = None
 
-    www_authenticate_realm = 'api'
+    www_authenticate_realm = "api"
 
     def get_authenticate_header(self, request):
         return '{0} realm="{1}"'.format(
-            AUTH_HEADER_TYPES[0],
-            self.www_authenticate_realm,
+            AUTH_HEADER_TYPES[0], self.www_authenticate_realm
         )
 
     def post(self, request, *args, **kwargs):
@@ -36,6 +35,7 @@ class TokenObtainPairView(TokenViewBase):
     Takes a set of user credentials and returns an access and refresh JSON web
     token pair to prove the authentication of those credentials.
     """
+
     serializer_class = serializers.TokenObtainPairSerializer
 
 
@@ -47,6 +47,7 @@ class TokenRefreshView(TokenViewBase):
     Takes a refresh type JSON web token and returns an access type JSON web
     token if the refresh token is valid.
     """
+
     serializer_class = serializers.TokenRefreshSerializer
 
 
@@ -58,6 +59,7 @@ class TokenObtainSlidingView(TokenViewBase):
     Takes a set of user credentials and returns a sliding JSON web token to
     prove the authentication of those credentials.
     """
+
     serializer_class = serializers.TokenObtainSlidingSerializer
 
 
@@ -69,6 +71,7 @@ class TokenRefreshSlidingView(TokenViewBase):
     Takes a sliding JSON web token and returns a new, refreshed version if the
     token's refresh period has not expired.
     """
+
     serializer_class = serializers.TokenRefreshSlidingSerializer
 
 
@@ -80,6 +83,7 @@ class TokenVerifyView(TokenViewBase):
     Takes a token and indicates if it is valid.  This view provides no
     information about a token's fitness for a particular use.
     """
+
     serializer_class = serializers.TokenVerifySerializer
 
 

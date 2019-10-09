@@ -14,7 +14,6 @@ class Invoice(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
     def generate_invoice_items(self):
         order: Order = self.order
         participants = order.order_participants.all()
@@ -22,7 +21,9 @@ class Invoice(models.Model):
             print(f"participant: {participant.user_id}")
 
             ordered_items = OrderItem.objects.filter(
-                order=order, shared_with=participant.user, status=OrderItemStatusType.CONFIRMED
+                order=order,
+                shared_with=participant.user,
+                status=OrderItemStatusType.CONFIRMED,
             )
             print(ordered_items)
 
@@ -53,7 +54,9 @@ class Transaction(models.Model):
     )
 
     pt_order_id = models.CharField(max_length=32, unique=True)
-    pt_transaction_id = models.CharField(max_length=12, unique=True, null=True, blank=True)
+    pt_transaction_id = models.CharField(
+        max_length=12, unique=True, null=True, blank=True
+    )
     currency = models.CharField(max_length=3, default="SAR")
     amount = models.DecimalField(max_digits=10, decimal_places=3)
 

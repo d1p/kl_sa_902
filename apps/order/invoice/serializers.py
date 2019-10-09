@@ -20,13 +20,7 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InvoiceItem
-        fields = (
-            "id",
-            "invoice",
-            "user",
-            "amount",
-            "paid",
-        )
+        fields = ("id", "invoice", "user", "amount", "paid")
         read_only_fields = ("id", "invoice", "user", "amount", "paid")
 
 

@@ -5,21 +5,28 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('ticket', '0002_message_sender'),
-    ]
+    dependencies = [("ticket", "0002_message_sender")]
 
     operations = [
         migrations.CreateModel(
-            name='PreBackedTicketTopic',
+            name="PreBackedTicketTopic",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.TextField(max_length=300)),
-                ('text_in_ar', models.TextField(max_length=300, verbose_name='Text in arabic')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField(max_length=300)),
+                (
+                    "text_in_ar",
+                    models.TextField(max_length=300, verbose_name="Text in arabic"),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
-            options={
-                'ordering': ('text', 'text_in_ar'),
-            },
-        ),
+            options={"ordering": ("text", "text_in_ar")},
+        )
     ]

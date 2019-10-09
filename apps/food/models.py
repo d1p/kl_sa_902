@@ -38,7 +38,7 @@ class FoodItem(models.Model):
         return f"{self.name} by {self.user.name}"
 
     class Meta:
-        ordering = ("-created_at", )
+        ordering = ("-created_at",)
 
 
 class FoodAttribute(models.Model):

@@ -5,14 +5,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('order', '0008_auto_20190928_0648'),
-    ]
+    dependencies = [("order", "0008_auto_20190928_0648")]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='order_type',
-            field=models.SmallIntegerField(choices=[(0, 'Pick Up'), (1, 'In House')], help_text='Indicates weather the order is a Pick up (0) order or In House (1)'),
-        ),
+            model_name="order",
+            name="order_type",
+            field=models.SmallIntegerField(
+                choices=[(0, "Pick Up"), (1, "In House")],
+                help_text="Indicates weather the order is a Pick up (0) order or In House (1)",
+            ),
+        )
     ]

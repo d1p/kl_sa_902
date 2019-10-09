@@ -25,7 +25,7 @@ class CustomerTicketAdmin(admin.ModelAdmin):
         "status",
     )
 
-    generic_list_filter = ("status", )
+    generic_list_filter = ("status",)
 
     search_fields = ("created_by__name",)
 

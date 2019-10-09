@@ -5,24 +5,22 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('food', '0013_remove_foodattribute_price'),
-    ]
+    dependencies = [("food", "0013_remove_foodattribute_price")]
 
     operations = [
         migrations.AddField(
-            model_name='foodaddon',
-            name='position',
+            model_name="foodaddon",
+            name="position",
             field=models.IntegerField(null=True),
         ),
         migrations.AddField(
-            model_name='foodattribute',
-            name='position',
+            model_name="foodattribute",
+            name="position",
             field=models.IntegerField(null=True),
         ),
         migrations.AddField(
-            model_name='foodattributematrix',
-            name='position',
+            model_name="foodattributematrix",
+            name="position",
             field=models.IntegerField(null=True),
         ),
     ]

@@ -11,44 +11,107 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('order', '0013_auto_20191002_1656'),
+        ("order", "0013_auto_20191002_1656"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Invoice',
+            name="Invoice",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('order', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='order.Order')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "order",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE, to="order.Order"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='InvoiceItem',
+            name="InvoiceItem",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount', models.DecimalField(decimal_places=3, max_digits=9)),
-                ('paid', models.BooleanField(db_index=True, default=False)),
-                ('invoice', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='invoice_items', to='invoice.Invoice')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("amount", models.DecimalField(decimal_places=3, max_digits=9)),
+                ("paid", models.BooleanField(db_index=True, default=False)),
+                (
+                    "invoice",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="invoice_items",
+                        to="invoice.Invoice",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Transaction',
+            name="Transaction",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('transaction_status', models.IntegerField(choices=[(0, 'Pending'), (1, 'Successful'), (2, 'Failed'), (3, 'Invalid')], db_index=True, default=0)),
-                ('order_id', models.CharField(max_length=32, unique=True)),
-                ('transaction_id', models.CharField(blank=True, max_length=12, null=True, unique=True)),
-                ('currency', models.CharField(default='SAR', max_length=3)),
-                ('amount', models.DecimalField(decimal_places=3, max_digits=10)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('invoice_items', models.ManyToManyField(to='invoice.InvoiceItem')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "transaction_status",
+                    models.IntegerField(
+                        choices=[
+                            (0, "Pending"),
+                            (1, "Successful"),
+                            (2, "Failed"),
+                            (3, "Invalid"),
+                        ],
+                        db_index=True,
+                        default=0,
+                    ),
+                ),
+                ("order_id", models.CharField(max_length=32, unique=True)),
+                (
+                    "transaction_id",
+                    models.CharField(blank=True, max_length=12, null=True, unique=True),
+                ),
+                ("currency", models.CharField(default="SAR", max_length=3)),
+                ("amount", models.DecimalField(decimal_places=3, max_digits=10)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("invoice_items", models.ManyToManyField(to="invoice.InvoiceItem")),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Transaction',
-                'verbose_name_plural': 'Transactions',
+                "verbose_name": "Transaction",
+                "verbose_name_plural": "Transactions",
             },
         ),
     ]

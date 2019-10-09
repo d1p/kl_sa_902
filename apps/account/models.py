@@ -44,7 +44,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_picture = models.ImageField(
         _("Profile Picture"),
         upload_to=RandomFileName("user/profile-picture/"),
-        null=True, blank=True
+        null=True,
+        blank=True,
     )
 
     is_staff = models.BooleanField(

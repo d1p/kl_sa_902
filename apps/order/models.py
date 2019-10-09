@@ -71,7 +71,9 @@ class Order(models.Model):
         calculates orders total amount to be paid.
         """
         total = Decimal(0.0)
-        items = OrderItem.objects.filter(order=self, status=OrderItemStatusType.CONFIRMED)
+        items = OrderItem.objects.filter(
+            order=self, status=OrderItemStatusType.CONFIRMED
+        )
         for i in items:
             total += i.total_price()
         return Decimal(total)
@@ -81,7 +83,9 @@ class Order(models.Model):
         Get total payable by each user.
         """
         total = Decimal(0.0)
-        items = OrderItem.objects.filter(order=self, status=OrderItemStatusType.CONFIRMED, shared_with=user)
+        items = OrderItem.objects.filter(
+            order=self, status=OrderItemStatusType.CONFIRMED, shared_with=user
+        )
 
         for i in items:
             total += i.shared_price()
@@ -189,7 +193,9 @@ class OrderItemAttributeMatrix(models.Model):
         FoodAttributeMatrix, on_delete=models.CASCADE, null=True
     )
     order_item = models.ForeignKey(
-        OrderItem, related_name="order_item_attribute_matrices", on_delete=models.CASCADE
+        OrderItem,
+        related_name="order_item_attribute_matrices",
+        on_delete=models.CASCADE,
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

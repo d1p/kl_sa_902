@@ -220,6 +220,7 @@ def send_new_order_items_confirmed_notification(order_id: int):
     except:
         pass
 
+
 @app.task
 def send_update_order_items_confirmed_notification(order_id: int):
     try:
@@ -241,7 +242,9 @@ def send_update_order_items_confirmed_notification(order_id: int):
 
 
 @app.task
-def send_update_order_items_confirmed_customer_notification(from_user: int, order_id: int):
+def send_update_order_items_confirmed_customer_notification(
+    from_user: int, order_id: int
+):
     try:
         order = Order.objects.get(id=order_id)
         notification_users = order.order_participants.all().exclude(user__id=from_user)

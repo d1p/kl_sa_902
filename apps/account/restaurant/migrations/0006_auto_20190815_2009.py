@@ -9,18 +9,19 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('restaurant', '0005_auto_20190814_1958'),
+        ("restaurant", "0005_auto_20190814_1958"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='restauranttable',
-            name='restaurant',
-        ),
+        migrations.RemoveField(model_name="restauranttable", name="restaurant"),
         migrations.AddField(
-            model_name='restauranttable',
-            name='user',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="restauranttable",
+            name="user",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
             preserve_default=False,
         ),
     ]

@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('order', '0001_initial'),
-    ]
+    dependencies = [("order", "0001_initial")]
 
     operations = [
         migrations.AlterField(
-            model_name='orderinvite',
-            name='status',
-            field=models.SmallIntegerField(choices=[(0, 'Pending'), (1, 'Accepted'), (2, 'Rejected')], default=0),
-        ),
+            model_name="orderinvite",
+            name="status",
+            field=models.SmallIntegerField(
+                choices=[(0, "Pending"), (1, "Accepted"), (2, "Rejected")], default=0
+            ),
+        )
     ]

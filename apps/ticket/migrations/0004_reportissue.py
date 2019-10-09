@@ -9,25 +9,50 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('order', '0004_remove_order_fully_paid'),
-        ('ticket', '0003_prebackedtickettopic'),
+        ("order", "0004_remove_order_fully_paid"),
+        ("ticket", "0003_prebackedtickettopic"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ReportIssue',
+            name="ReportIssue",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('topic', models.CharField(help_text='Topic Name', max_length=300)),
-                ('description', models.TextField(max_length=1000)),
-                ('status', models.IntegerField(choices=[(0, 'Open'), (1, 'Closed')], default=0)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.Order')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("topic", models.CharField(help_text="Topic Name", max_length=300)),
+                ("description", models.TextField(max_length=1000)),
+                (
+                    "status",
+                    models.IntegerField(
+                        choices=[(0, "Open"), (1, "Closed")], default=0
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="order.Order"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Report Issue',
-                'verbose_name_plural': 'Report Issues',
+                "verbose_name": "Report Issue",
+                "verbose_name_plural": "Report Issues",
             },
-        ),
+        )
     ]

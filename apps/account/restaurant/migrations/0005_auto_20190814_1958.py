@@ -6,19 +6,22 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('restaurant', '0004_auto_20190814_1951'),
-    ]
+    dependencies = [("restaurant", "0004_auto_20190814_1951")]
 
     operations = [
         migrations.AlterField(
-            model_name='restaurant',
-            name='full_address',
+            model_name="restaurant",
+            name="full_address",
             field=models.TextField(blank=True, db_index=True, max_length=800),
         ),
         migrations.AlterField(
-            model_name='restaurant',
-            name='restaurant_type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='restaurant.Category'),
+            model_name="restaurant",
+            name="restaurant_type",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="restaurant.Category",
+            ),
         ),
     ]
