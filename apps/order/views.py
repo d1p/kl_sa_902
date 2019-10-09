@@ -251,17 +251,6 @@ class OrderViewSet(
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @action(detail=True, methods=["POST"])
-    def make_for_checkout(self, request, pk):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid()
-
-        if serializer.validated_data.get("sure") is False:
-            return Response({"status": "failed"}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
-        order: Order = self.get_object()
-        pass
-
 
 class OrderItemViewSet(ModelViewSet):
     """
