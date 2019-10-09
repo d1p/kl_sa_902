@@ -49,13 +49,16 @@ class InvoiceSerializer(serializers.ModelSerializer):
                 invoice.generate_invoice_items()
                 order.status = OrderStatusType.CHECKOUT
                 order.save()
+                for p in order.order_participants.all():
+                    p.user.misc.last_order_in_checkout = True
+                    p.user.misc.save()
 
             # Send necessary Signals.
             send_checkout_push_notification_to_other_users(
                 from_user=current_user.id, order_id=order.id
             )
             send_checkout_push_notification_to_the_restaurant(
-                from_user=current_user.id, order_id=order.id
+                order_id=order.id
             )
             invoice.refresh_from_db()
 

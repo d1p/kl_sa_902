@@ -14,3 +14,4 @@ class Misc(models.Model):
     last_order = models.ForeignKey(
         Order, on_delete=models.SET_NULL, null=True, blank=True
     )
+    last_order_in_checkout = models.BooleanField(default=False, db_index=True)

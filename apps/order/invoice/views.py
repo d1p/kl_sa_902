@@ -97,6 +97,8 @@ class TransactionVerifyViewSet(CreateAPIView):
             transaction.save()
             # Send necessary signals
             transaction.invoice_items.update(paid=True)
+            transaction.invoice_items.user.misc.last_order_in_checkout = False
+            transaction.invoice_items.user.misc.save()
 
         else:
             transaction.transaction_status = PaymentStatus.FAILED
