@@ -19,6 +19,8 @@ class CustomerViewSet(
 
 
 class MiscViewSet(ReadOnlyModelViewSet):
+    lookup_field = "user"
+
     def get_queryset(self):
         return Misc.objects.filter(user=self.request.user)
 
