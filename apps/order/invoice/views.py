@@ -8,7 +8,11 @@ from apps.account.types import ProfileType
 from apps.order.invoice.types import PaymentStatus
 from apps.order.invoice.utils import verify_transaction
 from .models import Invoice, Transaction
-from .serializers import InvoiceSerializer, TransactionVerifySerializer
+from .serializers import (
+    InvoiceSerializer,
+    TransactionVerifySerializer,
+    TransactionSerializer,
+)
 
 
 class InvoiceViewSet(
@@ -108,3 +112,15 @@ class TransactionVerifyViewSet(CreateAPIView):
             {"transaction_status": transaction.transaction_status},
             status=status.HTTP_200_OK,
         )
+
+
+class TransactionViewSet(
+    mixins.CreateModelMixin, mixins.RetrieveModelMixin, GenericViewSet
+):
+    serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        return Transaction.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

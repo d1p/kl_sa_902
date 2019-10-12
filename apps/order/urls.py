@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from apps.order.invoice.views import InvoiceViewSet, TransactionVerifyViewSet
+from apps.order.invoice.views import InvoiceViewSet, TransactionVerifyViewSet, TransactionViewSet
 from .views import (
     OrderViewSet,
     OrderItemViewSet,
@@ -23,7 +23,7 @@ router.register("order-invite", OrderInviteViewSet, base_name="order-invite")
 
 
 router.register("order", OrderViewSet, base_name="order")
-
+router.register("transaction", TransactionViewSet, base_name="transaction")
 router.register("invoice", InvoiceViewSet, base_name="invoice")
 
 urlpatterns = [

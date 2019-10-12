@@ -57,9 +57,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             send_checkout_push_notification_to_other_users(
                 from_user=current_user.id, order_id=order.id
             )
-            send_checkout_push_notification_to_the_restaurant(
-                order_id=order.id
-            )
+            send_checkout_push_notification_to_the_restaurant(order_id=order.id)
             invoice.refresh_from_db()
 
         return invoice
@@ -73,9 +71,9 @@ class TransactionSerializer(serializers.ModelSerializer):
             "user",
             "invoice_items",
             "order",
-            "pt_transaction_status",
+            "transaction_status",
             "pt_order_id",
-            "transaction_id",
+            "pt_transaction_id",
             "currency",
             "amount",
             "created_at",
@@ -83,8 +81,9 @@ class TransactionSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id",
             "user",
-            "order_id",
-            "transaction_id",
+            "transaction_status",
+            "pt_order_id",
+            "pt_transaction_id",
             "currency",
             "amount",
             "created_at",
@@ -99,17 +98,24 @@ class TransactionSerializer(serializers.ModelSerializer):
             raise PermissionDenied
 
         amount: Decimal = Decimal(0.0)
-
-        for invoice_item in validated_data.get("invoice_items"):
-            if invoice_item.order != order:
+        invoice_items = validated_data.pop("invoice_items")
+        for invoice_item in invoice_items:
+            if invoice_item.invoice.order != order:
                 raise PermissionDenied
             if invoice_item.paid is True:
                 raise ValidationError(
                     {"invoice_items": [f"Item {invoice_item.id} has been paid."]}
                 )
             amount += invoice_item.amount
+        instance = Transaction.objects.create(
+            order=order,
+            user=validated_data.get("user"),
+            amount=amount
+        )
+        for invoice_item in invoice_items:
+            instance.invoice_items.add(invoice_item)
+        instance.refresh_from_db()
 
-        instance = Transaction.objects.create(**validated_data)
         return instance
 
 

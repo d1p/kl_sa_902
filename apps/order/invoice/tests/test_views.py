@@ -1,14 +1,10 @@
-import json
-
 import pytest
-from django.contrib.auth.models import Group
-from fcm_django.models import FCMDevice
 from mixer.backend.django import mixer
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from apps.order.invoice.models import Invoice, InvoiceItem
-from apps.order.invoice.views import InvoiceViewSet
+from apps.order.invoice.views import InvoiceViewSet, TransactionViewSet
 from apps.order.tests.test_views import TOrderFixtures
 from apps.order.types import OrderStatusType, OrderItemStatusType
 
@@ -48,3 +44,16 @@ class TestInvoice(TOrderFixtures):
             InvoiceItem.objects.all().count() == 2
         ), "Should have 2 invoice items for 2 participant"
         assert order.status == OrderStatusType.CHECKOUT, "Should be in checkout stage"
+
+        request = factory.post(
+            "/",
+            data={
+                "order": order.id,
+                "invoice_items": [x.id for x in InvoiceItem.objects.all()],
+            },
+        )
+        force_authenticate(request, customer.user)
+        response = TransactionViewSet.as_view({"post": "create"})(request)
+        assert (
+            response.status_code == status.HTTP_201_CREATED
+        ), "Should create a new transaction"

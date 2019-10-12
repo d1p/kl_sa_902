@@ -18,15 +18,11 @@ class Invoice(models.Model):
         order: Order = self.order
         participants = order.order_participants.all()
         for participant in participants:
-            print(f"participant: {participant.user_id}")
-
             ordered_items = OrderItem.objects.filter(
                 order=order,
                 shared_with=participant.user,
                 status=OrderItemStatusType.CONFIRMED,
             )
-            print(ordered_items)
-
             if ordered_items.count() > 0:
                 InvoiceItem.objects.create(
                     invoice=self,
@@ -68,7 +64,7 @@ class Transaction(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk is None:
-            self.order_id = generate_order_id(self.user.id)
+            self.pt_order_id = generate_order_id(self.user.id)
         super(Transaction, self).save(*args, **kwargs)
 
 
@@ -78,7 +74,7 @@ def generate_order_id(user_id: int) -> str:
     alphabet = string.ascii_letters + string.digits
     secret = "".join(choice(alphabet) for i in range(max_length - user_id_length))
     order_id = f"{user_id}{secret}"
-    if Transaction.objects.filter(order_id=order_id).exists():
+    if Transaction.objects.filter(pt_order_id=order_id).exists():
         return generate_order_id(user_id)  # pragma: no cover
     else:
         return order_id

@@ -16,3 +16,12 @@ class ActionSerializer(serializers.ModelSerializer):
             "created_at",
             "extra_data",
         )
+
+
+class OrderRemainingTimeNotificationSerializer(serializers.Serializer):
+    order_id = serializers.IntegerField(required=True)
+    remaining_time = serializers.IntegerField(required=True)
+
+
+class ConfirmSerializer(serializers.Serializer):
+    sure = serializers.BooleanField(required=True)
