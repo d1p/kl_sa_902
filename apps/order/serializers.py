@@ -63,6 +63,7 @@ class OrderInviteSerializer(serializers.ModelSerializer):
             order = instance.order
             order.order_participants.create(user=current_user)
             current_user.misc.last_order = order
+            current_user.misc.last_order_in_checkout = False
             current_user.misc.save()
             instance.status = OrderInviteStatusType.ACCEPTED
             instance.save()
@@ -276,8 +277,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
         order_item_attribute_matrices = validated_data.pop(
             "order_item_attribute_matrices", []
         )
-        print(order_item_addons)
-        print(order_item_attribute_matrices)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -349,6 +348,7 @@ class OrderSerializer(serializers.ModelSerializer):
         order = Order.objects.create(**validated_data)
         order.order_participants.create(user=order.created_by)
         order.created_by.misc.last_order = order
+        order.created_by.misc.last_order_in_checkout = False
         order.created_by.misc.save()
         return order
 

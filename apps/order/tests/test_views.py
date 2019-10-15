@@ -123,6 +123,8 @@ class TestOrder(TOrderFixtures):
         )
 
         assert response.status_code == status.HTTP_200_OK, "Should accept the invite"
+        order.refresh_from_db()
+        assert order.order_participants.all().count() == 2, "Should have two"
 
     def test_add_item_in_order(
         self, customer, restaurant, order, food, addon, attribute_matrix, other_customer

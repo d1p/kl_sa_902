@@ -39,7 +39,7 @@ django-nested-admin = "*"
 django-cors-headers = "*"
 
 [requires]
-python_version = "3.7.3"
+python_version = "3.7.4"
 
 [pipenv]
 allow_prereleases = true
