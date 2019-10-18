@@ -202,6 +202,9 @@ class TestOrder(TOrderFixtures):
         ), "Should remove item from order"
 
     def test_leave_order(self, customer, order, other_customer):
+        assert (
+            order.order_participants.all().count() > 0
+        ), "Should have participant"
         factory = APIRequestFactory()
         request = factory.delete("/", data={"sure": True})
         force_authenticate(request, customer.user)

@@ -39,6 +39,16 @@ class InvoiceItem(models.Model):
     amount = models.DecimalField(decimal_places=3, max_digits=9)
     paid = models.BooleanField(default=False, db_index=True)
 
+    @property
+    def food_items(self) -> []:
+        ordered_items = OrderItem.objects.filter(
+            order=self.invoice.order,
+            shared_with=self.user,
+            status=OrderItemStatusType.CONFIRMED,
+        )
+
+        return ordered_items
+
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

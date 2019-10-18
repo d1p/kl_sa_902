@@ -13,14 +13,16 @@ from apps.order.invoice.tasks import (
 from apps.order.models import Order
 from apps.order.types import OrderStatusType
 from .models import Invoice, InvoiceItem, Transaction
+from ..serializers import OrderItemSerializer
 
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
     user = PublicUserSerializer(read_only=True)
+    food_items = OrderItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = InvoiceItem
-        fields = ("id", "invoice", "user", "amount", "paid")
+        fields = ("id", "invoice", "user", "amount", "paid", "food_items")
         read_only_fields = ("id", "invoice", "user", "amount", "paid")
 
 
@@ -108,9 +110,7 @@ class TransactionSerializer(serializers.ModelSerializer):
                 )
             amount += invoice_item.amount
         instance = Transaction.objects.create(
-            order=order,
-            user=validated_data.get("user"),
-            amount=amount
+            order=order, user=validated_data.get("user"), amount=amount
         )
         for invoice_item in invoice_items:
             instance.invoice_items.add(invoice_item)
