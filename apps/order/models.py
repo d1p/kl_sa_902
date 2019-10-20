@@ -2,7 +2,8 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
+from django.db.models import Avg
+from django.db.models import F
 from django.utils.translation import ugettext_lazy as _
 
 from apps.account.models import User
@@ -235,3 +236,30 @@ class OrderItemInvite(models.Model):
             order_item.order.order_participants.filter(id=to_user).exists()
             and order_item.shared_with.filter(id=to_user).exists() is False
         )
+
+
+class Rating(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="rated_by")
+    restaurant = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="rated_restaurant"
+    )
+    food_item_rating = models.PositiveSmallIntegerField(default=0)
+    restaurant_rating = models.PositiveSmallIntegerField(default=0)
+    customer_service_rating = models.PositiveSmallIntegerField(default=0)
+    application_rating = models.PositiveSmallIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.name} rated {self.restaurant.name}"
+
+    @staticmethod
+    def get_average_restaurant_rating(restaurant: User):
+        ratings = Rating.objects.filter(restaurant=restaurant)
+        rating_avg = ratings.annotate(
+            n_avg=F("food_item_rating")
+            + F("restaurant_rating")
+            + F("customer_service_rating")
+            + F("application_rating")
+        ).annocate(Avg("n_avg"))
+        return rating_avg["n_avg__avg"]

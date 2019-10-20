@@ -1,4 +1,3 @@
-import qrcode
 from django.contrib.gis.db.models import PointField
 from django.contrib.gis.geos import Point
 from django.db import models
@@ -50,6 +49,11 @@ class Restaurant(models.Model):
     def clean(self):
         if self.lat and self.lng:
             self.geolocation = Point(self.lng, self.lat, srid=4326)
+
+    @property
+    def rating(self):
+        from apps.order.models import Rating
+        return Rating.get_average_restaurant_rating(restaurant=self.user)
 
 
 class RestaurantTable(models.Model):

@@ -22,7 +22,7 @@ from apps.order.types import (
     OrderType,
 )
 from .filters import OrderFilter, OrderItemFilter, OrderParticipantFilter
-from .models import OrderInvite, Order, OrderItem, OrderItemInvite, OrderParticipant
+from .models import OrderInvite, Order, OrderItem, OrderItemInvite, OrderParticipant, Rating
 from .serializers import (
     OrderInviteSerializer,
     OrderSerializer,
@@ -32,7 +32,7 @@ from .serializers import (
     BulkOrderItemInviteSerializer,
     ConfirmSerializer,
     OrderParticipantSerializer,
-)
+    OrderRatingSerializer)
 
 
 class OrderInviteViewSet(
@@ -318,3 +318,12 @@ class OrderParticipantViewSet(mixins.ListModelMixin, GenericViewSet):
     def get_queryset(self):
         order = Order.objects.filter(order_participants__user=self.request.user)
         return OrderParticipant.objects.filter(order__in=order)
+
+
+class OrderRatingViewSet(GenericViewSet, mixins.CreateModelMixin):
+    serializer_class = OrderRatingSerializer
+    queryset = Rating.objects.all()
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(user=user)

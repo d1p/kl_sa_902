@@ -8,7 +8,7 @@ from .views import (
     OrderInviteViewSet,
     OrderItemInviteViewSet,
     OrderParticipantViewSet,
-)
+    OrderRatingViewSet)
 
 router = DefaultRouter()
 
@@ -23,6 +23,8 @@ router.register("order-invite", OrderInviteViewSet, base_name="order-invite")
 
 
 router.register("order", OrderViewSet, base_name="order")
+router.register("order-rating", OrderRatingViewSet, base_name="order_rating")
+
 router.register("transaction", TransactionViewSet, base_name="transaction")
 router.register("invoice", InvoiceViewSet, base_name="invoice")
 

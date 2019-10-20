@@ -22,6 +22,7 @@ class PublicRestaurantSerializer(serializers.ModelSerializer):
         fields = (
             "user",
             "cover_picture",
+            "rating",
             "restaurant_type",
             "full_address",
             "lat",
@@ -41,6 +42,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         fields = (
             "user",
             "cover_picture",
+            "rating",
             "restaurant_type",
             "full_address",
             "lat",
@@ -48,7 +50,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
             "online",
             "restaurant_type_details",
         )
-        read_only_fields = ("lat", "lng", "restaurant_type_details")
+        read_only_fields = ("lat", "lng", "restaurant_type_details", "rating")
 
     def create(self, validated_data):
         user = register_basic_user("Restaurant", validated_data.pop("user", {}))

@@ -3,9 +3,9 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from .models import Action
 from apps.order.models import Order
-from .serializers import ActionSerializer, ConfirmSerializer, OrderRemainingTimeNotificationSerializer
+from .models import Action
+from .serializers import ActionSerializer, OrderRemainingTimeNotificationSerializer
 
 
 class ActionViewSet(ReadOnlyModelViewSet):
@@ -36,5 +36,4 @@ class OrderRemainingTimeNotificationView(CreateAPIView):
         for participant in order.order_participants.all():
             pass
 
-        #FoodItem.objects.filter(name="Burger").select_related(:)
-
+        # FoodItem.objects.filter(name="Burger").select_related(:)

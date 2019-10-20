@@ -19,6 +19,7 @@ from .models import (
     OrderParticipant,
     OrderItemAddOn,
     OrderItemAttributeMatrix,
+    Rating,
 )
 
 
@@ -355,3 +356,35 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class ConfirmSerializer(serializers.Serializer):
     sure = serializers.BooleanField(required=True)
+
+
+class OrderRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = (
+            "id",
+            "order",
+            "restaurant",
+            "user",
+            "food_item_rating",
+            "restaurant_rating",
+            "customer_service_rating",
+            "application_rating",
+            "created_at",
+        )
+        read_only_field = ("id", "restaurant", "user", "created_at")
+
+    def create(self, validated_data):
+        order: Order = validated_data.get("order")
+        if order.status != OrderStatusType.CHECKOUT:
+            raise ValidationError(
+                {"non_field_error": ["Order has not been checked out."]}
+            )
+        if (
+            order.order_participants.filter(user=validated_data.get("user")).exists()
+            is False
+        ):
+            raise PermissionDenied
+
+        instance = Rating.objects.create(**validated_data)
+        return instance

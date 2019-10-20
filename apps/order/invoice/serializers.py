@@ -28,11 +28,22 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
 
 class InvoiceSerializer(serializers.ModelSerializer):
     invoice_items = InvoiceItemSerializer(many=True, read_only=True)
+    restaurant_name = serializers.CharField(source="order.restaurant.name", read_only=True)
+    restaurant_address = serializers.CharField(
+        source="order.restaurant.Restaurant.full_address", read_only=True
+    )
 
     class Meta:
         model = Invoice
-        fields = ("id", "order", "invoice_items", "created_at")
-        read_only_fields = ("id", "created_at")
+        fields = (
+            "id",
+            "order",
+            "invoice_items",
+            "restaurant_name",
+            "restaurant_address",
+            "created_at",
+        )
+        read_only_fields = ("id", "created_at", )
 
     def create(self, validated_data):
         current_user: User = self.context["request"].user
