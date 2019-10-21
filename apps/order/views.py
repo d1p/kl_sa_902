@@ -194,6 +194,8 @@ class OrderViewSet(
         if order.order_participants.filter(user=request.user).exists() is True:
             OrderParticipant.objects.filter(order=order, user=request.user).delete()
             request.user.misc.last_order = None
+            request.user.misc.last_restaurant = None
+            request.user.misc.last_order_type = None
             request.user.misc.save()
             if order.order_participants.all().count() == 0:
                 order.status = OrderStatusType.CANCELED
