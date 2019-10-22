@@ -70,7 +70,7 @@ class TransactionVerifyViewSet(CreateAPIView):
         response_data = verify_transaction(
             serializer.validated_data.get("transaction_id")
         )
-
+        print(f"response from paytabs {response_data}")
         try:
             transaction = Transaction.objects.get(
                 pt_order_id=response_data.get("order_id")
