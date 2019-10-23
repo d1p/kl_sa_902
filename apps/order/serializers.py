@@ -392,3 +392,6 @@ class OrderRatingSerializer(serializers.ModelSerializer):
 
         instance = Rating.objects.create(**validated_data)
         return instance
+
+class OrderIsReadySerializer(serializers.Serializer):
+    time = serializers.IntegerField(required=True)

@@ -263,3 +263,25 @@ def send_update_order_items_confirmed_customer_notification(
             translation.deactivate()
     except:
         pass
+
+
+@app.task
+def send_update_order_items_confirmed_customer_notification(order_id: int, time: int):
+    try:
+        order = Order.objects.get(id=order_id)
+        notification_users = order.order_participants.all()
+        for participant_user in notification_users:
+            translation.activate(participant_user.user.locale)
+            title = _(f"{order.restaurant.name}")
+            body = _(f"Your order will be ready in {time} minutes.")
+            data = {
+                "notification_id": 13,
+                "notification_action": "ORDER_WILL_BE_READY",
+                "title": title,
+                "body": body,
+                "order_id": order_id,
+            }
+            send_push_notification(participant_user.user, title, body, data)
+            translation.deactivate()
+    except:
+        pass

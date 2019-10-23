@@ -22,7 +22,14 @@ from apps.order.types import (
     OrderType,
 )
 from .filters import OrderFilter, OrderItemFilter, OrderParticipantFilter
-from .models import OrderInvite, Order, OrderItem, OrderItemInvite, OrderParticipant, Rating
+from .models import (
+    OrderInvite,
+    Order,
+    OrderItem,
+    OrderItemInvite,
+    OrderParticipant,
+    Rating,
+)
 from .serializers import (
     OrderInviteSerializer,
     OrderSerializer,
@@ -32,7 +39,9 @@ from .serializers import (
     BulkOrderItemInviteSerializer,
     ConfirmSerializer,
     OrderParticipantSerializer,
-    OrderRatingSerializer)
+    OrderRatingSerializer,
+    OrderIsReadySerializer,
+)
 
 
 class OrderInviteViewSet(
@@ -161,6 +170,8 @@ class OrderViewSet(
     def get_serializer_class(self):
         if self.action == "leave":
             return ConfirmSerializer
+        elif self.action == "send_order_is_ready_notification":
+            return OrderIsReadySerializer
         return OrderSerializer
 
     filter_backends = [DjangoFilterBackend]
@@ -210,7 +221,7 @@ class OrderViewSet(
     @action(detail=True, methods=["POST"])
     def confirm_current_items(self, request, pk):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
 
         if serializer.validated_data.get("sure") is False:
             return Response({"status": "failed"}, status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -252,6 +263,18 @@ class OrderViewSet(
                 {"status": "failed", "message": "No new item to confirm in the order"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    @action(detail=True, methods=["POST"])
+    def send_order_is_ready_notification(self, request, pk):
+        order: Order = self.get_object()
+        if order.restaurant != request.user:
+            raise PermissionDenied
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        send_update_order_items_confirmed_customer_notification.delay(
+            order_id=order.id, time=serializer.validated_data.get("time")
+        )
+        return Response({"status": "success"}, status=status.HTTP_201_CREATED)
 
 
 class OrderItemViewSet(ModelViewSet):
