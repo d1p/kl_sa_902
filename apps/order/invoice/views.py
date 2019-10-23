@@ -6,8 +6,9 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.account.types import ProfileType
 from apps.order.invoice.types import PaymentStatus
-from apps.order.invoice.utils import verify_transaction, capture_transaction
-from apps.order.types import OrderType
+from apps.order.invoice.utils import verify_transaction
+from apps.order.models import Order
+from apps.order.types import OrderType, OrderStatusType
 from .models import Invoice, Transaction
 from .serializers import (
     InvoiceSerializer,
@@ -107,9 +108,16 @@ class TransactionVerifyViewSet(CreateAPIView):
             transaction.save()
             # Send necessary signals
             transaction.invoice_items.update(paid=True)
-            transaction.invoice_items.user.misc.last_order_in_checkout = False
-            transaction.invoice_items.user.misc.save()
+            for item in transaction.invoice_items.all():
+                item.user.misc.last_order_in_checkout = False
+                item.user.misc.save()
 
+            # Check if everything has been paid off.
+            order: Order = transaction.order
+            if order.invoice.invoice_items.filter(paid=False).exists() is False:
+                # Everything is paid!!
+                order.status = OrderStatusType.COMPLETED
+                order.save()
         else:
             transaction.transaction_status = PaymentStatus.FAILED
             transaction.save()
