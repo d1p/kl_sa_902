@@ -10,9 +10,8 @@ from .models import (
     OrderItemInvite,
 )
 
-admin.register(Order)
 
-
+@admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
         "id",
