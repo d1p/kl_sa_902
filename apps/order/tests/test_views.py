@@ -202,9 +202,7 @@ class TestOrder(TOrderFixtures):
         ), "Should remove item from order"
 
     def test_leave_order(self, customer, order, other_customer):
-        assert (
-            order.order_participants.all().count() > 0
-        ), "Should have participant"
+        assert order.order_participants.all().count() > 0, "Should have participant"
         factory = APIRequestFactory()
         request = factory.delete("/", data={"sure": True})
         force_authenticate(request, customer.user)
@@ -217,3 +215,37 @@ class TestOrder(TOrderFixtures):
             order.order_participants.all().count() == 0
         ), "Should have zero participant"
         assert order.status == OrderStatusType.CANCELED, "Order should be cancelled."
+
+    def test_restaurant_notifications(self, restaurant, order):
+        order.confirmed = True
+        order.save()
+        order.refresh_from_db()
+        factory = APIRequestFactory()
+        request = factory.post("/", data={"time": 10})
+        force_authenticate(request, restaurant.user)
+        response = OrderViewSet.as_view({"post": "send_order_is_ready_in_x_notification"})(
+            request, pk=order.id
+        )
+        assert (
+            response.status_code == status.HTTP_201_CREATED
+        ), "Should send notification"
+
+        request = factory.post("/", data={"sure": True})
+        force_authenticate(request, restaurant.user)
+        response = OrderViewSet.as_view({"post": "send_order_is_ready_notification"})(
+            request, pk=order.id
+        )
+
+        assert (
+            response.status_code == status.HTTP_201_CREATED
+        ), "Should send ready notification"
+
+        request = factory.post("/", data={"sure": True})
+        force_authenticate(request, restaurant.user)
+        response = OrderViewSet.as_view(
+            {"post": "send_order_is_delivered_notification"}
+        )(request, pk=order.id)
+
+        assert (
+            response.status_code == status.HTTP_201_CREATED
+        ), "Should send delivered notification"

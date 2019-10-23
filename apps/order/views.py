@@ -14,6 +14,9 @@ from apps.order.tasks import (
     send_new_order_items_confirmed_notification,
     send_update_order_items_confirmed_notification,
     send_update_order_items_confirmed_customer_notification,
+    send_order_will_be_ready_in_x_notification,
+    send_order_is_ready_notification,
+    send_order_is_delivered_notification,
 )
 from apps.order.types import (
     OrderInviteStatusType,
@@ -168,9 +171,9 @@ class OrderViewSet(
     """
 
     def get_serializer_class(self):
-        if self.action == "leave":
+        if self.action in ["leave", "send_order_is_ready_notification", "send_order_is_delivered_notification"]:
             return ConfirmSerializer
-        elif self.action == "send_order_is_ready_notification":
+        elif self.action == "send_order_is_ready_in_x_notification":
             return OrderIsReadySerializer
         return OrderSerializer
 
@@ -265,14 +268,36 @@ class OrderViewSet(
             )
 
     @action(detail=True, methods=["POST"])
+    def send_order_is_ready_in_x_notification(self, request, pk):
+        order: Order = self.get_object()
+        if order.restaurant != request.user:
+            raise PermissionDenied
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        send_order_will_be_ready_in_x_notification.delay(
+            order_id=order.id, time=serializer.validated_data.get("time")
+        )
+        return Response({"status": "success"}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["POST"])
     def send_order_is_ready_notification(self, request, pk):
         order: Order = self.get_object()
         if order.restaurant != request.user:
             raise PermissionDenied
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        send_update_order_items_confirmed_customer_notification.delay(
-            order_id=order.id, time=serializer.validated_data.get("time")
+        send_order_is_ready_notification.delay(order_id=order.id)
+        return Response({"status": "success"}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["POST"])
+    def send_order_is_delivered_notification(self, request, pk):
+        order: Order = self.get_object()
+        if order.restaurant != request.user:
+            raise PermissionDenied
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        send_order_is_delivered_notification.delay(
+            order_id=order.id
         )
         return Response({"status": "success"}, status=status.HTTP_201_CREATED)
 
