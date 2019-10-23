@@ -36,7 +36,7 @@ class InvoiceItem(models.Model):
         Invoice, on_delete=models.CASCADE, related_name="invoice_items"
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    amount = models.DecimalField(decimal_places=2, max_digits=9)
+    amount = models.DecimalField(decimal_places=3, max_digits=9)
     paid = models.BooleanField(default=False, db_index=True)
 
     @property
@@ -64,7 +64,7 @@ class Transaction(models.Model):
         max_length=12, unique=True, null=True, blank=True
     )
     currency = models.CharField(max_length=3, default="SAR")
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=3)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

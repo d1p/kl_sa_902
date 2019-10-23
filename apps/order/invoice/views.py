@@ -6,7 +6,8 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.account.types import ProfileType
 from apps.order.invoice.types import PaymentStatus
-from apps.order.invoice.utils import verify_transaction
+from apps.order.invoice.utils import verify_transaction, capture_transaction
+from apps.order.types import OrderType
 from .models import Invoice, Transaction
 from .serializers import (
     InvoiceSerializer,
@@ -85,17 +86,19 @@ class TransactionVerifyViewSet(CreateAPIView):
             )
 
         transaction.transaction_id = response_data.get("transaction_id")
-
-        if response_data.get("response_code") == "100":
-            if str(transaction.amount) != response_data.get(
-                "amount"
-            ) or transaction.currency != response_data.get("currency"):
-                transaction.transaction_status = PaymentStatus.INVALID
-                transaction.save()
-                return Response(
-                    {"transaction_status": transaction.transaction_status},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        if transaction.order.order_type == OrderType.IN_HOUSE:
+            if response_data.get("response_code") == "100":
+                if str(transaction.amount) != response_data.get(
+                    "amount"
+                ) or transaction.currency != response_data.get("currency"):
+                    transaction.transaction_status = PaymentStatus.INVALID
+                    transaction.save()
+                    return Response(
+                        {"transaction_status": transaction.transaction_status},
+                        status=status.HTTP_200_OK,
+                    )
+            else:
+                pass
 
             transaction.transaction_status = PaymentStatus.SUCCESSFUL
             transaction.save()

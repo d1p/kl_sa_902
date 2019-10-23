@@ -165,7 +165,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         child=serializers.IntegerField(), required=False
     )
     food_item_price = serializers.DecimalField(
-        source="food_item.price", read_only=True, decimal_places=2, max_digits=9
+        source="food_item.price", read_only=True, decimal_places=3, max_digits=9
     )
     food_item_name = serializers.CharField(source="food_item.name", read_only=True)
     food_item_calorie = serializers.IntegerField(

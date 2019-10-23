@@ -27,7 +27,7 @@ class FoodItem(models.Model):
         upload_to=RandomFileName("user/restaurant/food/"),
         default="user/restaurant/food/default.png",
     )
-    price = models.DecimalField(max_digits=9, decimal_places=2)
+    price = models.DecimalField(max_digits=9, decimal_places=3)
     calorie = models.IntegerField()
     is_active = models.BooleanField(default=False, db_index=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
@@ -76,7 +76,7 @@ class FoodAttributeMatrix(models.Model):
 class FoodAddOn(models.Model):
     food = models.ForeignKey(FoodItem, on_delete=models.CASCADE, related_name="addons")
     name = models.CharField(max_length=144, db_index=True)
-    price = models.DecimalField(max_digits=9, decimal_places=2)
+    price = models.DecimalField(max_digits=9, decimal_places=3)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
