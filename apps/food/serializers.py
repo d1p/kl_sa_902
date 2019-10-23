@@ -37,9 +37,11 @@ class FoodAddOnSerializer(serializers.ModelSerializer):
 
 
 class FoodAttributeMatrixSerializer(serializers.ModelSerializer):
+    attribute_name = serializers.CharField(source="attribute.name", read_only=True)
+
     class Meta:
         model = FoodAttributeMatrix
-        fields = ("id", "name", "attribute")
+        fields = ("id", "name", "attribute", "attribute_name")
         read_only_fields = ("id",)
 
     def create(self, validated_data):
