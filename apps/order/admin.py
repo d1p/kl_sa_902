@@ -10,7 +10,23 @@ from .models import (
     OrderItemInvite,
 )
 
-admin.site.register(Order)
+admin.register(Order)
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "status",
+        "order_type",
+        "restaurant",
+        "created_by",
+        "confirmed",
+        "table",
+        "created_at",
+    )
+    list_filter = ("status", "order_type", "confirmed")
+    search_fields = ("id",)
+
 
 admin.register(OrderItemAddOn)
 
