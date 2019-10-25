@@ -147,14 +147,14 @@ class TransactionVerifyViewSet(CreateAPIView):
                         order.save()
                         # Collect money
                         transactions = Transaction.objects.filter(
-                            order=order, status=PaymentStatus.AUTHORIZED
+                            order=order, transaction_status=PaymentStatus.AUTHORIZED
                         )
                         for t in transactions:
                             result = capture_transaction(
                                 t.pt_transaction_id, amount=t.amount
                             )
                             print(result)
-                            t.status = PaymentStatus.SUCCESSFUL
+                            t.transaction_status = PaymentStatus.SUCCESSFUL
                             t.save()
                         order.confirmed = True
                         order.save()
