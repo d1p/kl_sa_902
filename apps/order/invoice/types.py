@@ -6,10 +6,12 @@ class PaymentStatus:
     SUCCESSFUL = 1
     FAILED = 2
     INVALID = 3
+    AUTHORIZED = 5
 
     CHOICES = (
         (PENDING, _("Pending")),
         (SUCCESSFUL, _("Successful")),
         (FAILED, _("Failed")),
         (INVALID, _("Invalid")),
+        (AUTHORIZED, _("Authorized"))
     )

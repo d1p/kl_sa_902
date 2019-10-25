@@ -6,8 +6,9 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.account.types import ProfileType
 from apps.order.invoice.types import PaymentStatus
-from apps.order.invoice.utils import verify_transaction
+from apps.order.invoice.utils import verify_transaction, capture_transaction
 from apps.order.models import Order
+from apps.order.tasks import send_new_order_items_confirmed_notification
 from apps.order.types import OrderType, OrderStatusType
 from .models import Invoice, Transaction
 from .serializers import (
@@ -87,11 +88,9 @@ class TransactionVerifyViewSet(CreateAPIView):
             )
 
         transaction.transaction_id = response_data.get("transaction_id")
+
         if transaction.order.order_type == OrderType.IN_HOUSE:
             if response_data.get("response_code") == "100":
-                print(f"{str(transaction.amount)} != {response_data.get('amount')}")
-                print(f"{str(transaction.currency)} != {response_data.get('currency')}")
-
                 if str(transaction.amount) != response_data.get(
                     "amount"
                 ) or transaction.currency != response_data.get("currency"):
@@ -101,26 +100,73 @@ class TransactionVerifyViewSet(CreateAPIView):
                         {"transaction_status": transaction.transaction_status},
                         status=status.HTTP_200_OK,
                     )
-            else:
-                pass
+                else:
+                    # Post processing for inhouse orders
+                    transaction.transaction_status = PaymentStatus.SUCCESSFUL
+                    transaction.save()
+                    # Send necessary signals
+                    transaction.invoice_items.update(paid=True)
+                    for item in transaction.invoice_items.all():
+                        item.user.misc.last_order_in_checkout = False
+                        item.user.misc.save()
 
-            transaction.transaction_status = PaymentStatus.SUCCESSFUL
-            transaction.save()
-            # Send necessary signals
-            transaction.invoice_items.update(paid=True)
-            for item in transaction.invoice_items.all():
-                item.user.misc.last_order_in_checkout = False
-                item.user.misc.save()
-
-            # Check if everything has been paid off.
-            order: Order = transaction.order
-            if order.invoice.invoice_items.filter(paid=False).exists() is False:
-                # Everything is paid!!
-                order.status = OrderStatusType.COMPLETED
-                order.save()
+                    # Check if everything has been paid off.
+                    order: Order = transaction.order
+                    if order.invoice.invoice_items.filter(paid=False).exists() is False:
+                        # Everything is paid!!
+                        order.status = OrderStatusType.COMPLETED
+                        order.save()
+                    return Response(
+                        {"transaction_status": transaction.transaction_status},
+                        status=status.HTTP_200_OK,
+                    )
         else:
-            transaction.transaction_status = PaymentStatus.FAILED
-            transaction.save()
+            if response_data.get("response_code") == "111":
+                if str(transaction.amount) != response_data.get(
+                    "amount"
+                ) or transaction.currency != response_data.get("currency"):
+                    transaction.transaction_status = PaymentStatus.INVALID
+                    transaction.save()
+                    return Response(
+                        {"transaction_status": transaction.transaction_status},
+                        status=status.HTTP_200_OK,
+                    )
+                else:
+                    # Post processing for pickup orders
+                    transaction.transaction_status = PaymentStatus.AUTHORIZED
+                    transaction.save()
+                    transaction.invoice_items.update(paid=True)
+                    for item in transaction.invoice_items.all():
+                        item.user.misc.last_order_in_checkout = False
+                        item.user.misc.save()
+                    order: Order = transaction.order
+
+                    if order.invoice.invoice_items.filter(paid=False).exists() is False:
+                        # Everything is paid!!
+                        order.status = OrderStatusType.CHECKOUT
+                        order.save()
+                        # Collect money
+                        transactions = Transaction.objects.filter(
+                            order=order, status=PaymentStatus.AUTHORIZED
+                        )
+                        for t in transactions:
+                            result = capture_transaction(
+                                t.pt_transaction_id, amount=t.amount
+                            )
+                            print(result)
+                            t.status = PaymentStatus.SUCCESSFUL
+                            t.save()
+                        order.confirmed = True
+                        order.save()
+                        send_new_order_items_confirmed_notification.delay(
+                            order_id=order.id
+                        )
+                    return Response(
+                        {"transaction_status": transaction.transaction_status},
+                        status=status.HTTP_200_OK,
+                    )
+        transaction.transaction_status = PaymentStatus.FAILED
+        transaction.save()
 
         return Response(
             {"transaction_status": transaction.transaction_status},
