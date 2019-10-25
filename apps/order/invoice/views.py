@@ -153,7 +153,7 @@ class TransactionVerifyViewSet(CreateAPIView):
                             result = capture_transaction(
                                 t.pt_transaction_id, amount=t.amount
                             )
-                            print(result)
+                            print(f"Transaction capture result: {result}")
                             t.transaction_status = PaymentStatus.SUCCESSFUL
                             t.save()
                         order.confirmed = True

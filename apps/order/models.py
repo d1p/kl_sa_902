@@ -255,11 +255,17 @@ class Rating(models.Model):
 
     @staticmethod
     def get_average_restaurant_rating(restaurant: User):
-        ratings = Rating.objects.filter(restaurant=restaurant)
-        rating_avg = ratings.annotate(
-            n_avg=F("food_item_rating")
-            + F("restaurant_rating")
-            + F("customer_service_rating")
-            + F("application_rating")
-        ).annocate(Avg("n_avg"))
-        return rating_avg["n_avg__avg"]
+        rating = (
+            Rating.objects.filter(restaurant=restaurant)
+            .annotate(
+                n_rating=F("food_item_rating")
+                + F("restaurant_rating")
+                + F("customer_service_rating")
+                + F("application_rating")
+            )
+            .aggregate(avg_rating=Avg("n_rating"))
+        )
+        try:
+            return Decimal(rating["avg_rating"] / 4)
+        except (TypeError, ZeroDivisionError):
+            return Decimal(0.00)

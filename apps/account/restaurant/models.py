@@ -50,10 +50,10 @@ class Restaurant(models.Model):
         if self.lat and self.lng:
             self.geolocation = Point(self.lng, self.lat, srid=4326)
 
-    @property
     def rating(self):
         from apps.order.models import Rating
-        return Rating.get_average_restaurant_rating(restaurant=self.user)
+        rate = Rating.get_average_restaurant_rating(restaurant=self.user)
+        return rate
 
 
 class RestaurantTable(models.Model):

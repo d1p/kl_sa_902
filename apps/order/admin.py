@@ -8,7 +8,7 @@ from .models import (
     OrderItemAddOn,
     OrderItemAttributeMatrix,
     OrderItemInvite,
-)
+    Rating)
 
 
 @admin.register(Order)
@@ -89,3 +89,5 @@ class OrderItemAdmin(admin.ModelAdmin):
 
 admin.site.register(OrderItemAttributeMatrix)
 admin.site.register(OrderItemInvite)
+
+admin.site.register(Rating)

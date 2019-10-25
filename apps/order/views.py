@@ -171,7 +171,11 @@ class OrderViewSet(
     """
 
     def get_serializer_class(self):
-        if self.action in ["leave", "send_order_is_ready_notification", "send_order_is_delivered_notification"]:
+        if self.action in [
+            "leave",
+            "send_order_is_ready_notification",
+            "send_order_is_delivered_notification",
+        ]:
             return ConfirmSerializer
         elif self.action == "send_order_is_ready_in_x_notification":
             return OrderIsReadySerializer
@@ -296,9 +300,10 @@ class OrderViewSet(
             raise PermissionDenied
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        send_order_is_delivered_notification.delay(
-            order_id=order.id
-        )
+        send_order_is_delivered_notification.delay(order_id=order.id)
+        if order.order_type == OrderType.PICK_UP:
+            order.status = OrderStatusType.COMPLETED
+            order.save()
         return Response({"status": "success"}, status=status.HTTP_201_CREATED)
 
 
