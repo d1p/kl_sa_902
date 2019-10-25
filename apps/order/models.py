@@ -33,7 +33,7 @@ class Order(models.Model):
     )
 
     table = models.ForeignKey(
-        RestaurantTable, on_delete=models.SET_NULL, db_index=True, null=True
+        RestaurantTable, on_delete=models.SET_NULL, db_index=True, null=True, blank=True
     )
 
     created_by = models.ForeignKey(
