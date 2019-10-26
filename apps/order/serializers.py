@@ -342,6 +342,7 @@ class OrderSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "id",
+            "status",
             "created_by",
             "created_at",
             "order_item_set",
