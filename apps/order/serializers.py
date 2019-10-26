@@ -336,6 +336,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "order_item_set",
             "order_participants",
             "confirmed",
+            "status",
             "created_by",
             "created_at",
         )
