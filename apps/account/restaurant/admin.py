@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.account.models import User
-from .models import Category, Restaurant, RestaurantTable
+from .models import Category, Restaurant, RestaurantTable, Payable
 
 
 class OnlyRestaurantInUserAdmin(admin.ModelAdmin):
@@ -46,6 +46,50 @@ class RestaurantAdmin(admin.ModelAdmin):
 
     def phone_number(self, obj):
         return obj.user.phone_number
+
+
+@admin.register(Payable)
+class PayableAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "phone_number",
+        "get_inhouse_earning",
+        "get_pickup_earning",
+        "get_total_earning",
+    )
+
+    date_hierarchy = "user__created_at"
+    search_fields = ("user__email", "user__phone_number")
+
+    def name(self, obj):
+        return obj.user.name
+
+    def phone_number(self, obj):
+        return obj.user.phone_number
+
+    def get_inhouse_earning(self, obj):
+        return obj.get_inhouse_earning()
+
+    get_inhouse_earning.short_description = "Inhouse earning"
+
+    def get_pickup_earning(self, obj):
+        return obj.get_pickup_earning()
+
+    get_inhouse_earning.short_description = "Pickup earning"
+
+    def get_total_earning(self, obj):
+        return obj.get_total_earning()
+
+    get_inhouse_earning.short_description = "Total earning"
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(RestaurantTable)
