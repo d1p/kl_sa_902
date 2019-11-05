@@ -108,8 +108,8 @@ class Restaurant(models.Model):
 class Payable(Restaurant):
     class Meta:
         proxy = True
-        verbose_name = _("Restaurant Payable")
-        verbose_name_plural = _("Restaurant Parable's")
+        verbose_name = _("Restaurant Commission and Earning")
+        verbose_name_plural = _("Restaurant Commissions and Earnings")
 
 
 class RestaurantTable(models.Model):
