@@ -75,12 +75,12 @@ class PayableAdmin(admin.ModelAdmin):
     def get_pickup_earning(self, obj):
         return obj.get_pickup_earning()
 
-    get_inhouse_earning.short_description = "Pickup earning"
+    get_pickup_earning.short_description = "Pickup earning"
 
     def get_total_earning(self, obj):
         return obj.get_total_earning()
 
-    get_inhouse_earning.short_description = "Total earning"
+    get_total_earning.short_description = "Total earning"
 
     def has_add_permission(self, request):
         return False

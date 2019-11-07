@@ -1,5 +1,6 @@
 from random import randrange
 
+import requests
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
@@ -8,9 +9,6 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from rest_framework.exceptions import ValidationError
-from twilio.base.exceptions import TwilioRestException
-from twilio.rest import Client
 
 from utils.file import RandomFileName
 from .managers import CustomUserManager
@@ -86,13 +84,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         """ Send a sms to the user """
         if settings.UNIT_TESTING:
             pass
-        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        try:
-            client.messages.create(
-                to=self.phone_number, from_=settings.TWILIO_FROM_NUMBER, body=body
-            )
-        except TwilioRestException:
-            raise ValidationError({"non_field_errors": ["Invalid phone number"]})
+        r = requests.get(
+            f"http://www.jawalbsms.ws/api.php/sendsms?user=kol&pass=20190710sSKol&to={self.phone_number}&message={body}&sender=kol"
+        )
+        if r.status_code != 200:
+            print(f"SMS sending failed: {r.content}")
 
     @property
     def profile(self) -> object:
