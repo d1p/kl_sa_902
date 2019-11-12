@@ -101,6 +101,9 @@ class FoodItemSerializer(serializers.ModelSerializer):
     addons = FoodAddOnSerializer(many=True, read_only=True)
     attributes = FoodAttributeSerializer(many=True, read_only=True)
 
+    addons_display = FoodAddOnSerializer(many=True, read_only=True)
+    attributes_display = FoodAttributeSerializer(many=True, read_only=True)
+
     class Meta:
         model = FoodItem
         fields = (
@@ -115,6 +118,8 @@ class FoodItemSerializer(serializers.ModelSerializer):
             "is_active",
             "addons",
             "attributes",
+            "addons_display",
+            "attributes_display",
         )
 
         read_only_fields = ("id", "user")

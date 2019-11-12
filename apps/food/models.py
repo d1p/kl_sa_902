@@ -39,8 +39,16 @@ class FoodItem(models.Model):
     def __str__(self):
         return f"{self.name} by {self.user.name}"
 
+    def addons_display(self):
+        return FoodAddOn.objects.filter(food=self, is_deleted=False)
+
+    def attributes_display(self):
+        return FoodAttribute.objects.filter(food=self, is_deleted=False)
+
     class Meta:
         ordering = ("-created_at",)
+
+
 
 
 class FoodAttribute(models.Model):
