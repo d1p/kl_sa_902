@@ -26,6 +26,8 @@ class FoodItem(models.Model):
     picture = models.ImageField(
         upload_to=RandomFileName("user/restaurant/food/"),
         default="user/restaurant/food/default.png",
+        null=True,
+        blank=True,
     )
     price = models.DecimalField(max_digits=9, decimal_places=3)
     calorie = models.IntegerField()
