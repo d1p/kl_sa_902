@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from apps.account.models import User
 from .models import Category, Restaurant, RestaurantTable, Payable
@@ -34,9 +36,21 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ("name", "email_address", "phone_number", "is_public")
+    list_display = (
+        "name",
+        "view_food_items",
+        "email_address",
+        "phone_number",
+        "is_public",
+    )
     search_fields = ("user__name", "user__email_address", "user__phone_number")
-    list_filter = ("is_public",)
+    list_filter = ("is_public", "user__name")
+
+    def view_food_items(self, obj):
+        return mark_safe(f"<a href='/admin/food/fooditem/?q={obj.user.id}'>View</a>")
+
+    view_food_items.short_description = _("Food Items")
+    view_food_items.allow_tags = True
 
     def name(self, obj):
         return obj.user.name

@@ -52,7 +52,7 @@ class FoodItemAdmin(NestedModelAdmin, OnlyRestaurantInUserAdmin):
         "created_at",
     )
     list_filter = ("category", "created_at", "price")
-    search_fields = ("user", "name")
+    search_fields = ("user__id", "name")
     date_hierarchy = "created_at"
     inlines = [FoodAttributeInline, FoodAddOnInline]
 
