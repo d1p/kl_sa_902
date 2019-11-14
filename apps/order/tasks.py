@@ -23,7 +23,7 @@ def send_order_invite_notification(from_user: int, to_user: int, invite_id: int)
             "body": body,
             "from_user_id": from_user,
             "from_user_name": f_user.name,
-            "from_user_profile_picture": f_user.profile_picture.url,
+            "from_user_profile_picture": f_user.profile_picture.url if f_user.profile_picture else None,
             "to_user": to_user,
             "invite_id": invite_id,
             "notification_id": 1,

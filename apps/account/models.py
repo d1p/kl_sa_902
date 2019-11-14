@@ -1,5 +1,3 @@
-from random import randrange
-
 import requests
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -9,6 +7,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from random import randrange
 
 from utils.file import RandomFileName
 from .managers import CustomUserManager
@@ -84,11 +83,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         """ Send a sms to the user """
         if settings.UNIT_TESTING:
             return
-        r = requests.get(
-            f"http://www.jawalbsms.ws/api.php/sendsms?user=kol&pass=20190710sSKol&to={self.phone_number}&message={body}&sender=kol"
-        )
-        if r.status_code != 200:
-            print(f"SMS sending failed: {r.content}")
+        x = f"http://www.jawalbsms.ws/api.php/sendsms?user=kol&pass=20190710sSKol&to={self.phone_number}&message={body}&sender=kol"
+        r = requests.get(x)
+
+        print(f"Request: {x}\nResponse: {r.content}")
 
     @property
     def profile(self) -> object:
