@@ -21,6 +21,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)
+UNIT_TESTING = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -45,6 +46,7 @@ THIRD_PARTY_APPS = [
     "fcm_django",
     "drf_yasg",
     "nested_admin",
+    "django_filters",
 ]
 
 CORE_APPS = [
