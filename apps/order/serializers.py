@@ -109,7 +109,14 @@ class OrderItemInviteSerializer(serializers.ModelSerializer):
         Update should only be used by the invited user to accept or reject the request.
         """
         current_user = self.context["request"].user
-        if instance.invited_user != current_user or instance.status != 0:
+        if (
+            instance.invited_user != current_user
+            or instance.status != 0
+            or instance.order_item.order.order_participants.filter(
+                user=current_user
+            ).exists()
+            is False
+        ):
             raise PermissionDenied
 
         if validated_data.get("status") == 1:

@@ -212,6 +212,7 @@ class OrderViewSet(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = self.get_object()
+
         if order.order_participants.filter(user=request.user).exists() is True:
             OrderParticipant.objects.filter(order=order, user=request.user).delete()
             request.user.misc.last_order = None
