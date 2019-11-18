@@ -117,6 +117,7 @@ def send_order_left_push_notification(order_id: int, from_user: int):
                 "left_user_name": left_user,
                 "order_id": order_id,
             }
+            print(data)
             send_push_notification(participant_user.user, title, body, data)
             translation.deactivate()
     except:
@@ -195,6 +196,7 @@ def send_order_item_invitation_accept_notification(
                 "join_user_name": joined_user,
                 "order_id": order_id,
             }
+            print(data)
             send_push_notification(participant_user.user, title, body, data)
             translation.deactivate()
     except:
