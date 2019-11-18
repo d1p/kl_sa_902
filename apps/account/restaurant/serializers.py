@@ -48,9 +48,16 @@ class RestaurantSerializer(serializers.ModelSerializer):
             "lat",
             "lng",
             "online",
+            "tax_percentage",
             "restaurant_type_details",
         )
-        read_only_fields = ("lat", "lng", "restaurant_type_details", "rating")
+        read_only_fields = (
+            "lat",
+            "lng",
+            "tax_percentage",
+            "restaurant_type_details",
+            "rating",
+        )
 
     def create(self, validated_data):
         user = register_basic_user("Restaurant", validated_data.pop("user", {}))

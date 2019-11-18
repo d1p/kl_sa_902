@@ -48,12 +48,16 @@ class Restaurant(models.Model):
 
     is_public = models.BooleanField(default=False, db_index=True)
 
-    # Parable's
+    # payables
     pickup_order_cut = models.DecimalField(
         max_digits=6, decimal_places=3, default=100.00
     )
     inhouse_order_cut = models.DecimalField(
         max_digits=6, decimal_places=3, default=100.00
+    )
+
+    tax_percentage = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0.00
     )
 
     def __str__(self):

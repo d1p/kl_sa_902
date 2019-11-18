@@ -7,6 +7,7 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from apps.account.models import User
 from apps.account.types import ProfileType
+from apps.order.invoice.models import InvoiceItem
 from apps.order.tasks import (
     send_order_invite_notification,
     send_order_left_push_notification,
@@ -337,8 +338,17 @@ class OrderViewSet(
             )
             if ordered_items.count() > 0:
                 has_paid = False
-                if order.status in [OrderStatusType.CHECKOUT, OrderStatusType.COMPLETED]:
-                    has_paid = False
+                if order.status in [
+                    OrderStatusType.CHECKOUT,
+                    OrderStatusType.COMPLETED,
+                ]:
+                    try:
+                        invoice_item = InvoiceItem.objects.get(
+                            order=order, user=participant.user
+                        )
+                        has_paid = invoice_item.paid
+                    except InvoiceItem.DoesNotExist:
+                        has_paid = False
 
                 response.append(
                     {
@@ -350,7 +360,7 @@ class OrderViewSet(
                             else None,
                         },
                         "amount": order.get_total_of_user(participant.user),
-                        "has_paid": has_paid
+                        "has_paid": has_paid,
                     }
                 )
         return Response(response, status=status.HTTP_200_OK)
