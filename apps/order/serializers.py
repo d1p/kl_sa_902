@@ -368,7 +368,6 @@ class OrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         order = Order.objects.create(**validated_data)
         order.order_participants.create(user=order.created_by)
-        order.order_participants.save()
         order.save()
         order.created_by.misc.last_order = order
         order.created_by.misc.last_order_in_checkout = False
