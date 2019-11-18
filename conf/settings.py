@@ -172,7 +172,7 @@ else:
 FCM_DJANGO_SETTINGS = {
     "FCM_SERVER_KEY": env.str("FCM_SERVER_KEY", default=""),
     "ONE_DEVICE_PER_USER": False,
-    "DELETE_INACTIVE_DEVICES": False,
+    "DELETE_INACTIVE_DEVICES": True,
 }
 
 # JWT

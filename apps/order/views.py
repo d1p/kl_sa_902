@@ -308,7 +308,37 @@ class OrderViewSet(
 
     @action(detail=True, methods=["GET"])
     def payment_info(self, request, pk):
-        pass
+        order: Order = self.get_object()
+        if order.restaurant != request.user:
+            raise PermissionDenied
+        response = []
+        participants = order.order_participants.all()
+        for participant in participants:
+            ordered_items = OrderItem.objects.filter(
+                order=order,
+                shared_with=participant.user,
+                status=OrderItemStatusType.CONFIRMED,
+            )
+            if ordered_items.count() > 0:
+                has_paid = False
+                if order.status in [OrderStatusType.CHECKOUT, OrderStatusType.COMPLETED]:
+                    has_paid = False
+
+                response.append(
+                    {
+                        "user": {
+                            "id": participant.user.id,
+                            "name": participant.user.name,
+                            "profile_picture": participant.user.profile_picture.url
+                            if participant.user.profile_picture
+                            else None,
+                        },
+                        "amount": order.get_total_of_user(participant.user),
+                        "has_paid": has_paid
+                    }
+                )
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class OrderItemViewSet(ModelViewSet):
     """
