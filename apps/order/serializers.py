@@ -391,17 +391,21 @@ class OrderRatingSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         order: Order = validated_data.get("order")
+        user: User = validated_data.get("user")
         if order.status not in [OrderStatusType.CHECKOUT, OrderStatusType.COMPLETED]:
             raise ValidationError(
                 {"non_field_error": ["Order has not been checked out or completed."]}
             )
-        if (
-            order.order_participants.filter(user=validated_data.get("user")).exists()
-            is False
-        ):
+        if order.order_participants.filter(user=user).exists() is False:
             raise PermissionDenied
 
         instance = Rating.objects.create(**validated_data)
+
+        user.misc.last_order = None
+        user.misc.last_order_in_checkout = None
+        user.misc.last_order_type = None
+        user.misc.last_restaurant = None
+
         return instance
 
 
