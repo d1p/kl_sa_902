@@ -1,7 +1,13 @@
 from django.contrib import admin
 
 from apps.account.models import User
-from .models import Customer
+from .models import Customer, Misc
+
+
+@admin.register(Misc)
+class MiscAdmin(admin.ModelAdmin):
+    list_display = ("user",)
+    search_fields = ("user",)
 
 
 class CustomerInline(admin.TabularInline):
