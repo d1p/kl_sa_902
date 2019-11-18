@@ -49,8 +49,6 @@ class FoodItem(models.Model):
         ordering = ("-created_at",)
 
 
-
-
 class FoodAttribute(models.Model):
     name = models.CharField(max_length=144)
     food = models.ForeignKey(
@@ -65,6 +63,9 @@ class FoodAttribute(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+    def attribute_matrix_display(self):
+        return FoodAttributeMatrix.objects.filter(attribute=self, is_deleted=False)
 
 
 class FoodAttributeMatrix(models.Model):

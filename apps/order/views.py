@@ -306,6 +306,9 @@ class OrderViewSet(
             order.save()
         return Response({"status": "success"}, status=status.HTTP_201_CREATED)
 
+    @action(detail=True, methods=["GET"])
+    def payment_info(self, request, pk):
+        pass
 
 class OrderItemViewSet(ModelViewSet):
     """

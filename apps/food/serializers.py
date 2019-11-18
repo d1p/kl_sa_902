@@ -63,7 +63,9 @@ class FoodAttributeMatrixSerializer(serializers.ModelSerializer):
 
 
 class FoodAttributeSerializer(serializers.ModelSerializer):
-    attribute_matrix = FoodAttributeMatrixSerializer(many=True, read_only=True)
+    attribute_matrix = FoodAttributeMatrixSerializer(
+        many=True, read_only=True, source="attribute_matrix_display"
+    )
 
     class Meta:
         model = FoodAttribute
