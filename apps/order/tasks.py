@@ -23,7 +23,9 @@ def send_order_invite_notification(from_user: int, to_user: int, invite_id: int)
             "body": body,
             "from_user_id": from_user,
             "from_user_name": f_user.name,
-            "from_user_profile_picture": f_user.profile_picture.url if f_user.profile_picture else None,
+            "from_user_profile_picture": f_user.profile_picture.url
+            if f_user.profile_picture
+            else None,
             "to_user": to_user,
             "invite_id": invite_id,
             "notification_id": 1,
@@ -117,7 +119,7 @@ def send_order_left_push_notification(order_id: int, from_user: int):
                 "left_user_name": left_user,
                 "order_id": order_id,
             }
-            print(data)
+            print(f"{participant_user}: {data}")
             send_push_notification(participant_user.user, title, body, data)
             translation.deactivate()
     except:
@@ -196,7 +198,7 @@ def send_order_item_invitation_accept_notification(
                 "join_user_name": joined_user,
                 "order_id": order_id,
             }
-            print(data)
+            print(f"{participant_user}: {data}")
             send_push_notification(participant_user.user, title, body, data)
             translation.deactivate()
     except:
