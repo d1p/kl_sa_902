@@ -308,6 +308,22 @@ class OrderViewSet(
 
     @action(detail=True, methods=["GET"])
     def payment_info(self, request, pk):
+        """
+        returning data type example:
+        ```json
+        [
+            {
+                    "user": {
+                        "id": 123,
+                        "name": "john Smith",
+                        "profile_picture": "https://example.com/user.jpg,
+                    },
+                    "amount": 34.345,
+                    "has_paid": true
+            }
+        ]
+        ```
+        """
         order: Order = self.get_object()
         if order.restaurant != request.user:
             raise PermissionDenied
