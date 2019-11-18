@@ -193,7 +193,9 @@ class OrderViewSet(
                 order_participants__user=current_user
             ).distinct("id")
         elif current_user.profile_type == ProfileType.RESTAURANT:
-            queryset = Order.objects.filter(restaurant=current_user, confirmed=True)
+            queryset = Order.objects.filter(
+                restaurant=current_user, confirmed=True
+            ).exclude(status=OrderStatusType.CANCELED)
         else:
             queryset = Order.objects.all()
 
