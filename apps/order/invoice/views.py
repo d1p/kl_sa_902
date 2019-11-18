@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
@@ -5,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from apps.account.types import ProfileType
+from apps.order.invoice.filters import InvoiceFilter
 from apps.order.invoice.types import PaymentStatus
 from apps.order.invoice.utils import verify_transaction, capture_transaction
 from apps.order.models import Order
@@ -26,6 +28,8 @@ class InvoiceViewSet(
 ):
     serializer_class = InvoiceSerializer
     lookup_field = "order"
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = InvoiceFilter
 
     def get_queryset(self):
         user = self.request.user
