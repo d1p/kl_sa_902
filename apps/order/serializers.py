@@ -172,6 +172,11 @@ class OrderItemSerializer(serializers.ModelSerializer):
         source="food_item.calorie", read_only=True
     )
 
+    shared_with = serializers.SerializerMethodField()
+
+    def get_shared_with(self, obj: OrderItem):
+        return obj.shared_with.all().exclude(id=self.context["request"].user.id)
+
     class Meta:
         model = OrderItem
         fields = (

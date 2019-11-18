@@ -180,7 +180,10 @@ class OrderItem(models.Model):
 
     def shared_price(self) -> Decimal:
         total = self.total_price()
-        return total / Decimal(self.shared_with.count())
+        try:
+            return total / Decimal(self.shared_with.count())
+        except ZeroDivisionError:
+            return total
 
 
 class OrderItemAddOn(models.Model):
