@@ -95,6 +95,12 @@ class Order(models.Model):
             total += i.shared_price()
         return Decimal(total)
 
+    def get_total_tax_of_user(self, user:User) -> Decimal:
+        """
+        Get total tax by each user
+        """
+        total = self.get_total_of_user(user) * Decimal(self.order.restaurant.restaurant.tax_percentage)
+        return Decimal(total)
 
 class OrderParticipant(models.Model):
     order = models.ForeignKey(
@@ -185,6 +191,13 @@ class OrderItem(models.Model):
         except ZeroDivisionError:
             return total
 
+    def tax_amount(self) -> Decimal:
+        percentage = self.order.restaurant.restaurant.tax_percentage
+        amount = Decimal(0)
+        if percentage > 0:
+            shared_price = self.shared_price()
+            amount = Decimal((percentage * shared_price) / Decimal(100))
+        return amount
 
 class OrderItemAddOn(models.Model):
     food_add_on = models.ForeignKey(FoodAddOn, on_delete=models.SET_NULL, null=True)

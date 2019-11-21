@@ -1,4 +1,5 @@
 import string
+from decimal import Decimal
 from secrets import choice
 
 from django.db import models
@@ -24,10 +25,15 @@ class Invoice(models.Model):
                 status=OrderItemStatusType.CONFIRMED,
             )
             if ordered_items.count() > 0:
+                price = order.get_total_of_user(participant.user)
+                tax = order.get_total_tax_of_user(participant.user)
+                amount = price + tax
                 InvoiceItem.objects.create(
                     invoice=self,
                     user=participant.user,
-                    amount=order.get_total_of_user(participant.user),
+                    general_amount=price,
+                    tax_amount=tax,
+                    amount=amount,
                 )
 
 
@@ -36,7 +42,23 @@ class InvoiceItem(models.Model):
         Invoice, on_delete=models.CASCADE, related_name="invoice_items"
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    amount = models.DecimalField(decimal_places=3, max_digits=9)
+    general_amount = models.DecimalField(
+        decimal_places=3,
+        max_digits=9,
+        default=Decimal(0),
+        help_text=_("Actual price of the items, without Tax."),
+    )
+    tax_amount = models.DecimalField(
+        decimal_places=3,
+        max_digits=9,
+        default=Decimal(0),
+        help_text=_("Total payable tax amount."),
+    )
+    amount = models.DecimalField(
+        decimal_places=3,
+        max_digits=9,
+        help_text=_("Actual amount that the user has to pay. With taxing."),
+    )
     paid = models.BooleanField(default=False, db_index=True)
 
     @property
