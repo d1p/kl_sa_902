@@ -48,3 +48,14 @@ class Misc(models.Model):
         self.last_order_in_rating = False
         self.state = CustomerMiscType.NO_ORDER
         self.save()
+
+    def set_order_in_checkout(self):
+        self.last_order_in_checkout = True
+        self.state = CustomerMiscType.IN_CHECKOUT
+        self.save()
+
+    def set_order_in_rating(self):
+        self.last_order_in_checkout = False
+        self.last_order_in_rating = True
+        self.state = CustomerMiscType.IN_RATING
+        self.save()

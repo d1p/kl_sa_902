@@ -106,12 +106,12 @@ class OrderItemInviteSerializer(serializers.ModelSerializer):
         """
         current_user = self.context["request"].user
         if (
-            instance.invited_user != current_user
-            or instance.status != 0
-            or instance.order_item.order.order_participants.filter(
-                user=current_user
-            ).exists()
-            is False
+                instance.invited_user != current_user
+                or instance.status != 0
+                or instance.order_item.order.order_participants.filter(
+            user=current_user
+        ).exists()
+                is False
         ):
             raise PermissionDenied
 
@@ -228,10 +228,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
             for order_addon in order_item_addons:
                 add_on = order_addon["food_add_on"]
                 if (
-                    OrderItemAddOn.objects.filter(
-                        order_item=order_item, food_add_on=add_on
-                    ).exists()
-                    is False
+                        OrderItemAddOn.objects.filter(
+                            order_item=order_item, food_add_on=add_on
+                        ).exists()
+                        is False
                 ):
                     OrderItemAddOn.objects.create(
                         order_item=order_item, food_add_on=add_on
@@ -240,10 +240,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
             for order_attribute_matrix in order_item_attribute_matrices:
                 attribute_matrix = order_attribute_matrix["food_attribute_matrix"]
                 if (
-                    OrderItemAttributeMatrix.objects.filter(
-                        order_item=order_item, food_attribute_matrix=attribute_matrix
-                    ).exists()
-                    is False
+                        OrderItemAttributeMatrix.objects.filter(
+                            order_item=order_item, food_attribute_matrix=attribute_matrix
+                        ).exists()
+                        is False
                 ):
                     OrderItemAttributeMatrix.objects.create(
                         order_item=order_item, food_attribute_matrix=attribute_matrix
@@ -282,8 +282,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
         current_user = self.context["request"].user
 
         if (
-            instance.order.order_participants.filter(user=current_user).exists()
-            is False
+                instance.order.order_participants.filter(user=current_user).exists()
+                is False
         ):
             raise PermissionDenied
 
@@ -303,20 +303,20 @@ class OrderItemSerializer(serializers.ModelSerializer):
         for order_addon in order_item_addons:
             add_on = order_addon["food_add_on"]
             if (
-                OrderItemAddOn.objects.filter(
-                    order_item=instance, food_add_on=add_on
-                ).exists()
-                is False
+                    OrderItemAddOn.objects.filter(
+                        order_item=instance, food_add_on=add_on
+                    ).exists()
+                    is False
             ):
                 OrderItemAddOn.objects.create(order_item=instance, food_add_on=add_on)
 
         for order_attribute_matrix in order_item_attribute_matrices:
             attribute_matrix = order_attribute_matrix["food_attribute_matrix"]
             if (
-                OrderItemAttributeMatrix.objects.filter(
-                    order_item=instance, food_attribute_matrix=attribute_matrix
-                ).exists()
-                is False
+                    OrderItemAttributeMatrix.objects.filter(
+                        order_item=instance, food_attribute_matrix=attribute_matrix
+                    ).exists()
+                    is False
             ):
                 OrderItemAttributeMatrix.objects.create(
                     order_item=instance, food_attribute_matrix=attribute_matrix
@@ -403,10 +403,7 @@ class OrderRatingSerializer(serializers.ModelSerializer):
 
         instance = Rating.objects.create(**validated_data)
 
-        user.misc.last_order = None
-        user.misc.last_order_in_checkout = None
-        user.misc.last_order_type = None
-        user.misc.last_restaurant = None
+        user.misc.set_no_order()
 
         return instance
 

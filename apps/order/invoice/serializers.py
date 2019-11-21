@@ -63,8 +63,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
                 order.status = OrderStatusType.CHECKOUT
                 order.save()
                 for p in order.order_participants.all():
-                    p.user.misc.last_order_in_checkout = True
-                    p.user.misc.save()
+                    p.user.misc.set_order_in_checkout()
 
             # Send necessary Signals.
             send_checkout_push_notification_to_other_users(
