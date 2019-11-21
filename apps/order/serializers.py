@@ -63,11 +63,7 @@ class OrderInviteSerializer(serializers.ModelSerializer):
             # Accepts
             order = instance.order
             order.order_participants.create(user=current_user)
-            current_user.misc.last_order = order
-            current_user.misc.last_order_in_checkout = False
-            current_user.misc.last_restaurant = order.restaurant
-            current_user.misc.last_order_type = order.order_type
-            current_user.misc.save()
+            current_user.misc.set_new_order(order)
             instance.status = OrderInviteStatusType.ACCEPTED
             instance.save()
             send_order_invitation_accept_notification.delay(
@@ -369,11 +365,9 @@ class OrderSerializer(serializers.ModelSerializer):
         order = Order.objects.create(**validated_data)
         order.order_participants.create(user=order.created_by)
         order.save()
-        order.created_by.misc.last_order = order
-        order.created_by.misc.last_order_in_checkout = False
-        order.created_by.misc.last_restaurant = order.restaurant
-        order.created_by.misc.last_order_type = order.order_type
-        order.created_by.misc.save()
+
+        order.created_by.misc.set_new_order(order)
+
         return order
 
 
