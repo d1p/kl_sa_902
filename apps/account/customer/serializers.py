@@ -1,7 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied, ValidationError
-from twilio.base.exceptions import TwilioRestException
+from rest_framework.exceptions import PermissionDenied
 
 from apps.account.customer.models import Customer, Misc
 from apps.account.serializers import UserSerializer
@@ -29,12 +28,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 
             token = VerifyPhoneToken.objects.create(user=user)
 
-            try:
-                user.sms_user(f"Use {token.code} as verification code for Kol.")
-            except TwilioRestException:
-                raise ValidationError(
-                    {"user": {"phone_number": "Invalid phone Number."}}
-                )
+        user.sms_user(f"Use {token.code} as verification code for Kol.")
 
         return customer
 
