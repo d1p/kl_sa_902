@@ -30,7 +30,7 @@ class CustomerSerializer(serializers.ModelSerializer):
             token = VerifyPhoneToken.objects.create(user=user)
 
             try:
-                user.sms_user(f"Use {token.code} as verification code for Kole.")
+                user.sms_user(f"Use {token.code} as verification code for Kol.")
             except TwilioRestException:
                 raise ValidationError(
                     {"user": {"phone_number": "Invalid phone Number."}}

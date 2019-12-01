@@ -1,0 +1,12 @@
+{% load static %}{% load i18n %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order #-{{ order.id }}</title>
+</head>
+<body>
+{% for invoice_item in order.invoice.invoice_items %}
+
+{% endfor %}
+</body>
+</html>
