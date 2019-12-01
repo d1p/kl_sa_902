@@ -83,7 +83,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def sms_user(self, body: str):
         """ Send a sms to the user """
         if settings.UNIT_TESTING:
-            return
+            pass
         x = f"http://www.jawalbsms.ws/api.php/sendsms?user=kol&pass=20190710sSKol&to={self.phone_number}&message={body}&sender=kol"
         r = requests.get(x)
 
