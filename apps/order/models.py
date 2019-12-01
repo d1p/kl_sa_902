@@ -99,7 +99,7 @@ class Order(models.Model):
         """
         Get total tax by each user
         """
-        total = self.get_total_of_user(user) * Decimal(self.order.restaurant.restaurant.tax_percentage)
+        total = self.get_total_of_user(user) * Decimal(self.restaurant.restaurant.tax_percentage)
         return Decimal(total)
 
 class OrderParticipant(models.Model):
