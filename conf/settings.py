@@ -23,7 +23,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 UNIT_TESTING = False
 
-ALLOWED_HOSTS = ["*", "kl-sa-902.herokuapp.com"]
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 DJANGO_APPS = [
@@ -159,7 +159,7 @@ AWS_DEFAULT_ACL = "public-read"
 PAYTABS_SECRET_KEY = env.str("PAYTABS_SECRET_KEY", default="")
 PAYTABS_MERCHANT_EMAIL = env.str("PAYTABS_MERCHANT_EMAIL", default="")
 PAYTABS_VERIFY_PAYMENT_URL = "https://www.paytabs.com/apiv2/verify_payment_transaction"
-if DEBUG is False:
+if DEBUG is True:
     STATIC_URL = "https://%s/%s/" % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
     STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -186,9 +186,6 @@ SIMPLE_JWT = {
 }
 
 # SMS
-TWILIO_ACCOUNT_SID = env.str("TWILIO_ACCOUNT_SID")
-TWILIO_AUTH_TOKEN = env.str("TWILIO_AUTH_TOKEN")
-TWILIO_FROM_NUMBER = env.str("TWILIO_FROM_NUMBER")
 DEFAULT_PHONE_NUMBER_COUNTRY_EXTENSION = env.str(
     "DEFAULT_PHONE_NUMBER_COUNTRY_EXTENSION", default="+88"
 )
@@ -221,7 +218,7 @@ if DEBUG is False:
 
 LOGIN_URL = "/admin/"
 # Logging
-if DEBUG is True:
+if DEBUG is False:
     LOGS_ROOT = env("LOGS_ROOT", default=root_path("logs"))
     LOGGING = {
         "version": 1,
@@ -265,3 +262,4 @@ if "heroku" in os.environ:
     GDAL_LIBRARY_PATH = os.getenv("GDAL_LIBRARY_PATH")
     GEOS_LIBRARY_PATH = os.getenv("GEOS_LIBRARY_PATH")
     DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
+
