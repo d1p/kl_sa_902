@@ -306,3 +306,4 @@ class CheckResetTokenViewSet(GenericViewSet, CreateModelMixin):
             },
             status=status.HTTP_200_OK,
         )
+
