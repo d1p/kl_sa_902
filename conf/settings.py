@@ -219,7 +219,7 @@ if DEBUG is False:
 
 LOGIN_URL = "/admin/"
 # Logging
-if DEBUG is False:
+if DEBUG is True:
     LOGS_ROOT = env("LOGS_ROOT", default=root_path("logs"))
     LOGGING = {
         "version": 1,
