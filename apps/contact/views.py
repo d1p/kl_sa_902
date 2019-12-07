@@ -23,15 +23,9 @@ class ContactListSyncApiView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             contact_list = serializer.validated_data.get("contacts")
-            # add country extension if not available.
-            valid_contact_list = []
-            for c in contact_list:
-                if "+" not in c:
-                    c = f"{settings.DEFAULT_PHONE_NUMBER_COUNTRY_EXTENSION}{c}"
-                valid_contact_list.append(c)
 
             kole_contacts = User.objects.filter(
-                groups__name="Customer", phone_number__in=valid_contact_list
+                groups__name="Customer", phone_number__in=contact_list
             )
             kole_contact_serializer = ContactUserSerializer(kole_contacts, many=True)
             return Response(kole_contact_serializer.data, status=status.HTTP_200_OK)
