@@ -159,6 +159,7 @@ AWS_DEFAULT_ACL = "public-read"
 PAYTABS_SECRET_KEY = env.str("PAYTABS_SECRET_KEY", default="")
 PAYTABS_MERCHANT_EMAIL = env.str("PAYTABS_MERCHANT_EMAIL", default="")
 PAYTABS_VERIFY_PAYMENT_URL = "https://www.paytabs.com/apiv2/verify_payment_transaction"
+
 if DEBUG is False:
     STATIC_URL = "https://%s/%s/" % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
     STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -218,45 +219,45 @@ if DEBUG is False:
 
 LOGIN_URL = "/admin/"
 # Logging
-# if DEBUG is False:
-#     LOGS_ROOT = env("LOGS_ROOT", default=root_path("logs"))
-#     LOGGING = {
-#         "version": 1,
-#         "disable_existing_loggers": False,
-#         "formatters": {
-#             "console_format": {"format": " %(asctime)-4s %(levelname)-8s %(message)s"},
-#             "file_format": {
-#                 "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
-#             },
-#         },
-#         "handlers": {
-#             "console": {
-#                 "level": "DEBUG",
-#                 "class": "logging.StreamHandler",
-#                 "formatter": "console_format",
-#             },
-#             "file": {
-#                 "level": "INFO",
-#                 "class": "logging.handlers.RotatingFileHandler",
-#                 "filename": os.path.join(LOGS_ROOT, "django.log"),
-#                 "maxBytes": 1024 * 1024 * 15,  # 15MB
-#                 "backupCount": 10,
-#                 "formatter": "file_format",
-#             },
-#         },
-#         "loggers": {
-#             "django": {
-#                 "level": "INFO",
-#                 "handlers": ["console", "file"],
-#                 "propagate": False,
-#             },
-#             "apps": {
-#                 "level": "DEBUG",
-#                 "handlers": ["console", "file"],
-#                 "propagate": False,
-#             },
-#         },
-#     }
+if DEBUG is False:
+    LOGS_ROOT = env("LOGS_ROOT", default=root_path("logs"))
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "console_format": {"format": " %(asctime)-4s %(levelname)-8s %(message)s"},
+            "file_format": {
+                "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
+            },
+        },
+        "handlers": {
+            "console": {
+                "level": "DEBUG",
+                "class": "logging.StreamHandler",
+                "formatter": "console_format",
+            },
+            "file": {
+                "level": "INFO",
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": os.path.join(LOGS_ROOT, "django.log"),
+                "maxBytes": 1024 * 1024 * 15,  # 15MB
+                "backupCount": 10,
+                "formatter": "file_format",
+            },
+        },
+        "loggers": {
+            "django": {
+                "level": "INFO",
+                "handlers": ["console", "file"],
+                "propagate": False,
+            },
+            "apps": {
+                "level": "DEBUG",
+                "handlers": ["console", "file"],
+                "propagate": False,
+            },
+        },
+    }
 
 if "heroku" in os.environ:
     GDAL_LIBRARY_PATH = os.getenv("GDAL_LIBRARY_PATH")
