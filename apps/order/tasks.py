@@ -55,7 +55,9 @@ def send_order_item_invite_notification(
             "body": body,
             "from_user_name": f_user.name,
             "from_user_phone_number": f_user.phone_number,
-            "from_user_profile_picture": f_user.profile_picture.url if f_user.profile_picture else "",
+            "from_user_profile_picture": f_user.profile_picture.url
+            if f_user.profile_picture
+            else "",
             "item_id": order_item.id,
             "item_name": order_item.food_item.name,
             "item_price": str(order_item.food_item.price),
@@ -329,6 +331,32 @@ def send_order_is_delivered_notification(order_id: int):
                 "body": body,
                 "order_id": order_id,
             }
+            send_push_notification(participant_user.user, title, body, data)
+            translation.deactivate()
+    except:
+        pass
+
+
+@app.task
+def send_order_edit_notification(from_user: int, order_id: int):
+    try:
+        joined_user = User.objects.get(id=from_user).name
+        order = Order.objects.get(id=order_id)
+        notification_users = order.order_participants.all().exclude(user__id=from_user)
+        for participant_user in notification_users:
+            translation.activate(participant_user.user.locale)
+            title = _(f"Order has been updated")
+            body = _("Tap to get started")
+            data = {
+                "notification_id": 15,
+                "notification_action": "ORDER_ITEM_EDITED",
+                "title": title,
+                "body": body,
+                "joined_user": from_user,
+                "join_user_name": joined_user,
+                "order_id": order_id,
+            }
+            print(f"{participant_user}: {data}")
             send_push_notification(participant_user.user, title, body, data)
             translation.deactivate()
     except:
