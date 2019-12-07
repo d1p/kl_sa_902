@@ -1,5 +1,8 @@
+from django.contrib.auth.models import User
 from django.utils import translation
 
+from apps.order.invoice.models import Invoice, Transaction
+from apps.order.invoice.types import PaymentStatus
 from apps.order.models import Order
 from conf.celery import app
 from utils.fcm import send_push_notification
@@ -45,6 +48,35 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
         }
         send_push_notification(order.restaurant.user, title, body, data)
         translation.deactivate()
+
+    except:
+        pass
+
+
+@app.task
+def send_all_bill_paid_notification(order_id: int):
+    try:
+        order = Order.objects.get(id=order_id)
+        paid_transaction = Transaction.objects.filter(
+            order=order,
+            transaction_status__in=[PaymentStatus.AUTHORIZED, PaymentStatus.SUCCESSFUL],
+        )
+        paid_transaction_users = [user for user in paid_transaction]
+        for participant_user in order.order_participants.all():
+            if participant_user not in paid_transaction_users:
+                translation.activate(participant_user.user.locale)
+                title = _(f"Bill has been paid")
+                body = _("Tap to get started")
+                data = {
+                    "notification_id": 16,
+                    "notification_action": "ORDER_ALL_BILL_PAID",
+                    "title": title,
+                    "body": body,
+                    "order_id": order_id,
+                }
+                print(f"{participant_user}: {data}")
+                send_push_notification(participant_user.user, title, body, data)
+                translation.deactivate()
 
     except:
         pass
