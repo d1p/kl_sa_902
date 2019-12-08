@@ -289,6 +289,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
             raise PermissionDenied
 
         validated_data.pop("order")
+        invited_users = validated_data.pop("invited_users", [])
+
         order_item_addons = validated_data.pop("order_item_add_ons", [])
         order_item_attribute_matrices = validated_data.pop(
             "order_item_attribute_matrices", []
@@ -322,6 +324,22 @@ class OrderItemSerializer(serializers.ModelSerializer):
                 OrderItemAttributeMatrix.objects.create(
                     order_item=instance, food_attribute_matrix=attribute_matrix
                 )
+
+        for i_user in invited_users:
+            try:
+                user = User.objects.get(id=i_user)
+                invite = instance.order_item_invites.create(
+                    invited_user=user, invited_by=validated_data.get("added_by")
+                )
+                send_order_item_invite_notification.delay(
+                    from_user=instance.added_by.id,
+                    to_user=user.id,
+                    invite_id=invite.id,
+                    item_id=instance.id,
+                )
+            except User.DoesNotExist:
+                pass
+
         # Order Edit Notification to rest users
         send_order_edit_notification.delay(
             from_user=current_user.id, order_id=instance.id

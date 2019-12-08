@@ -157,7 +157,7 @@ class ResendVerificationViewSet(GenericViewSet, CreateModelMixin):
 
         token = VerifyPhoneToken.objects.create(user=user)
 
-        user.sms_user(f"Use {token.code} as your verification code for Kol.")
+        user.sms_user(f"Use {token.code} as your verification code for Kol .")
         return Response({"success": True}, status=status.HTTP_200_OK)
 
 
