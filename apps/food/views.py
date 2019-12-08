@@ -58,7 +58,7 @@ class FoodItemViewSet(ModelViewSet):
         user = self.request.user
         if user.profile_type == ProfileType.RESTAURANT:
             return FoodItem.objects.filter(is_deleted=False)
-        return FoodItem.objects.filter(is_active=True, is_deleted=False)
+        return FoodItem.objects.filter(is_active=True, is_deleted=False, category__is_deleted=False)
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = FoodItemFilter
