@@ -329,10 +329,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
             try:
                 user = User.objects.get(id=i_user)
                 invite = instance.order_item_invites.create(
-                    invited_user=user, invited_by=validated_data.get("added_by")
+                    invited_user=user, invited_by=current_user
                 )
                 send_order_item_invite_notification.delay(
-                    from_user=instance.added_by.id,
+                    from_user=current_user.id,
                     to_user=user.id,
                     invite_id=invite.id,
                     item_id=instance.id,
