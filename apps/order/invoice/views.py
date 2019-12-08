@@ -95,7 +95,7 @@ class TransactionVerifyViewSet(CreateAPIView):
         transaction.transaction_id = response_data.get("transaction_id")
 
         if transaction.order.order_type == OrderType.IN_HOUSE:
-            if response_data.get("response_code") == ["100", "481"]:
+            if response_data.get("response_code") in ["100", "481"]:
                 if str(transaction.amount) != response_data.get(
                     "amount"
                 ) or transaction.currency != response_data.get("currency"):
@@ -126,7 +126,7 @@ class TransactionVerifyViewSet(CreateAPIView):
                         status=status.HTTP_200_OK,
                     )
         else:
-            if response_data.get("response_code") == ["111", "481"]:
+            if response_data.get("response_code") in ["111", "481"]:
                 if str(transaction.amount) != response_data.get(
                     "amount"
                 ) or transaction.currency != response_data.get("currency"):
