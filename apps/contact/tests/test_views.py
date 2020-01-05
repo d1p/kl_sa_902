@@ -25,7 +25,7 @@ class TestSyncContacts:
         active_contacts = []
         for i in range(0, 9):
             active_contacts.append(
-                mixer.blend("customer.Customer", user__phone_number=f"+88018763662{i}")
+                mixer.blend("customer.Customer", user__phone_number=f"18763662{i}")
             )
         mixer.cycle(2).blend("customer.Customer")
 
@@ -124,16 +124,3 @@ class TestGroupViewSet:
         ), "Should add the contact into group"
 
         assert contactGroup.contacts.count() == 1, "Should have a single contact"
-
-        request = factory.delete("/", data={"ids": [contact.user.id]})
-
-        force_authenticate(request, customer.user)
-
-        response = ContactGroupViewSet.as_view({"delete": "contacts"})(
-            request, id=contactGroup.id
-        )
-
-        assert (
-            response.status_code == status.HTTP_204_NO_CONTENT
-        ), "Should remove the contact from the group"
-        assert contactGroup.contacts.count() == 0, "Should have a single contact"

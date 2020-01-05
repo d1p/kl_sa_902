@@ -70,44 +70,28 @@ class ContactGroupViewSet(ModelViewSet):
             raise PermissionDenied
         serializer.save(user=self.request.user)
 
-    @action(detail=True, methods=["POST", "DELETE"])
+    @action(detail=True, methods=["POST"])
     def contacts(self, request, *args, **kwargs):
         group: ContactGroup = self.get_object()
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
+            # Delete all contacts for new sync
+            group.contacts.all().delete()
+
             contact_ids = serializer.validated_data.get("ids")
-            if request.method == "POST":
-                for contact_id in contact_ids:
-                    try:
-                        user = User.objects.get(id=contact_id)
-                        if user.groups.filter(name="Customer").exists() is False:
-                            return Response(
-                                {"id": "User not found."},
-                                status=status.HTTP_404_NOT_FOUND,
-                            )
-                    except User.DoesNotExist:
+            for contact_id in contact_ids:
+                try:
+                    user = User.objects.get(id=contact_id)
+                    if user.groups.filter(name="Customer").exists() is False:
                         return Response(
-                            {"id": "User not found."}, status=status.HTTP_404_NOT_FOUND
+                            {"id": "User not found."},
+                            status=status.HTTP_404_NOT_FOUND,
                         )
-
-                    if group.contacts.filter(id=user.id).exists() is False:
-                        group.contacts.add(user)
-                return Response({"success": True}, status.HTTP_201_CREATED)
-            else:
-                for contact_id in contact_ids:
-                    try:
-                        user = User.objects.get(id=contact_id)
-                        if user.groups.filter(name="Customer").exists() is False:
-                            return Response(
-                                {"id": "User not found."},
-                                status=status.HTTP_404_NOT_FOUND,
-                            )
-                    except User.DoesNotExist:
-                        return Response(
-                            {"id": "User not found."}, status=status.HTTP_404_NOT_FOUND
-                        )
-
-                    if group.contacts.filter(id=user.id).exists():
-                        group.contacts.filter(id=contact_id).delete()
-                return Response({"success": True}, status.HTTP_204_NO_CONTENT)
+                except User.DoesNotExist:
+                    return Response(
+                        {"id": "User not found."}, status=status.HTTP_404_NOT_FOUND
+                    )
+                if group.contacts.filter(id=user.id).exists() is False:
+                    group.contacts.add(user)
+            return Response({"success": True}, status.HTTP_201_CREATED)
