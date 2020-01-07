@@ -43,57 +43,6 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
         )
 
 
-class InvoiceSerializer(serializers.ModelSerializer):
-    invoice_items = InvoiceItemSerializer(many=True, read_only=True)
-    restaurant_name = serializers.CharField(
-        source="order.restaurant.name", read_only=True
-    )
-    restaurant_address = serializers.CharField(
-        source="order.restaurant.Restaurant.full_address", read_only=True
-    )
-
-    class Meta:
-        model = Invoice
-        fields = (
-            "id",
-            "order",
-            "invoice_items",
-            "restaurant_name",
-            "restaurant_address",
-            "created_at",
-        )
-        read_only_fields = ("id", "created_at")
-
-    def create(self, validated_data):
-        current_user: User = self.context["request"].user
-        order: Order = validated_data.get("order")
-        if order.order_participants.filter(user=current_user).exists() is False:
-            raise PermissionDenied
-
-        if order.status != OrderStatusType.OPEN:
-            raise ValidationError({"order": ["Order is not open."]})
-
-        try:
-            invoice = Invoice.objects.get(order=order)
-        except Invoice.DoesNotExist:
-            with transaction.atomic():
-                invoice = Invoice.objects.create(**validated_data)
-                invoice.generate_invoice_items()
-                order.status = OrderStatusType.CHECKOUT
-                order.save()
-                for p in order.order_participants.all():
-                    p.user.misc.set_order_in_checkout()
-
-            # Send necessary Signals.
-            send_checkout_push_notification_to_other_users(
-                from_user=current_user.id, order_id=order.id
-            )
-            send_checkout_push_notification_to_the_restaurant(order_id=order.id)
-            invoice.refresh_from_db()
-
-        return invoice
-
-
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
@@ -150,3 +99,57 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 class TransactionVerifySerializer(serializers.Serializer):
     transaction_id = serializers.CharField(required=True)
+
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    invoice_items = InvoiceItemSerializer(many=True, read_only=True)
+    restaurant_name = serializers.CharField(
+        source="order.restaurant.name", read_only=True
+    )
+    restaurant_address = serializers.CharField(
+        source="order.restaurant.Restaurant.full_address", read_only=True
+    )
+    successful_transactions = TransactionSerializer(
+        source="successful_transactions", read_only=True
+    )
+
+    class Meta:
+        model = Invoice
+        fields = (
+            "id",
+            "order",
+            "invoice_items",
+            "restaurant_name",
+            "restaurant_address",
+            "created_at",
+        )
+        read_only_fields = ("id", "successful_transactions" ,"created_at")
+
+    def create(self, validated_data):
+        current_user: User = self.context["request"].user
+        order: Order = validated_data.get("order")
+        if order.order_participants.filter(user=current_user).exists() is False:
+            raise PermissionDenied
+
+        if order.status != OrderStatusType.OPEN:
+            raise ValidationError({"order": ["Order is not open."]})
+
+        try:
+            invoice = Invoice.objects.get(order=order)
+        except Invoice.DoesNotExist:
+            with transaction.atomic():
+                invoice = Invoice.objects.create(**validated_data)
+                invoice.generate_invoice_items()
+                order.status = OrderStatusType.CHECKOUT
+                order.save()
+                for p in order.order_participants.all():
+                    p.user.misc.set_order_in_checkout()
+
+            # Send necessary Signals.
+            send_checkout_push_notification_to_other_users(
+                from_user=current_user.id, order_id=order.id
+            )
+            send_checkout_push_notification_to_the_restaurant(order_id=order.id)
+            invoice.refresh_from_db()
+
+        return invoice

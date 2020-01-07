@@ -111,8 +111,8 @@ class TransactionVerifyViewSet(CreateAPIView):
                     transaction.save()
                     # Send necessary signals
                     transaction.invoice_items.update(paid=True)
-                    for item in transaction.invoice_items.all():
-                        item.user.misc.set_order_in_rating()
+
+                    transaction.user.misc.set_order_in_rating()
 
                     # Check if everything has been paid off.
                     order: Order = transaction.order
@@ -141,8 +141,8 @@ class TransactionVerifyViewSet(CreateAPIView):
                     transaction.transaction_status = PaymentStatus.AUTHORIZED
                     transaction.save()
                     transaction.invoice_items.update(paid=True)
-                    for item in transaction.invoice_items.all():
-                        item.user.misc.set_order_in_rating()
+
+                    transaction.user.misc.set_order_in_rating()
 
                     order: Order = transaction.order
 

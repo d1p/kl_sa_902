@@ -71,6 +71,12 @@ class InvoiceItem(models.Model):
 
         return ordered_items
 
+    @property
+    def successful_transactions(self) -> []:
+        return Transaction.objects.filter(
+            order=self, transaction_status=PaymentStatus.SUCCESSFUL
+        )
+
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
