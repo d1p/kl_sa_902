@@ -1,3 +1,6 @@
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404, render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.generics import CreateAPIView
@@ -190,3 +193,11 @@ class TransactionViewSet(
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+@login_required
+def invoice_view(request, order_id: int):
+    if request.user.is_superuser is False:
+        raise PermissionDenied
+    invoice = get_object_or_404(Invoice, order__id=order_id)
+    return render(request, "invoice/invoice.html", {"invoice": invoice})

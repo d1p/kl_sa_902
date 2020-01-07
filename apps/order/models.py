@@ -15,6 +15,7 @@ from .types import (
     OrderStatusType,
     OrderInviteStatusType,
 )
+from ..notification.models import Action
 
 
 class Order(models.Model):

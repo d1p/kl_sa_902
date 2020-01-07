@@ -102,7 +102,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {"default": env.db()}
-
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 CACHES = {"default": env.cache()}
 
 # Password validation

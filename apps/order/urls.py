@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from apps.order.invoice.views import InvoiceViewSet, TransactionVerifyViewSet, TransactionViewSet
+from apps.order.invoice.views import InvoiceViewSet, TransactionVerifyViewSet, TransactionViewSet, invoice_view
 from .views import (
     OrderViewSet,
     OrderItemViewSet,
@@ -35,4 +35,5 @@ urlpatterns = [
         TransactionVerifyViewSet.as_view(),
         name="transaction_verification",
     ),
+    path("invoice/view/<int:order_id>/", invoice_view, name="view_invoice")
 ]

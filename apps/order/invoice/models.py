@@ -36,6 +36,12 @@ class Invoice(models.Model):
                     amount=amount,
                 )
 
+    @property
+    def successful_transactions(self) -> []:
+        return Transaction.objects.filter(
+            order=self.order, transaction_status=PaymentStatus.SUCCESSFUL
+        )
+
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(
@@ -74,7 +80,7 @@ class InvoiceItem(models.Model):
     @property
     def successful_transactions(self) -> []:
         return Transaction.objects.filter(
-            order=self, transaction_status=PaymentStatus.SUCCESSFUL
+            order=self.invoice.order, transaction_status=PaymentStatus.SUCCESSFUL
         )
 
 

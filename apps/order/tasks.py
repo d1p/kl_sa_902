@@ -1,6 +1,7 @@
 from django.utils import translation
 
 from apps.account.models import User
+from apps.notification.models import Action
 from apps.order.models import Order, OrderItem
 from conf.celery import app
 from utils.fcm import send_push_notification
@@ -221,6 +222,11 @@ def send_new_order_items_confirmed_notification(order_id: int):
             "body": body,
             "order_id": order_id,
         }
+        Action.objects.create(
+            user=order.restaurant,
+            extra_data=data,
+
+        )
         send_push_notification(order.restaurant, title, body, data)
         translation.deactivate()
     except:

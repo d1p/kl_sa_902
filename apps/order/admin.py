@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy
+from django.utils.safestring import mark_safe
 
 from .models import (
     Order,
@@ -9,6 +11,7 @@ from .models import (
     OrderItemAttributeMatrix,
     OrderItemInvite,
     Rating)
+from .types import OrderStatusType
 
 
 @admin.register(Order)
@@ -20,12 +23,20 @@ class OrderAdmin(admin.ModelAdmin):
         "restaurant",
         "created_by",
         "confirmed",
+        "invoice_link",
         "table",
         "created_at",
     )
     list_filter = ("status", "order_type", "confirmed")
     search_fields = ("id",)
 
+    def invoice_link(self, obj: Order):
+        if obj.status is OrderStatusType.COMPLETED:
+            return mark_safe(f"<a href='/invoice/view/{obj.id}/' target='_blank'>View Invoice</a>")
+        else:
+            return gettext_lazy("Order hasn't been completed yet.")
+
+    invoice_link.short_description = ''
 
 admin.register(OrderItemAddOn)
 
