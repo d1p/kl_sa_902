@@ -109,9 +109,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
     restaurant_address = serializers.CharField(
         source="order.restaurant.Restaurant.full_address", read_only=True
     )
-    successful_transactions = TransactionSerializer(
-        source="successful_transactions", read_only=True
-    )
+
 
     class Meta:
         model = Invoice
