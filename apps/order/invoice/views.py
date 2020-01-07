@@ -78,6 +78,7 @@ class TransactionVerifyViewSet(CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        print(serializer.validated_data.get("transaction_id"))
         response_data = verify_transaction(
             serializer.validated_data.get("transaction_id")
         )
