@@ -16,7 +16,7 @@ class FoodCategory(models.Model):
         verbose_name_plural = _("Categories")
 
     def __str__(self):
-        return f"{self.name} by {self.user.name}"
+        return f"{self.id}"
 
 
 class FoodItem(models.Model):
