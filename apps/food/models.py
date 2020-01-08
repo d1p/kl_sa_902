@@ -16,8 +16,10 @@ class FoodCategory(models.Model):
         verbose_name_plural = _("Categories")
 
     def __str__(self):
-        return f"{self.id}"
-
+        try:
+            return f"{self.name}"
+        except:
+            return ""
 
 class FoodItem(models.Model):
     category = models.ForeignKey(FoodCategory, on_delete=models.SET_NULL, null=True)
