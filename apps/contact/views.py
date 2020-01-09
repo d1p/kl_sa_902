@@ -16,6 +16,7 @@ from .serializers import (
 )
 
 
+
 class ContactListSyncApiView(CreateAPIView):
     serializer_class = ContactListSyncSerializer
 
@@ -77,7 +78,7 @@ class ContactGroupViewSet(ModelViewSet):
 
         if serializer.is_valid(raise_exception=True):
             # Delete all contacts for new sync
-            group.contacts.all().delete()
+            group.contacts.clear()
 
             contact_ids = serializer.validated_data.get("ids")
             for contact_id in contact_ids:
