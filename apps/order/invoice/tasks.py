@@ -52,6 +52,50 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
     except:
         pass
 
+@app.task
+def send_single_bill_paid_notification(invoice_id: int, user_id: int):
+    try:
+        user = User.objects.get(id=user_id)
+
+        invoice = Invoice.objects.get(id=invoice_id)
+        paid_transaction = Transaction.objects.filter(
+            order=invoice.order,
+            transaction_status__in=[PaymentStatus.AUTHORIZED, PaymentStatus.SUCCESSFUL],
+        )
+        paid_transaction_users = [user for user in paid_transaction]
+
+        for participant_user in invoice.order.order_participants.all():
+            if participant_user not in paid_transaction_users:
+                translation.activate(participant_user.user.locale)
+                title = _(f"{user.get_full_name()} has paid bill.")
+                body = _("Tap to see more")
+                data = {
+                    "notification_id": 17,
+                    "notification_action": "ORDER_SINGLE_USER_PAID",
+                    "title": title,
+                    "body": body,
+                    "order_id": invoice.order_id,
+                    "invoice_id": invoice.id,
+                }
+                send_push_notification(participant_user.user, title, body, data)
+                translation.deactivate()
+
+        translation.activate(invoice.order.restaurant.locale)
+        title = _(f"{user.get_full_name()} has paid bill.")
+        body = _("Tap to see more")
+        data = {
+            "notification_id": 17,
+            "notification_action": "ORDER_SINGLE_USER_PAID",
+            "title": title,
+            "body": body,
+            "order_id": invoice.order_id,
+            "invoice_id": invoice.id,
+        }
+        send_push_notification(invoice.order.restaurant, title, body, data)
+        translation.deactivate()
+
+    except:
+        pass
 
 @app.task
 def send_all_bill_paid_notification(order_id: int):
