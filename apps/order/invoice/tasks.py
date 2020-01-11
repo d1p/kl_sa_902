@@ -1,6 +1,6 @@
-from apps.account.models import User
 from django.utils import translation
 
+from apps.account.models import User
 from apps.notification.models import Action
 from apps.notification.types import NotificationActionType
 from apps.order.invoice.models import Invoice, Transaction
@@ -74,51 +74,26 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
 def send_single_bill_paid_notification(
     invoice_id: int, user_id: int, transaction_id: int
 ):
-    try:
-        user = User.objects.get(id=user_id)
-        transaction = Transaction.objects.get(id=transaction_id)
+    user = User.objects.get(id=user_id)
+    transaction = Transaction.objects.get(id=transaction_id)
 
-        invoice = Invoice.objects.get(id=invoice_id)
-        paid_transaction = Transaction.objects.filter(
-            order=invoice.order,
-            transaction_status__in=[PaymentStatus.AUTHORIZED, PaymentStatus.SUCCESSFUL],
-        )
-        paid_transaction_users = [user for user in paid_transaction]
+    invoice = Invoice.objects.get(id=invoice_id)
+    paid_transaction = Transaction.objects.filter(
+        order=invoice.order,
+        transaction_status__in=[PaymentStatus.AUTHORIZED, PaymentStatus.SUCCESSFUL],
+    )
+    paid_transaction_users = [user for user in paid_transaction]
 
-        for participant_user in invoice.order.order_participants.all():
-            print(participant_user.user)
-            for p in paid_transaction_users:
-                print(p)
-    
-            if participant_user.user not in paid_transaction_users:
+    for participant_user in invoice.order.order_participants.all():
+        print(participant_user.user)
+        for p in paid_transaction_users:
+            print(p)
 
-                print("why?")
-                translation.activate(participant_user.user.locale)
-                title = _(f"{user.get_full_name()} has paid bill.")
-                body = _("Tap to see more")
-                data = {
-                    "notification_id": 17,
-                    "notification_action": "ORDER_SINGLE_USER_PAID",
-                    "title": title,
-                    "body": body,
-                    "order_id": invoice.order_id,
-                    "invoice_id": invoice.id,
-                    "paid_for": [
-                        invoice_item.user_id
-                        for invoice_item in transaction.invoice_items.all()
-                    ],
-                }
-                print(f"debug notification data: {data})")
+        if participant_user.user not in paid_transaction_users:
 
-                send_push_notification(participant_user.user, title, body, data)
-                translation.deactivate()
-
-        if invoice.order.order_type is OrderType.IN_HOUSE:
-            translation.activate(invoice.order.restaurant.locale)
-            message = f"{user.name} has paid for the Table order #{invoice.order.id} from {invoice.order.table_id}. Please check it from the order."
-            message_in_ar = f"{user.name} has paid for the Table order #{invoice.order.id} from {invoice.order.table_id}. Please check it from the order."
-
-            title = _(message)
+            print("why?")
+            translation.activate(participant_user.user.locale)
+            title = _(f"{user.name} has paid bill.")
             body = _("Tap to see more")
             data = {
                 "notification_id": 17,
@@ -128,23 +103,46 @@ def send_single_bill_paid_notification(
                 "order_id": invoice.order_id,
                 "invoice_id": invoice.id,
                 "paid_for": [
-                    invoice_item.user_id for invoice_item in transaction.invoice_items.all()
+                    invoice_item.user_id
+                    for invoice_item in transaction.invoice_items.all()
                 ],
             }
-            send_push_notification(invoice.order.restaurant, title, body, data)
-            translation.deactivate()
-            action_type = NotificationActionType.RESTAURANT_RECEIVED_PAYMENT_FOR_ORDER
+            print(f"debug notification data: {data})")
 
-            Action.objects.create(
-                message=message,
-                message_in_ar=message_in_ar,
-                action_type=action_type,
-                user=invoice.order.restaurant,
-                sender=invoice.order.created_by,
-                extra_data=data,
-            )
-    except:
-        pass
+            send_push_notification(participant_user.user, title, body, data)
+            translation.deactivate()
+
+    if invoice.order.order_type is OrderType.IN_HOUSE:
+        translation.activate(invoice.order.restaurant.locale)
+        message = f"{user.name} has paid for the Table order #{invoice.order.id} from {invoice.order.table_id}. Please check it from the order."
+        message_in_ar = f"{user.name} has paid for the Table order #{invoice.order.id} from {invoice.order.table_id}. Please check it from the order."
+
+        title = _(message)
+        body = _("Tap to see more")
+        data = {
+            "notification_id": 17,
+            "notification_action": "ORDER_SINGLE_USER_PAID",
+            "title": title,
+            "body": body,
+            "order_id": invoice.order_id,
+            "invoice_id": invoice.id,
+            "paid_for": [
+                invoice_item.user_id for invoice_item in transaction.invoice_items.all()
+            ],
+        }
+        send_push_notification(invoice.order.restaurant, title, body, data)
+        translation.deactivate()
+        action_type = NotificationActionType.RESTAURANT_RECEIVED_PAYMENT_FOR_ORDER
+
+        Action.objects.create(
+            message=message,
+            message_in_ar=message_in_ar,
+            action_type=action_type,
+            user=invoice.order.restaurant,
+            sender=invoice.order.created_by,
+            extra_data=data,
+        )
+
 
 @app.task
 def send_all_bill_paid_notification(order_id: int):
