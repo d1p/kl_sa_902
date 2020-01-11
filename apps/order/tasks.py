@@ -216,9 +216,9 @@ def send_new_order_items_confirmed_notification(order_id: int):
         order = Order.objects.get(id=order_id)
         translation.activate(order.restaurant.locale)
         if order.order_type is OrderType.IN_HOUSE:
-            title = _(f"A new Table order just arrived from {order.table_id}.")
+            title = f"ORDER #{order.id} A new Table order just arrived from Table #{order.table_id}."
         else:
-            title = _(f"A new Pickup order just arrived.")
+            title = f"ORDER #{order.id} A new Pickup order just arrived."
 
         body = _("See the dashboard for details")
         data = {
@@ -229,18 +229,25 @@ def send_new_order_items_confirmed_notification(order_id: int):
             "order_id": order_id,
         }
 
+        if order.order_type is OrderType.IN_HOUSE:
+            message = f"ORDER #{order.id} A new Table order just arrived from {order.table_id}."
+            message_in_ar = f"ORDER #{order.id} A new Table order just arrived from {order.table_id}."
+            action_type = NotificationActionType.RESTAURANT_NEW_TABLE_ORDER
+        else:
+            message = f"ORDER #{order.id} A new Table order just arrived from {order.table_id}."
+            message_in_ar = f"ORDER #{order.id} A new Table order just arrived from {order.table_id}."
+            action_type = NotificationActionType.RESTAURANT_NEW_TABLE_ORDER
+
         Action.objects.create(
-            message=f"ORDER #{order.id} A new Table order just arrived from {order.table_id}.",
-            message_in_ar=f"ORDER #{order.id} A new Table order just arrived from {order.table_id}.",
-            action_type=NotificationActionType.RESTAURANT_NEW_PICKUP_ORDER
-            if order.order_type is OrderType.PICK_UP
-            else NotificationActionType.RESTAURANT_NEW_TABLE_ORDER,
+            message=message,
+            message_in_ar=message_in_ar,
+            action_type=action_type,
             user=order.restaurant,
             sender=order.created_by,
             extra_data=data,
         )
 
-        send_push_notification(order.restaurant, title, body, data)
+        send_push_notification(order.restaurant, _(title), body, data)
         translation.deactivate()
     except:
         pass
