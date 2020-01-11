@@ -23,8 +23,9 @@ class Action(models.Model):
     class Meta:
         ordering = ("-created_at",)
 
-    def sender_profile_picture(self):
-        return self.sender.profile_picture.url
 
     def sender_name(self):
-        return self.sender.name
+        if self.sender is not None:
+            return self.sender.name
+        else:
+            return ""

@@ -9,7 +9,6 @@ class ActionSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "sender_name",
-            "sender_profile_picture",
             "message",
             "action_type",
             "message_in_ar",
