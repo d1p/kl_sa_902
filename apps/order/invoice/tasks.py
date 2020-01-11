@@ -102,8 +102,11 @@ def send_single_bill_paid_notification(
                         for invoice_item in transaction.invoice_items.all()
                     ],
                 }
+                print(f"debug notification data: {data})")
+
                 send_push_notification(participant_user.user, title, body, data)
                 translation.deactivate()
+
         if invoice.order.order_type is OrderType.IN_HOUSE:
             translation.activate(invoice.order.restaurant.locale)
             message = f"{user.name} has paid for the Table order #{invoice.order.id} from {invoice.order.table_id}. Please check it from the order."
