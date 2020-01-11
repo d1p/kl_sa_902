@@ -10,7 +10,10 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.account.types import ProfileType
 from apps.order.invoice.filters import InvoiceFilter
-from apps.order.invoice.tasks import send_all_bill_paid_notification
+from apps.order.invoice.tasks import (
+    send_all_bill_paid_notification,
+    send_single_bill_paid_notification,
+)
 from apps.order.invoice.types import PaymentStatus
 from apps.order.invoice.utils import verify_transaction, capture_transaction
 from apps.order.models import Order
@@ -125,6 +128,10 @@ class TransactionVerifyViewSet(CreateAPIView):
                         order.status = OrderStatusType.COMPLETED
                         order.save()
                         send_all_bill_paid_notification.delay(order_id=order.id)
+                    else:
+                        send_single_bill_paid_notification.delay(
+                            invoice_id=order.invoice.id, user_id=transaction.user_id
+                        )
                     return Response(
                         {"transaction_status": transaction.transaction_status},
                         status=status.HTTP_200_OK,
@@ -171,6 +178,10 @@ class TransactionVerifyViewSet(CreateAPIView):
                             order_id=order.id
                         )
                         send_all_bill_paid_notification.delay(order_id=order.id)
+                    else:
+                        send_single_bill_paid_notification.delay(
+                            invoice_id=order.invoice.id, user_id=transaction.user_id
+                        )
                     return Response(
                         {"transaction_status": transaction.transaction_status},
                         status=status.HTTP_200_OK,
