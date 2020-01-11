@@ -91,7 +91,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         if len(paid_invoice_items) > 0:
             raise ValidationError(
                 {
-                    "invoice_items": [f"Item {invoice_item.id} has been paid."],
+                    "invoice_items": [f"Item {paid_invoice_items[0]} has been paid."],
                     "paid_invoice_items": paid_invoice_items,
                 }
             )
