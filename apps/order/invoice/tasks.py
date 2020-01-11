@@ -74,6 +74,7 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
 def send_single_bill_paid_notification(
     invoice_id: int, user_id: int, transaction_id: int
 ):
+    print("SEND SINGLE BILL PAID NOTIFICATION.")
     try:
         user = User.objects.get(id=user_id)
         transaction = Transaction.objects.get(id=transaction_id)
@@ -86,6 +87,8 @@ def send_single_bill_paid_notification(
         paid_transaction_users = [user for user in paid_transaction]
 
         for participant_user in invoice.order.order_participants.all():
+            print(participant_user)
+
             if participant_user not in paid_transaction_users:
                 translation.activate(participant_user.user.locale)
                 title = _(f"{user.get_full_name()} has paid bill.")

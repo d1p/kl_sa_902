@@ -79,14 +79,23 @@ class TransactionSerializer(serializers.ModelSerializer):
 
         amount: Decimal = Decimal(0.0)
         invoice_items = validated_data.pop("invoice_items")
+        paid_invoice_items = []
         for invoice_item in invoice_items:
             if invoice_item.invoice.order != order:
                 raise PermissionDenied
             if invoice_item.paid is True:
-                raise ValidationError(
-                    {"invoice_items": [f"Item {invoice_item.id} has been paid."]}
-                )
-            amount += invoice_item.amount
+                paid_invoice_items.append(invoice_item.id)
+            else:
+                amount += invoice_item.amount
+
+        if len(paid_invoice_items) > 0:
+            raise ValidationError(
+                {
+                    "invoice_items": [f"Item {invoice_item.id} has been paid."],
+                    "paid_invoice_items": paid_invoice_items,
+                }
+            )
+
         instance = Transaction.objects.create(
             order=order, user=validated_data.get("user"), amount=amount
         )
@@ -110,7 +119,6 @@ class InvoiceSerializer(serializers.ModelSerializer):
         source="order.restaurant.Restaurant.full_address", read_only=True
     )
 
-
     class Meta:
         model = Invoice
         fields = (
@@ -121,7 +129,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "restaurant_address",
             "created_at",
         )
-        read_only_fields = ("id", "successful_transactions" ,"created_at")
+        read_only_fields = ("id", "successful_transactions", "created_at")
 
     def create(self, validated_data):
         current_user: User = self.context["request"].user
