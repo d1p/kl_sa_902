@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.utils import translation
 
+from apps.notification.models import Action
+from apps.notification.types import NotificationActionType
 from apps.order.invoice.models import Invoice, Transaction
 from apps.order.invoice.types import PaymentStatus
 from apps.order.models import Order
@@ -12,8 +14,8 @@ _ = translation.ugettext
 
 @app.task
 def send_checkout_push_notification_to_other_users(from_user: int, order_id: int):
+    order = Order.objects.get(id=order_id)
     try:
-        order = Order.objects.get(id=order_id)
         notification_users = order.order_participants.all().exclude(user__id=from_user)
         for participant_user in notification_users:
             translation.activate(participant_user.user.locale)
@@ -37,7 +39,7 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
     try:
         order = Order.objects.get(id=order_id)
         translation.activate(order.restaurant.user.locale)
-        title = _(f"Order {order_id} has been marked for checkout")
+        title = _(f"The order #{order_id} from #{order.table_id} has been checked out. Please check the payment status.")
         body = _("Tap to see more")
         data = {
             "notification_id": 12,
@@ -49,6 +51,18 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
         send_push_notification(order.restaurant.user, title, body, data)
         translation.deactivate()
 
+        message = f"The order #{order_id} from #{order.table_id} has been checked out. Please check the payment status."
+        message_in_ar = f"The order #{order_id} from #{order.table_id} has been checked out. Please check the payment status."
+        action_type = NotificationActionType.RESTAURANT_CHECKOUT_FROM_ORDER
+
+        Action.objects.create(
+            message=message,
+            message_in_ar=message_in_ar,
+            action_type=action_type,
+            user=order.restaurant,
+            sender=order.created_by,
+            extra_data=data,
+        )
     except:
         pass
 
