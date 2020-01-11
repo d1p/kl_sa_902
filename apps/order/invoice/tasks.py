@@ -86,9 +86,9 @@ def send_single_bill_paid_notification(
         paid_transaction_users = [user for user in paid_transaction]
 
         for participant_user in invoice.order.order_participants.all():
-            print(participant_user)
+            print(participant_user.user)
 
-            if participant_user not in paid_transaction_users:
+            if participant_user.user not in paid_transaction_users:
                 translation.activate(participant_user.user.locale)
                 title = _(f"{user.get_full_name()} has paid bill.")
                 body = _("Tap to see more")
