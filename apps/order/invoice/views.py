@@ -130,7 +130,7 @@ class TransactionVerifyViewSet(CreateAPIView):
                         send_all_bill_paid_notification.delay(order_id=order.id)
                     else:
                         send_single_bill_paid_notification.delay(
-                            invoice_id=order.invoice.id, user_id=transaction.user_id
+                            invoice_id=order.invoice.id, user_id=transaction.user_id, transaction_id=transaction.id
                         )
                     return Response(
                         {"transaction_status": transaction.transaction_status},
@@ -180,7 +180,7 @@ class TransactionVerifyViewSet(CreateAPIView):
                         send_all_bill_paid_notification.delay(order_id=order.id)
                     else:
                         send_single_bill_paid_notification.delay(
-                            invoice_id=order.invoice.id, user_id=transaction.user_id
+                            invoice_id=order.invoice.id, user_id=transaction.user_id, transaction_id= transaction.id
                         )
                     return Response(
                         {"transaction_status": transaction.transaction_status},

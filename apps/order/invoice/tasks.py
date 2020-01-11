@@ -53,9 +53,10 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
         pass
 
 @app.task
-def send_single_bill_paid_notification(invoice_id: int, user_id: int):
+def send_single_bill_paid_notification(invoice_id: int, user_id: int, transaction_id: int):
     try:
         user = User.objects.get(id=user_id)
+        transaction = Transaction.objects.get(id=transaction_id)
 
         invoice = Invoice.objects.get(id=invoice_id)
         paid_transaction = Transaction.objects.filter(
@@ -76,6 +77,7 @@ def send_single_bill_paid_notification(invoice_id: int, user_id: int):
                     "body": body,
                     "order_id": invoice.order_id,
                     "invoice_id": invoice.id,
+                    "paid_for": [invoice_item.user_id for invoice_item in transaction.invoice_items.all()],
                 }
                 send_push_notification(participant_user.user, title, body, data)
                 translation.deactivate()
@@ -90,6 +92,7 @@ def send_single_bill_paid_notification(invoice_id: int, user_id: int):
             "body": body,
             "order_id": invoice.order_id,
             "invoice_id": invoice.id,
+            "paid_for": [invoice_item.user_id for invoice_item in transaction.invoice_items.all()],
         }
         send_push_notification(invoice.order.restaurant, title, body, data)
         translation.deactivate()
