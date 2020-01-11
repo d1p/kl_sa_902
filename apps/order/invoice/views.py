@@ -100,6 +100,7 @@ class TransactionVerifyViewSet(CreateAPIView):
             )
 
         transaction.transaction_id = response_data.get("transaction_id")
+        transaction.save()
 
         if transaction.order.order_type == OrderType.IN_HOUSE:
             if response_data.get("response_code") in ["100", "481"]:

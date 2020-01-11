@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from apps.account.models import User
 from django.utils import translation
 
 from apps.notification.models import Action
@@ -74,7 +74,6 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
 def send_single_bill_paid_notification(
     invoice_id: int, user_id: int, transaction_id: int
 ):
-    print("SEND SINGLE BILL PAID NOTIFICATION.")
     try:
         user = User.objects.get(id=user_id)
         transaction = Transaction.objects.get(id=transaction_id)
@@ -140,10 +139,8 @@ def send_single_bill_paid_notification(
                 sender=invoice.order.created_by,
                 extra_data=data,
             )
-
     except:
         pass
-
 
 @app.task
 def send_all_bill_paid_notification(order_id: int):
