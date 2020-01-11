@@ -2,6 +2,7 @@ from django.utils import translation
 
 from apps.account.models import User
 from apps.notification.models import Action
+from apps.notification.types import NotificationActionType
 from apps.order.models import Order, OrderItem
 from apps.order.types import OrderType
 from conf.celery import app
@@ -231,6 +232,9 @@ def send_new_order_items_confirmed_notification(order_id: int):
         Action.objects.create(
             message=f"ORDER #{order.id} A new Table order just arrived from {order.table_id}.",
             message_in_ar=f"ORDER #{order.id} A new Table order just arrived from {order.table_id}.",
+            action_type=NotificationActionType.RESTAURANT_NEW_PICKUP_ORDER
+            if order.order_type is OrderType.PICK_UP
+            else NotificationActionType.RESTAURANT_NEW_TABLE_ORDER,
             user=order.restaurant,
             sender=order.created_by,
             extra_data=data,
