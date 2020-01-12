@@ -37,6 +37,10 @@ class Invoice(models.Model):
                 )
 
     @property
+    def order_type(self) -> int:
+        return self.order.order_type
+
+    @property
     def successful_transactions(self) -> []:
         return Transaction.objects.filter(
             order=self.order, transaction_status=PaymentStatus.SUCCESSFUL

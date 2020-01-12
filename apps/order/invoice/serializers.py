@@ -124,12 +124,13 @@ class InvoiceSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "order",
+            "order_type",
             "invoice_items",
             "restaurant_name",
             "restaurant_address",
             "created_at",
         )
-        read_only_fields = ("id", "successful_transactions", "created_at")
+        read_only_fields = ("id", "successful_transactions", "order_type","created_at")
 
     def create(self, validated_data):
         current_user: User = self.context["request"].user
