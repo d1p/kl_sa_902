@@ -9,6 +9,7 @@ from .models import (
     CustomerTicket,
     RestaurantMessage,
 )
+from ..account.models import User
 
 admin.site.register(PreBackedTicketTopic)
 admin.site.register(CustomerTicketTopic)
@@ -17,6 +18,15 @@ admin.site.register(CustomerTicketTopic)
 class RestaurantMessageAdmin(admin.ModelAdmin):
     list_display = ("id","ticket","sender","created_at")
     search_fields = ("id", "ticket", "sender", )
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(RestaurantMessageAdmin, self).get_form(request, obj, **kwargs)
+
+        form.base_fields["sender"].queryset = User.objects.filter(is_staff=True, is_superuser=True
+        )
+        form.base_fields["sender"].widget.can_add_related = False
+        return form
+
 
 @admin.register(CustomerTicket)
 class CustomerTicketAdmin(admin.ModelAdmin):
