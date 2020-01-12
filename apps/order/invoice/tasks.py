@@ -154,7 +154,7 @@ def send_all_bill_paid_notification(order_id: int):
         )
         paid_transaction_users = [user for user in paid_transaction]
         for participant_user in order.order_participants.all():
-            if participant_user not in paid_transaction_users:
+            if participant_user.user not in paid_transaction_users:
                 translation.activate(participant_user.user.locale)
                 title = _(f"Bill has been paid")
                 body = _("Tap to get started")
