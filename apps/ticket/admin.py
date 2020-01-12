@@ -7,11 +7,16 @@ from .models import (
     PreBackedTicketTopic,
     CustomerTicketTopic,
     CustomerTicket,
+    RestaurantMessage,
 )
 
 admin.site.register(PreBackedTicketTopic)
 admin.site.register(CustomerTicketTopic)
 
+@admin.register(RestaurantMessage)
+class RestaurantMessageAdmin(admin.ModelAdmin):
+    list_display = ("id","ticket","sender","created_at")
+    search_fields = ("id", "ticket", "sender", )
 
 @admin.register(CustomerTicket)
 class CustomerTicketAdmin(admin.ModelAdmin):
