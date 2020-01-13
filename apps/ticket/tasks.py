@@ -23,10 +23,11 @@ def send_message_notification(message_id: int):
             "sender_profile_picture": message.sender.profile_picture.url,
             "text": message.text,
         }
-
+        print(data)
         send_push_notification(
             user=message.ticket.created_by,
             title=message.sender.name,
             body=message.text,
             data=data,
         )
+        print("OK!")
