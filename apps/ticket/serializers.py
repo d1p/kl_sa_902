@@ -75,7 +75,7 @@ class RestaurantMessageSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         sender = validated_data.get("sender")
-        ticket = validated_data.get("ticket")
+        ticket: RestaurantTicket = validated_data.get("ticket")
 
         if sender.is_staff is False and sender.id != ticket.created_by.id:
             raise PermissionDenied
@@ -86,4 +86,7 @@ class RestaurantMessageSerializer(serializers.ModelSerializer):
             )
 
         message = RestaurantMessage.objects.create(**validated_data)
+        ticket.new_message = True
+        ticket.save()
+
         return message

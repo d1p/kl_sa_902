@@ -71,6 +71,7 @@ class RestaurantTicket(models.Model):
     description = models.TextField(max_length=1000)
     status = models.IntegerField(choices=STATUSES, default=OPEN)
     created_at = models.DateTimeField(auto_now_add=True)
+    new_message = models.BooleanField(default=True, db_index=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:

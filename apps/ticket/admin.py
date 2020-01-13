@@ -9,7 +9,6 @@ from .models import (
     PreBackedTicketTopic,
     CustomerTicketTopic,
     CustomerTicket,
-    RestaurantMessage,
 )
 
 admin.site.register(PreBackedTicketTopic)
@@ -59,9 +58,13 @@ class RestaurantTicketAdmin(admin.ModelAdmin):
         "chat",
         "created_at",
         "last_updated",
+        "new_message",
         "status",
     )
-    list_filter = ("status",)
+    list_filter = (
+        "status",
+        "new_message",
+    )
 
     search_fields = ("created_by__name",)
 

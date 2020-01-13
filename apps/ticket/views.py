@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied as DJPermissionDenied
 from django.shortcuts import render, get_object_or_404
 from rest_framework import mixins
-from django.core.exceptions import PermissionDenied as DJPermissionDenied
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -124,9 +124,12 @@ def admin_chat_thread(request, thread_id: str):
         form = MessageForm(request.POST)
         if form.is_valid():
             message = ticket.messages.create(
-                text=form.cleaned_data.get("text"),
-                sender=request.user
+                text=form.cleaned_data.get("text"), sender=request.user
             )
             send_message_notification.delay(message.id)
+            ticket.new_message = False
+            ticket.save()
             ticket.refresh_from_db()
-    return render(request, "ticket/thread.html", {"ticket": ticket, "form": MessageForm})
+    return render(
+        request, "ticket/thread.html", {"ticket": ticket, "form": MessageForm}
+    )
