@@ -27,6 +27,7 @@ class PublicRestaurantSerializer(serializers.ModelSerializer):
             "full_address",
             "lat",
             "lng",
+            "tax_percentage",
             "online",
         )
 
