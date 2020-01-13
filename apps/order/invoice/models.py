@@ -26,8 +26,11 @@ class Invoice(models.Model):
             )
             if ordered_items.count() > 0:
                 price = order.get_total_of_user(participant.user)
+
                 tax = order.get_total_tax_of_user(participant.user)
+
                 amount = price + tax
+
                 InvoiceItem.objects.create(
                     invoice=self,
                     user=participant.user,

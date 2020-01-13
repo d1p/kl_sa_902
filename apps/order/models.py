@@ -96,12 +96,16 @@ class Order(models.Model):
             total += i.shared_price()
         return Decimal(total)
 
-    def get_total_tax_of_user(self, user:User) -> Decimal:
+    def get_total_tax_of_user(self, user: User) -> Decimal:
         """
         Get total tax by each user
         """
-        total = self.get_total_of_user(user) * Decimal(self.restaurant.restaurant.tax_percentage)
+        total = (
+            self.get_total_of_user(user)
+            * Decimal(self.restaurant.restaurant.tax_percentage)
+        ) / Decimal(100.00)
         return Decimal(total)
+
 
 class OrderParticipant(models.Model):
     order = models.ForeignKey(
@@ -199,6 +203,7 @@ class OrderItem(models.Model):
             shared_price = self.shared_price()
             amount = Decimal((percentage * shared_price) / Decimal(100))
         return amount
+
 
 class OrderItemAddOn(models.Model):
     food_add_on = models.ForeignKey(FoodAddOn, on_delete=models.SET_NULL, null=True)
