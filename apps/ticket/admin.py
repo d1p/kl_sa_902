@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.utils import translation
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy
 
 from .models import (
     RestaurantTicket,
@@ -9,23 +11,19 @@ from .models import (
     CustomerTicket,
     RestaurantMessage,
 )
-from ..account.models import User
 
 admin.site.register(PreBackedTicketTopic)
 admin.site.register(CustomerTicketTopic)
 
+
 @admin.register(RestaurantMessage)
 class RestaurantMessageAdmin(admin.ModelAdmin):
-    list_display = ("id","ticket","sender","created_at")
-    search_fields = ("id", "ticket", "sender", )
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super(RestaurantMessageAdmin, self).get_form(request, obj, **kwargs)
-
-        form.base_fields["sender"].queryset = User.objects.filter(is_staff=True, is_superuser=True
-        )
-        form.base_fields["sender"].widget.can_add_related = False
-        return form
+    list_display = ("id", "ticket", "sender", "created_at")
+    search_fields = (
+        "id",
+        "ticket",
+        "sender",
+    )
 
 
 @admin.register(CustomerTicket)
@@ -54,10 +52,23 @@ class CustomerTicketAdmin(admin.ModelAdmin):
 
 @admin.register(RestaurantTicket)
 class RestaurantTicketAdmin(admin.ModelAdmin):
-    list_display = ("id", "created_by", "topic", "created_at", "last_updated", "status")
+    list_display = (
+        "id",
+        "created_by",
+        "topic",
+        "chat",
+        "created_at",
+        "last_updated",
+        "status",
+    )
     list_filter = ("status",)
 
     search_fields = ("created_by__name",)
+
+    def chat(self, obj):
+        return mark_safe(f"<a href='/admin/restaurant-ticket/{obj.id}/'> Chat </a>")
+
+    chat.short_description = gettext_lazy("Chat")
 
 
 @admin.register(ReportIssue)

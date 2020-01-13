@@ -8,6 +8,7 @@ from .views import (
     ReportIssueViewSet,
     CustomerTicketTopicViewSet,
     CustomerTicketViewSet,
+    admin_chat_thread,
 )
 
 router = DefaultRouter()
@@ -31,6 +32,11 @@ urlpatterns = [
         "api/restaurant-ticket-message/<str:ticket>/",
         RestaurantMessageListCreate.as_view(),
         name="restaurant-ticket-message",
+    ),
+    path(
+        "admin/restaurant-ticket/<str:thread_id>/",
+        admin_chat_thread,
+        name="admin_chat_thread",
     ),
     path("api/", include(router.urls)),
 ]

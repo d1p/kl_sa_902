@@ -84,14 +84,14 @@ class RestaurantTicket(models.Model):
 
 class RestaurantMessage(models.Model):
     ticket = models.ForeignKey(
-        RestaurantTicket, on_delete=models.CASCADE, db_index=True
+        RestaurantTicket, on_delete=models.CASCADE, db_index=True, related_name="messages"
     )
     sender = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     text = models.TextField(max_length=5000)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ("-created_at",)
+        ordering = ("created_at",)
         verbose_name = _("Restaurant Message")
         verbose_name_plural = _("Restaurant Messages")
 

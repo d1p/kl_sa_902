@@ -86,5 +86,4 @@ class RestaurantMessageSerializer(serializers.ModelSerializer):
             )
 
         message = RestaurantMessage.objects.create(**validated_data)
-        send_message_notification.delay(message.id)
         return message

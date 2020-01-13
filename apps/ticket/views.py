@@ -1,4 +1,7 @@
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
 from rest_framework import mixins
+from django.core.exceptions import PermissionDenied as DJPermissionDenied
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -6,6 +9,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from apps.account.types import ProfileType
+from .forms import MessageForm
 from .models import (
     RestaurantTicket,
     RestaurantMessage,
@@ -22,7 +26,7 @@ from .serializers import (
     CustomerTicketTopicSerializer,
     CustomerTicketSerializer,
 )
-from .tasks import send_new_ticket_notification
+from .tasks import send_new_ticket_notification, send_message_notification
 
 
 class PreBackedTicketTopicViewSet(ReadOnlyModelViewSet):
@@ -109,3 +113,20 @@ class RestaurantMessageListCreate(ListCreateAPIView):
 
         sender = self.request.user
         serializer.save(ticket=ticket, sender=sender)
+
+
+@login_required()
+def admin_chat_thread(request, thread_id: str):
+    if request.user.is_superuser is False:
+        raise DJPermissionDenied
+    ticket = get_object_or_404(RestaurantTicket, id=thread_id)
+    if request.method == "POST":
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = ticket.messages.create(
+                text=form.cleaned_data.get("text"),
+                sender=request.user
+            )
+            send_message_notification.delay(message.id)
+            ticket.refresh_from_db()
+    return render(request, "ticket/thread.html", {"ticket": ticket, "form": MessageForm})
