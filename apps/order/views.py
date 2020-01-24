@@ -7,7 +7,7 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from apps.account.models import User
 from apps.account.types import ProfileType
-from apps.order.invoice.models import InvoiceItem
+from apps.order.invoice.models import InvoiceItem, Transaction
 from apps.order.tasks import (
     send_order_invite_notification,
     send_order_left_push_notification,
@@ -18,7 +18,7 @@ from apps.order.tasks import (
     send_order_will_be_ready_in_x_notification,
     send_order_is_ready_notification,
     send_order_is_delivered_notification,
-)
+    send_order_rejected_notification, send_order_accepted_notification)
 from apps.order.types import (
     OrderInviteStatusType,
     OrderStatusType,
@@ -26,6 +26,8 @@ from apps.order.types import (
     OrderType,
 )
 from .filters import OrderFilter, OrderItemFilter, OrderParticipantFilter
+from .invoice.types import PaymentStatus
+from .invoice.utils import capture_transaction
 from .models import (
     OrderInvite,
     Order,
@@ -145,10 +147,10 @@ class OrderItemInviteViewSet(
             except User.DoesNotExist:
                 continue
             if (
-                OrderItemInvite.can_send_invite(
-                    to_user=user, order_item=validated_data.get("order_item")
-                )
-                is True
+                    OrderItemInvite.can_send_invite(
+                        to_user=user, order_item=validated_data.get("order_item")
+                    )
+                    is True
             ):
                 OrderItemInvite.objects.create(
                     to_user=user,
@@ -176,6 +178,7 @@ class OrderViewSet(
             "leave",
             "send_order_is_ready_notification",
             "send_order_is_delivered_notification",
+            "accept_order"
         ]:
             return ConfirmSerializer
         elif self.action == "send_order_is_ready_in_x_notification":
@@ -214,8 +217,8 @@ class OrderViewSet(
         order = self.get_object()
 
         if (
-            order.order_participants.filter(user=request.user).exists() is True
-            and order.confirmed is False
+                order.order_participants.filter(user=request.user).exists() is True
+                and order.confirmed is False
         ):
             OrderParticipant.objects.filter(order=order, user=request.user).delete()
 
@@ -310,6 +313,38 @@ class OrderViewSet(
         if order.order_type == OrderType.PICK_UP:
             order.status = OrderStatusType.COMPLETED
             order.save()
+        return Response({"status": "success"}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["POST"])
+    def accept_order(self, request, pk):
+        order: Order = self.get_object()
+        if order.restaurant != request.user:
+            raise PermissionDenied
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if order.order_type == OrderType.PICK_UP:
+            if order.has_restaurant_accepted is False:
+                if serializer.validated_data.get("sure") is True:
+                    transactions = Transaction.objects.filter(
+                        order=order, transaction_status=PaymentStatus.AUTHORIZED
+                    )
+                    for t in transactions:
+                        result = capture_transaction(
+                            t.pt_transaction_id, amount=t.amount
+                        )
+                        print(f"Transaction capture result: {result}")
+                        t.transaction_status = PaymentStatus.SUCCESSFUL
+                        t.save()
+                    send_order_accepted_notification.delay(order_id=order.id)
+                    # send succcess notification
+                else:
+                    order.status = OrderStatusType.CANCELED
+                    for participant in order.order_participants.all():
+                        participant.user.misc.set_no_order()
+                    order.save()
+                    # send reject notification
+                    send_order_rejected_notification.delay(order_id=order.id)
+
         return Response({"status": "success"}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["GET"])

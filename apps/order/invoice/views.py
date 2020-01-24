@@ -163,17 +163,6 @@ class TransactionVerifyViewSet(CreateAPIView):
                         # Everything is paid!!
                         order.status = OrderStatusType.CHECKOUT
                         order.save()
-                        # Collect money
-                        transactions = Transaction.objects.filter(
-                            order=order, transaction_status=PaymentStatus.AUTHORIZED
-                        )
-                        for t in transactions:
-                            result = capture_transaction(
-                                t.pt_transaction_id, amount=t.amount
-                            )
-                            print(f"Transaction capture result: {result}")
-                            t.transaction_status = PaymentStatus.SUCCESSFUL
-                            t.save()
                         order.confirmed = True
                         order.save()
                         send_new_order_items_confirmed_notification.delay(

@@ -49,6 +49,8 @@ class Order(models.Model):
         choices=OrderStatusType.CHOICES, default=OrderStatusType.OPEN
     )
 
+    has_restaurant_accepted = models.BooleanField(default=True, db_index=True)
+
     confirmed = models.BooleanField(
         default=False,
         db_index=True,
@@ -200,8 +202,8 @@ class OrderItem(models.Model):
         percentage = self.order.restaurant.restaurant.tax_percentage
         amount = Decimal(0)
         if percentage > 0:
-            shared_price = self.shared_price()
-            amount = Decimal((percentage * shared_price) / Decimal(100))
+            price = self.total_price()
+            amount = Decimal((percentage * price) / Decimal(100))
         return amount
 
 

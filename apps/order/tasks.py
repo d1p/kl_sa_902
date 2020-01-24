@@ -400,3 +400,46 @@ def send_order_edit_notification(from_user: int, order_id: int):
             translation.deactivate()
     except:
         pass
+
+@app.task
+def send_order_accepted_notification(order_id: int):
+    try:
+        order = Order.objects.get(id=order_id)
+        notification_users = order.order_participants.all()
+        for participant_user in notification_users:
+            translation.activate(participant_user.user.locale)
+            title = _(f"{order.restaurant.name}")
+            body = _(f"Your order has been accepted.")
+            data = {
+                "notification_id": 19,
+                "notification_action": "ORDER_ACCEPTED",
+                "title": title,
+                "body": body,
+                "order_id": order_id,
+            }
+            send_push_notification(participant_user.user, title, body, data)
+            translation.deactivate()
+    except:
+        pass
+
+
+@app.task
+def send_order_rejected_notification(order_id: int):
+    try:
+        order = Order.objects.get(id=order_id)
+        notification_users = order.order_participants.all()
+        for participant_user in notification_users:
+            translation.activate(participant_user.user.locale)
+            title = _(f"{order.restaurant.name}")
+            body = _(f"Your order has been rejected.")
+            data = {
+                "notification_id": 18,
+                "notification_action": "ORDER_REJECTED",
+                "title": title,
+                "body": body,
+                "order_id": order_id,
+            }
+            send_push_notification(participant_user.user, title, body, data)
+            translation.deactivate()
+    except:
+        pass

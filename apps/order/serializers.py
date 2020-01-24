@@ -11,7 +11,7 @@ from apps.order.tasks import (
     send_order_item_invitation_accept_notification,
     send_order_edit_notification,
 )
-from apps.order.types import OrderStatusType, OrderInviteStatusType
+from apps.order.types import OrderStatusType, OrderInviteStatusType, OrderType
 from .models import (
     Order,
     OrderInvite,
@@ -107,12 +107,12 @@ class OrderItemInviteSerializer(serializers.ModelSerializer):
         """
         current_user = self.context["request"].user
         if (
-            instance.invited_user != current_user
-            or instance.status != 0
-            or instance.order_item.order.order_participants.filter(
-                user=current_user
-            ).exists()
-            is False
+                instance.invited_user != current_user
+                or instance.status != 0
+                or instance.order_item.order.order_participants.filter(
+            user=current_user
+        ).exists()
+                is False
         ):
             raise PermissionDenied
 
@@ -229,10 +229,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
             for order_addon in order_item_addons:
                 add_on = order_addon["food_add_on"]
                 if (
-                    OrderItemAddOn.objects.filter(
-                        order_item=order_item, food_add_on=add_on
-                    ).exists()
-                    is False
+                        OrderItemAddOn.objects.filter(
+                            order_item=order_item, food_add_on=add_on
+                        ).exists()
+                        is False
                 ):
                     OrderItemAddOn.objects.create(
                         order_item=order_item, food_add_on=add_on
@@ -241,10 +241,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
             for order_attribute_matrix in order_item_attribute_matrices:
                 attribute_matrix = order_attribute_matrix["food_attribute_matrix"]
                 if (
-                    OrderItemAttributeMatrix.objects.filter(
-                        order_item=order_item, food_attribute_matrix=attribute_matrix
-                    ).exists()
-                    is False
+                        OrderItemAttributeMatrix.objects.filter(
+                            order_item=order_item, food_attribute_matrix=attribute_matrix
+                        ).exists()
+                        is False
                 ):
                     OrderItemAttributeMatrix.objects.create(
                         order_item=order_item, food_attribute_matrix=attribute_matrix
@@ -283,8 +283,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
         current_user = self.context["request"].user
 
         if (
-            instance.order.order_participants.filter(user=current_user).exists()
-            is False
+                instance.order.order_participants.filter(user=current_user).exists()
+                is False
         ):
             raise PermissionDenied
 
@@ -306,20 +306,20 @@ class OrderItemSerializer(serializers.ModelSerializer):
         for order_addon in order_item_addons:
             add_on = order_addon["food_add_on"]
             if (
-                OrderItemAddOn.objects.filter(
-                    order_item=instance, food_add_on=add_on
-                ).exists()
-                is False
+                    OrderItemAddOn.objects.filter(
+                        order_item=instance, food_add_on=add_on
+                    ).exists()
+                    is False
             ):
                 OrderItemAddOn.objects.create(order_item=instance, food_add_on=add_on)
 
         for order_attribute_matrix in order_item_attribute_matrices:
             attribute_matrix = order_attribute_matrix["food_attribute_matrix"]
             if (
-                OrderItemAttributeMatrix.objects.filter(
-                    order_item=instance, food_attribute_matrix=attribute_matrix
-                ).exists()
-                is False
+                    OrderItemAttributeMatrix.objects.filter(
+                        order_item=instance, food_attribute_matrix=attribute_matrix
+                    ).exists()
+                    is False
             ):
                 OrderItemAttributeMatrix.objects.create(
                     order_item=instance, food_attribute_matrix=attribute_matrix
@@ -373,6 +373,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "order_participants",
             "confirmed",
             "status",
+            "has_restaurant_accepted",
             "created_by",
             "created_at",
         )
@@ -381,6 +382,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "status",
             "created_by",
             "created_at",
+            "has_restaurant_accepted",
             "order_item_set",
             "confirmed",
         )
@@ -388,6 +390,9 @@ class OrderSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         order = Order.objects.create(**validated_data)
         order.order_participants.create(user=order.created_by)
+        # By default the acceptance is on for in house but pickup needs to be accepted.
+        if order.order_type == OrderType.PICK_UP:
+            order.has_restaurant_accepted = False
         order.save()
 
         order.created_by.misc.set_new_order(order)
