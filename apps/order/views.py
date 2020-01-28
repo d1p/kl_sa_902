@@ -335,8 +335,8 @@ class OrderViewSet(
                         print(f"Transaction capture result: {result}")
                         t.transaction_status = PaymentStatus.SUCCESSFUL
                         t.save()
-                        order.has_restaurant_accepted = True
-                        order.save()
+                    order.has_restaurant_accepted = True
+                    order.save()
                     send_order_accepted_notification.delay(order_id=order.id)
                     # send succcess notification
                 else:
