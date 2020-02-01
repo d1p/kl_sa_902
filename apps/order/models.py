@@ -67,13 +67,13 @@ class Order(models.Model):
 
     def is_active(self) -> bool:
         return (
-            OrderItem.objects.filter(
-                order=self, status=OrderItemStatusType.CONFIRMED
-            ).exists()
-            and self.status == OrderStatusType.OPEN
+                OrderItem.objects.filter(
+                    order=self, status=OrderItemStatusType.CONFIRMED
+                ).exists()
+                and self.status == OrderStatusType.OPEN
         )
 
-    def total_price(self) -> Decimal:
+    def total_price_without_tax(self) -> Decimal:
         """
         calculates orders total amount to be paid.
         """
@@ -82,10 +82,15 @@ class Order(models.Model):
             order=self, status=OrderItemStatusType.CONFIRMED
         )
         for i in items:
-            total += i.total_price()
+            total += i.total_price_without_tax()
         return Decimal(total)
 
-    def get_total_of_user(self, user: User) -> Decimal:
+    def total_price_with_tax(self) -> Decimal:
+        total_with_tax = self.total_price_without_tax() + (self.total_price_without_tax() * Decimal(
+            self.restaurant.restaurant.tax_percentage)) / Decimal(100.00)
+        return Decimal(total_with_tax)
+
+    def shared_price_without_tax(self, user: User) -> Decimal:
         """
         Get total payable by each user.
         """
@@ -95,18 +100,23 @@ class Order(models.Model):
         )
 
         for i in items:
-            total += i.shared_price()
+            total += i.shared_price_without_tax()
         return Decimal(total)
 
-    def get_total_tax_of_user(self, user: User) -> Decimal:
+    def shared_price_with_tax(self, user: User) -> Decimal:
         """
         Get total tax by each user
         """
-        total = (
-            self.get_total_of_user(user)
-            * Decimal(self.restaurant.restaurant.tax_percentage)
-        ) / Decimal(100.00)
+        total = self.shared_price_without_tax(user) + (
+                    self.shared_price_without_tax(user) * Decimal(self.restaurant.restaurant.tax_percentage)) / Decimal(
+            100.00)
         return Decimal(total)
+
+    def total_tax_amount(self) -> Decimal:
+        return self.total_price_with_tax() - self.total_price_with_tax()
+
+    def shared_tax_amount(self, user: User):
+        return self.shared_price_with_tax(user) - self.shared_price_without_tax(user)
 
 
 class OrderParticipant(models.Model):
@@ -147,10 +157,10 @@ class OrderInvite(models.Model):
     def can_send_invite(from_user: User, to_user: User, order: Order) -> bool:
         max_number = settings.MAX_NUMBER_OF_ORDER_INVITE_TRY
         return (
-            OrderInvite.objects.filter(
-                invited_user=to_user, invited_by=from_user, order=order
-            ).count()
-            <= max_number
+                OrderInvite.objects.filter(
+                    invited_user=to_user, invited_by=from_user, order=order
+                ).count()
+                <= max_number
         )
 
 
@@ -178,7 +188,7 @@ class OrderItem(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def total_price(self) -> Decimal:
+    def total_price_without_tax(self) -> Decimal:
         """
         calculates items total amount to be paid.
         """
@@ -186,25 +196,34 @@ class OrderItem(models.Model):
         add_ons = OrderItemAddOn.objects.filter(order_item=self)
         for a in add_ons:
             total += (
-                a.food_add_on.price * Decimal(a.quantity) * Decimal(self.quantity)
+                    a.food_add_on.price * Decimal(a.quantity) * Decimal(self.quantity)
             )  # Number of add on * Number of item * price of add ons
         total += self.food_item.price * Decimal(self.quantity)
         return total
 
-    def shared_price(self) -> Decimal:
-        total = self.total_price()
+    def total_price_with_tax(self) -> Decimal:
+        return self.total_price_without_tax() + (self.total_price_without_tax() * Decimal(
+            self.food_item.user.restaurant.tax_percentage)) / Decimal(100.00)
+
+    def shared_price_without_tax(self) -> Decimal:
+        total = self.total_price_without_tax()
         try:
             return total / Decimal(self.shared_with.count())
         except ZeroDivisionError:
             return total
 
-    def tax_amount(self) -> Decimal:
-        percentage = self.order.restaurant.restaurant.tax_percentage
-        amount = Decimal(0)
-        if percentage > 0:
-            price = self.total_price()
-            amount = Decimal((percentage * price) / Decimal(100))
-        return amount
+    def shared_price_with_tax(self) -> Decimal:
+        total = self.total_price_with_tax()
+        try:
+            return total / Decimal(self.shared_with.count())
+        except ZeroDivisionError:
+            return total
+
+    def total_tax(self):
+        return self.total_price_with_tax() - self.total_price_without_tax()
+
+    def shared_total_tax(self):
+        return self.shared_price_with_tax() - self.shared_price_without_tax()
 
 
 class OrderItemAddOn(models.Model):
@@ -260,8 +279,8 @@ class OrderItemInvite(models.Model):
     @staticmethod
     def can_send_invite(to_user: User, order_item: OrderItem) -> bool:
         return (
-            order_item.order.order_participants.filter(id=to_user).exists()
-            and order_item.shared_with.filter(id=to_user).exists() is False
+                order_item.order.order_participants.filter(id=to_user).exists()
+                and order_item.shared_with.filter(id=to_user).exists() is False
         )
 
 
@@ -284,13 +303,13 @@ class Rating(models.Model):
     def get_average_restaurant_rating(restaurant: User):
         rating = (
             Rating.objects.filter(restaurant=restaurant)
-            .annotate(
+                .annotate(
                 n_rating=F("food_item_rating")
-                + F("restaurant_rating")
-                + F("customer_service_rating")
-                + F("application_rating")
+                         + F("restaurant_rating")
+                         + F("customer_service_rating")
+                         + F("application_rating")
             )
-            .aggregate(avg_rating=Avg("n_rating"))
+                .aggregate(avg_rating=Avg("n_rating"))
         )
         try:
             return Decimal(rating["avg_rating"] / 4)

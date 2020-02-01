@@ -338,13 +338,11 @@ class OrderViewSet(
                     order.has_restaurant_accepted = True
                     order.save()
                     send_order_accepted_notification.delay(order_id=order.id)
-                    # send succcess notification
                 else:
                     order.status = OrderStatusType.CANCELED
                     for participant in order.order_participants.all():
                         participant.user.misc.set_no_order()
                     order.save()
-                    # send reject notification
                     send_order_rejected_notification.delay(order_id=order.id)
 
         return Response({"status": "success"}, status=status.HTTP_201_CREATED)

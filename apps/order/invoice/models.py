@@ -25,11 +25,9 @@ class Invoice(models.Model):
                 status=OrderItemStatusType.CONFIRMED,
             )
             if ordered_items.count() > 0:
-                price = order.get_total_of_user(participant.user)
-
-                tax = order.get_total_tax_of_user(participant.user)
-
-                amount = price + tax
+                price = order.shared_price_without_tax(participant.user)
+                tax = order.shared_tax_amount(participant.user)
+                amount = order.total_price_with_tax()
 
                 InvoiceItem.objects.create(
                     invoice=self,

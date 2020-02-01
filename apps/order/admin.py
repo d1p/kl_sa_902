@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.utils.translation import gettext_lazy
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy
 
 from .models import (
     Order,
@@ -37,6 +37,7 @@ class OrderAdmin(admin.ModelAdmin):
             return gettext_lazy("Order hasn't been completed yet.")
 
     invoice_link.short_description = ''
+
 
 admin.register(OrderItemAddOn)
 
@@ -87,7 +88,8 @@ class OrderParticipantAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ("id", "order", "quantity", "total_price")
+    list_display = ("id", "order", "quantity", "total_price_without_tax", "total_price_with_tax", "total_tax",
+                    "shared_price_without_tax", "shared_price_with_tax", "shared_total_tax")
     list_display_links = ("id", "order")
     inlines = [OrderItemAddOnInline, OrderItemMatrixInline]
 

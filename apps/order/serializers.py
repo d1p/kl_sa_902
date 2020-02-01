@@ -200,8 +200,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "invited_users",
             "status",
             "shared_with",
-            "total_price",
-            "shared_price",
+            "total_price_without_tax",
+            "total_price_with_tax",
+            "total_tax",
+            "shared_price_without_tax",
+            "shared_price_with_tax",
+            "shared_total_tax",
             "added_by",
             "created_at",
         )
@@ -210,8 +214,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "added_by",
             "shared_with",
             "created_at",
-            "total_price",
-            "shared_price",
+            "total_price_without_tax",
+            "total_price_with_tax",
+            "total_tax",
+            "shared_price_without_tax",
+            "shared_price_with_tax",
+            "shared_total_tax",
         )
 
     def create(self, validated_data):
