@@ -1,5 +1,2165 @@
 [
 {
+    "model": "auth.permission",
+    "pk": 1,
+    "fields": {
+        "name": "Can add log entry",
+        "content_type": [
+            "admin",
+            "logentry"
+        ],
+        "codename": "add_logentry"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 2,
+    "fields": {
+        "name": "Can change log entry",
+        "content_type": [
+            "admin",
+            "logentry"
+        ],
+        "codename": "change_logentry"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 3,
+    "fields": {
+        "name": "Can delete log entry",
+        "content_type": [
+            "admin",
+            "logentry"
+        ],
+        "codename": "delete_logentry"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 4,
+    "fields": {
+        "name": "Can view log entry",
+        "content_type": [
+            "admin",
+            "logentry"
+        ],
+        "codename": "view_logentry"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 5,
+    "fields": {
+        "name": "Can add permission",
+        "content_type": [
+            "auth",
+            "permission"
+        ],
+        "codename": "add_permission"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 6,
+    "fields": {
+        "name": "Can change permission",
+        "content_type": [
+            "auth",
+            "permission"
+        ],
+        "codename": "change_permission"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 7,
+    "fields": {
+        "name": "Can delete permission",
+        "content_type": [
+            "auth",
+            "permission"
+        ],
+        "codename": "delete_permission"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 8,
+    "fields": {
+        "name": "Can view permission",
+        "content_type": [
+            "auth",
+            "permission"
+        ],
+        "codename": "view_permission"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 9,
+    "fields": {
+        "name": "Can add group",
+        "content_type": [
+            "auth",
+            "group"
+        ],
+        "codename": "add_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 10,
+    "fields": {
+        "name": "Can change group",
+        "content_type": [
+            "auth",
+            "group"
+        ],
+        "codename": "change_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 11,
+    "fields": {
+        "name": "Can delete group",
+        "content_type": [
+            "auth",
+            "group"
+        ],
+        "codename": "delete_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 12,
+    "fields": {
+        "name": "Can view group",
+        "content_type": [
+            "auth",
+            "group"
+        ],
+        "codename": "view_group"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 13,
+    "fields": {
+        "name": "Can add content type",
+        "content_type": [
+            "contenttypes",
+            "contenttype"
+        ],
+        "codename": "add_contenttype"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 14,
+    "fields": {
+        "name": "Can change content type",
+        "content_type": [
+            "contenttypes",
+            "contenttype"
+        ],
+        "codename": "change_contenttype"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 15,
+    "fields": {
+        "name": "Can delete content type",
+        "content_type": [
+            "contenttypes",
+            "contenttype"
+        ],
+        "codename": "delete_contenttype"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 16,
+    "fields": {
+        "name": "Can view content type",
+        "content_type": [
+            "contenttypes",
+            "contenttype"
+        ],
+        "codename": "view_contenttype"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 17,
+    "fields": {
+        "name": "Can add session",
+        "content_type": [
+            "sessions",
+            "session"
+        ],
+        "codename": "add_session"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 18,
+    "fields": {
+        "name": "Can change session",
+        "content_type": [
+            "sessions",
+            "session"
+        ],
+        "codename": "change_session"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 19,
+    "fields": {
+        "name": "Can delete session",
+        "content_type": [
+            "sessions",
+            "session"
+        ],
+        "codename": "delete_session"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 20,
+    "fields": {
+        "name": "Can view session",
+        "content_type": [
+            "sessions",
+            "session"
+        ],
+        "codename": "view_session"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 21,
+    "fields": {
+        "name": "Can add blacklisted token",
+        "content_type": [
+            "token_blacklist",
+            "blacklistedtoken"
+        ],
+        "codename": "add_blacklistedtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 22,
+    "fields": {
+        "name": "Can change blacklisted token",
+        "content_type": [
+            "token_blacklist",
+            "blacklistedtoken"
+        ],
+        "codename": "change_blacklistedtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 23,
+    "fields": {
+        "name": "Can delete blacklisted token",
+        "content_type": [
+            "token_blacklist",
+            "blacklistedtoken"
+        ],
+        "codename": "delete_blacklistedtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 24,
+    "fields": {
+        "name": "Can view blacklisted token",
+        "content_type": [
+            "token_blacklist",
+            "blacklistedtoken"
+        ],
+        "codename": "view_blacklistedtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 25,
+    "fields": {
+        "name": "Can add outstanding token",
+        "content_type": [
+            "token_blacklist",
+            "outstandingtoken"
+        ],
+        "codename": "add_outstandingtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 26,
+    "fields": {
+        "name": "Can change outstanding token",
+        "content_type": [
+            "token_blacklist",
+            "outstandingtoken"
+        ],
+        "codename": "change_outstandingtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 27,
+    "fields": {
+        "name": "Can delete outstanding token",
+        "content_type": [
+            "token_blacklist",
+            "outstandingtoken"
+        ],
+        "codename": "delete_outstandingtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 28,
+    "fields": {
+        "name": "Can view outstanding token",
+        "content_type": [
+            "token_blacklist",
+            "outstandingtoken"
+        ],
+        "codename": "view_outstandingtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 29,
+    "fields": {
+        "name": "Can add FCM device",
+        "content_type": [
+            "fcm_django",
+            "fcmdevice"
+        ],
+        "codename": "add_fcmdevice"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 30,
+    "fields": {
+        "name": "Can change FCM device",
+        "content_type": [
+            "fcm_django",
+            "fcmdevice"
+        ],
+        "codename": "change_fcmdevice"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 31,
+    "fields": {
+        "name": "Can delete FCM device",
+        "content_type": [
+            "fcm_django",
+            "fcmdevice"
+        ],
+        "codename": "delete_fcmdevice"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 32,
+    "fields": {
+        "name": "Can view FCM device",
+        "content_type": [
+            "fcm_django",
+            "fcmdevice"
+        ],
+        "codename": "view_fcmdevice"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 33,
+    "fields": {
+        "name": "Can add User",
+        "content_type": [
+            "account",
+            "user"
+        ],
+        "codename": "add_user"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 34,
+    "fields": {
+        "name": "Can change User",
+        "content_type": [
+            "account",
+            "user"
+        ],
+        "codename": "change_user"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 35,
+    "fields": {
+        "name": "Can delete User",
+        "content_type": [
+            "account",
+            "user"
+        ],
+        "codename": "delete_user"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 36,
+    "fields": {
+        "name": "Can view User",
+        "content_type": [
+            "account",
+            "user"
+        ],
+        "codename": "view_user"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 37,
+    "fields": {
+        "name": "Can add token",
+        "content_type": [
+            "account",
+            "token"
+        ],
+        "codename": "add_token"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 38,
+    "fields": {
+        "name": "Can change token",
+        "content_type": [
+            "account",
+            "token"
+        ],
+        "codename": "change_token"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 39,
+    "fields": {
+        "name": "Can delete token",
+        "content_type": [
+            "account",
+            "token"
+        ],
+        "codename": "delete_token"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 40,
+    "fields": {
+        "name": "Can view token",
+        "content_type": [
+            "account",
+            "token"
+        ],
+        "codename": "view_token"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 41,
+    "fields": {
+        "name": "Can add forgot password token",
+        "content_type": [
+            "account",
+            "forgotpasswordtoken"
+        ],
+        "codename": "add_forgotpasswordtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 42,
+    "fields": {
+        "name": "Can change forgot password token",
+        "content_type": [
+            "account",
+            "forgotpasswordtoken"
+        ],
+        "codename": "change_forgotpasswordtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 43,
+    "fields": {
+        "name": "Can delete forgot password token",
+        "content_type": [
+            "account",
+            "forgotpasswordtoken"
+        ],
+        "codename": "delete_forgotpasswordtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 44,
+    "fields": {
+        "name": "Can view forgot password token",
+        "content_type": [
+            "account",
+            "forgotpasswordtoken"
+        ],
+        "codename": "view_forgotpasswordtoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 45,
+    "fields": {
+        "name": "Can add customer",
+        "content_type": [
+            "customer",
+            "customer"
+        ],
+        "codename": "add_customer"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 46,
+    "fields": {
+        "name": "Can change customer",
+        "content_type": [
+            "customer",
+            "customer"
+        ],
+        "codename": "change_customer"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 47,
+    "fields": {
+        "name": "Can delete customer",
+        "content_type": [
+            "customer",
+            "customer"
+        ],
+        "codename": "delete_customer"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 48,
+    "fields": {
+        "name": "Can view customer",
+        "content_type": [
+            "customer",
+            "customer"
+        ],
+        "codename": "view_customer"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 49,
+    "fields": {
+        "name": "Can add verify phone token",
+        "content_type": [
+            "account",
+            "verifyphonetoken"
+        ],
+        "codename": "add_verifyphonetoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 50,
+    "fields": {
+        "name": "Can change verify phone token",
+        "content_type": [
+            "account",
+            "verifyphonetoken"
+        ],
+        "codename": "change_verifyphonetoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 51,
+    "fields": {
+        "name": "Can delete verify phone token",
+        "content_type": [
+            "account",
+            "verifyphonetoken"
+        ],
+        "codename": "delete_verifyphonetoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 52,
+    "fields": {
+        "name": "Can view verify phone token",
+        "content_type": [
+            "account",
+            "verifyphonetoken"
+        ],
+        "codename": "view_verifyphonetoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 53,
+    "fields": {
+        "name": "Can add change phone number token",
+        "content_type": [
+            "account",
+            "changephonenumbertoken"
+        ],
+        "codename": "add_changephonenumbertoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 54,
+    "fields": {
+        "name": "Can change change phone number token",
+        "content_type": [
+            "account",
+            "changephonenumbertoken"
+        ],
+        "codename": "change_changephonenumbertoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 55,
+    "fields": {
+        "name": "Can delete change phone number token",
+        "content_type": [
+            "account",
+            "changephonenumbertoken"
+        ],
+        "codename": "delete_changephonenumbertoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 56,
+    "fields": {
+        "name": "Can view change phone number token",
+        "content_type": [
+            "account",
+            "changephonenumbertoken"
+        ],
+        "codename": "view_changephonenumbertoken"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 57,
+    "fields": {
+        "name": "Can add Category",
+        "content_type": [
+            "restaurant",
+            "category"
+        ],
+        "codename": "add_category"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 58,
+    "fields": {
+        "name": "Can change Category",
+        "content_type": [
+            "restaurant",
+            "category"
+        ],
+        "codename": "change_category"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 59,
+    "fields": {
+        "name": "Can delete Category",
+        "content_type": [
+            "restaurant",
+            "category"
+        ],
+        "codename": "delete_category"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 60,
+    "fields": {
+        "name": "Can view Category",
+        "content_type": [
+            "restaurant",
+            "category"
+        ],
+        "codename": "view_category"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 61,
+    "fields": {
+        "name": "Can add restaurant",
+        "content_type": [
+            "restaurant",
+            "restaurant"
+        ],
+        "codename": "add_restaurant"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 62,
+    "fields": {
+        "name": "Can change restaurant",
+        "content_type": [
+            "restaurant",
+            "restaurant"
+        ],
+        "codename": "change_restaurant"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 63,
+    "fields": {
+        "name": "Can delete restaurant",
+        "content_type": [
+            "restaurant",
+            "restaurant"
+        ],
+        "codename": "delete_restaurant"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 64,
+    "fields": {
+        "name": "Can view restaurant",
+        "content_type": [
+            "restaurant",
+            "restaurant"
+        ],
+        "codename": "view_restaurant"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 65,
+    "fields": {
+        "name": "Can add Ticket",
+        "content_type": [
+            "ticket",
+            "restaurantticket"
+        ],
+        "codename": "add_ticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 66,
+    "fields": {
+        "name": "Can change Ticket",
+        "content_type": [
+            "ticket",
+            "restaurantticket"
+        ],
+        "codename": "change_ticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 67,
+    "fields": {
+        "name": "Can delete Ticket",
+        "content_type": [
+            "ticket",
+            "restaurantticket"
+        ],
+        "codename": "delete_ticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 68,
+    "fields": {
+        "name": "Can view Ticket",
+        "content_type": [
+            "ticket",
+            "restaurantticket"
+        ],
+        "codename": "view_ticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 69,
+    "fields": {
+        "name": "Can add Message",
+        "content_type": [
+            "ticket",
+            "restaurantmessage"
+        ],
+        "codename": "add_message"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 70,
+    "fields": {
+        "name": "Can change Message",
+        "content_type": [
+            "ticket",
+            "restaurantmessage"
+        ],
+        "codename": "change_message"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 71,
+    "fields": {
+        "name": "Can delete Message",
+        "content_type": [
+            "ticket",
+            "restaurantmessage"
+        ],
+        "codename": "delete_message"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 72,
+    "fields": {
+        "name": "Can view Message",
+        "content_type": [
+            "ticket",
+            "restaurantmessage"
+        ],
+        "codename": "view_message"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 73,
+    "fields": {
+        "name": "Can add pre backed ticket topic",
+        "content_type": [
+            "ticket",
+            "prebackedtickettopic"
+        ],
+        "codename": "add_prebackedtickettopic"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 74,
+    "fields": {
+        "name": "Can change pre backed ticket topic",
+        "content_type": [
+            "ticket",
+            "prebackedtickettopic"
+        ],
+        "codename": "change_prebackedtickettopic"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 75,
+    "fields": {
+        "name": "Can delete pre backed ticket topic",
+        "content_type": [
+            "ticket",
+            "prebackedtickettopic"
+        ],
+        "codename": "delete_prebackedtickettopic"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 76,
+    "fields": {
+        "name": "Can view pre backed ticket topic",
+        "content_type": [
+            "ticket",
+            "prebackedtickettopic"
+        ],
+        "codename": "view_prebackedtickettopic"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 90,
+    "fields": {
+        "name": "Can add contact group",
+        "content_type": [
+            "contact",
+            "contactgroup"
+        ],
+        "codename": "add_contactgroup"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 91,
+    "fields": {
+        "name": "Can change contact group",
+        "content_type": [
+            "contact",
+            "contactgroup"
+        ],
+        "codename": "change_contactgroup"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 92,
+    "fields": {
+        "name": "Can delete contact group",
+        "content_type": [
+            "contact",
+            "contactgroup"
+        ],
+        "codename": "delete_contactgroup"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 93,
+    "fields": {
+        "name": "Can view contact group",
+        "content_type": [
+            "contact",
+            "contactgroup"
+        ],
+        "codename": "view_contactgroup"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 94,
+    "fields": {
+        "name": "Can add restaurant table",
+        "content_type": [
+            "restaurant",
+            "restauranttable"
+        ],
+        "codename": "add_restauranttable"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 95,
+    "fields": {
+        "name": "Can change restaurant table",
+        "content_type": [
+            "restaurant",
+            "restauranttable"
+        ],
+        "codename": "change_restauranttable"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 96,
+    "fields": {
+        "name": "Can delete restaurant table",
+        "content_type": [
+            "restaurant",
+            "restauranttable"
+        ],
+        "codename": "delete_restauranttable"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 97,
+    "fields": {
+        "name": "Can view restaurant table",
+        "content_type": [
+            "restaurant",
+            "restauranttable"
+        ],
+        "codename": "view_restauranttable"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 98,
+    "fields": {
+        "name": "Can add food category",
+        "content_type": [
+            "food",
+            "foodcategory"
+        ],
+        "codename": "add_foodcategory"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 99,
+    "fields": {
+        "name": "Can change food category",
+        "content_type": [
+            "food",
+            "foodcategory"
+        ],
+        "codename": "change_foodcategory"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 100,
+    "fields": {
+        "name": "Can delete food category",
+        "content_type": [
+            "food",
+            "foodcategory"
+        ],
+        "codename": "delete_foodcategory"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 101,
+    "fields": {
+        "name": "Can view food category",
+        "content_type": [
+            "food",
+            "foodcategory"
+        ],
+        "codename": "view_foodcategory"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 102,
+    "fields": {
+        "name": "Can add food attribute",
+        "content_type": [
+            "food",
+            "foodattribute"
+        ],
+        "codename": "add_foodattribute"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 103,
+    "fields": {
+        "name": "Can change food attribute",
+        "content_type": [
+            "food",
+            "foodattribute"
+        ],
+        "codename": "change_foodattribute"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 104,
+    "fields": {
+        "name": "Can delete food attribute",
+        "content_type": [
+            "food",
+            "foodattribute"
+        ],
+        "codename": "delete_foodattribute"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 105,
+    "fields": {
+        "name": "Can view food attribute",
+        "content_type": [
+            "food",
+            "foodattribute"
+        ],
+        "codename": "view_foodattribute"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 106,
+    "fields": {
+        "name": "Can add food item",
+        "content_type": [
+            "food",
+            "fooditem"
+        ],
+        "codename": "add_fooditem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 107,
+    "fields": {
+        "name": "Can change food item",
+        "content_type": [
+            "food",
+            "fooditem"
+        ],
+        "codename": "change_fooditem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 108,
+    "fields": {
+        "name": "Can delete food item",
+        "content_type": [
+            "food",
+            "fooditem"
+        ],
+        "codename": "delete_fooditem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 109,
+    "fields": {
+        "name": "Can view food item",
+        "content_type": [
+            "food",
+            "fooditem"
+        ],
+        "codename": "view_fooditem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 110,
+    "fields": {
+        "name": "Can add food attribute matrix",
+        "content_type": [
+            "food",
+            "foodattributematrix"
+        ],
+        "codename": "add_foodattributematrix"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 111,
+    "fields": {
+        "name": "Can change food attribute matrix",
+        "content_type": [
+            "food",
+            "foodattributematrix"
+        ],
+        "codename": "change_foodattributematrix"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 112,
+    "fields": {
+        "name": "Can delete food attribute matrix",
+        "content_type": [
+            "food",
+            "foodattributematrix"
+        ],
+        "codename": "delete_foodattributematrix"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 113,
+    "fields": {
+        "name": "Can view food attribute matrix",
+        "content_type": [
+            "food",
+            "foodattributematrix"
+        ],
+        "codename": "view_foodattributematrix"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 114,
+    "fields": {
+        "name": "Can add food add on",
+        "content_type": [
+            "food",
+            "foodaddon"
+        ],
+        "codename": "add_foodaddon"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 115,
+    "fields": {
+        "name": "Can change food add on",
+        "content_type": [
+            "food",
+            "foodaddon"
+        ],
+        "codename": "change_foodaddon"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 116,
+    "fields": {
+        "name": "Can delete food add on",
+        "content_type": [
+            "food",
+            "foodaddon"
+        ],
+        "codename": "delete_foodaddon"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 117,
+    "fields": {
+        "name": "Can view food add on",
+        "content_type": [
+            "food",
+            "foodaddon"
+        ],
+        "codename": "view_foodaddon"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 118,
+    "fields": {
+        "name": "Can add order",
+        "content_type": [
+            "order",
+            "order"
+        ],
+        "codename": "add_order"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 119,
+    "fields": {
+        "name": "Can change order",
+        "content_type": [
+            "order",
+            "order"
+        ],
+        "codename": "change_order"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 120,
+    "fields": {
+        "name": "Can delete order",
+        "content_type": [
+            "order",
+            "order"
+        ],
+        "codename": "delete_order"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 121,
+    "fields": {
+        "name": "Can view order",
+        "content_type": [
+            "order",
+            "order"
+        ],
+        "codename": "view_order"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 122,
+    "fields": {
+        "name": "Can add order item",
+        "content_type": [
+            "order",
+            "orderitem"
+        ],
+        "codename": "add_orderitem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 123,
+    "fields": {
+        "name": "Can change order item",
+        "content_type": [
+            "order",
+            "orderitem"
+        ],
+        "codename": "change_orderitem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 124,
+    "fields": {
+        "name": "Can delete order item",
+        "content_type": [
+            "order",
+            "orderitem"
+        ],
+        "codename": "delete_orderitem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 125,
+    "fields": {
+        "name": "Can view order item",
+        "content_type": [
+            "order",
+            "orderitem"
+        ],
+        "codename": "view_orderitem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 126,
+    "fields": {
+        "name": "Can add order participant",
+        "content_type": [
+            "order",
+            "orderparticipant"
+        ],
+        "codename": "add_orderparticipant"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 127,
+    "fields": {
+        "name": "Can change order participant",
+        "content_type": [
+            "order",
+            "orderparticipant"
+        ],
+        "codename": "change_orderparticipant"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 128,
+    "fields": {
+        "name": "Can delete order participant",
+        "content_type": [
+            "order",
+            "orderparticipant"
+        ],
+        "codename": "delete_orderparticipant"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 129,
+    "fields": {
+        "name": "Can view order participant",
+        "content_type": [
+            "order",
+            "orderparticipant"
+        ],
+        "codename": "view_orderparticipant"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 130,
+    "fields": {
+        "name": "Can add order item add on",
+        "content_type": [
+            "order",
+            "orderitemaddon"
+        ],
+        "codename": "add_orderitemaddon"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 131,
+    "fields": {
+        "name": "Can change order item add on",
+        "content_type": [
+            "order",
+            "orderitemaddon"
+        ],
+        "codename": "change_orderitemaddon"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 132,
+    "fields": {
+        "name": "Can delete order item add on",
+        "content_type": [
+            "order",
+            "orderitemaddon"
+        ],
+        "codename": "delete_orderitemaddon"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 133,
+    "fields": {
+        "name": "Can view order item add on",
+        "content_type": [
+            "order",
+            "orderitemaddon"
+        ],
+        "codename": "view_orderitemaddon"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 134,
+    "fields": {
+        "name": "Can add order invite",
+        "content_type": [
+            "order",
+            "orderinvite"
+        ],
+        "codename": "add_orderinvite"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 135,
+    "fields": {
+        "name": "Can change order invite",
+        "content_type": [
+            "order",
+            "orderinvite"
+        ],
+        "codename": "change_orderinvite"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 136,
+    "fields": {
+        "name": "Can delete order invite",
+        "content_type": [
+            "order",
+            "orderinvite"
+        ],
+        "codename": "delete_orderinvite"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 137,
+    "fields": {
+        "name": "Can view order invite",
+        "content_type": [
+            "order",
+            "orderinvite"
+        ],
+        "codename": "view_orderinvite"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 138,
+    "fields": {
+        "name": "Can add order item attribute matrix",
+        "content_type": [
+            "order",
+            "orderitemattributematrix"
+        ],
+        "codename": "add_orderitemattributematrix"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 139,
+    "fields": {
+        "name": "Can change order item attribute matrix",
+        "content_type": [
+            "order",
+            "orderitemattributematrix"
+        ],
+        "codename": "change_orderitemattributematrix"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 140,
+    "fields": {
+        "name": "Can delete order item attribute matrix",
+        "content_type": [
+            "order",
+            "orderitemattributematrix"
+        ],
+        "codename": "delete_orderitemattributematrix"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 141,
+    "fields": {
+        "name": "Can view order item attribute matrix",
+        "content_type": [
+            "order",
+            "orderitemattributematrix"
+        ],
+        "codename": "view_orderitemattributematrix"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 142,
+    "fields": {
+        "name": "Can add order item invite",
+        "content_type": [
+            "order",
+            "orderiteminvite"
+        ],
+        "codename": "add_orderiteminvite"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 143,
+    "fields": {
+        "name": "Can change order item invite",
+        "content_type": [
+            "order",
+            "orderiteminvite"
+        ],
+        "codename": "change_orderiteminvite"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 144,
+    "fields": {
+        "name": "Can delete order item invite",
+        "content_type": [
+            "order",
+            "orderiteminvite"
+        ],
+        "codename": "delete_orderiteminvite"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 145,
+    "fields": {
+        "name": "Can view order item invite",
+        "content_type": [
+            "order",
+            "orderiteminvite"
+        ],
+        "codename": "view_orderiteminvite"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 146,
+    "fields": {
+        "name": "Can add Report Issue",
+        "content_type": [
+            "ticket",
+            "reportissue"
+        ],
+        "codename": "add_reportissue"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 147,
+    "fields": {
+        "name": "Can change Report Issue",
+        "content_type": [
+            "ticket",
+            "reportissue"
+        ],
+        "codename": "change_reportissue"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 148,
+    "fields": {
+        "name": "Can delete Report Issue",
+        "content_type": [
+            "ticket",
+            "reportissue"
+        ],
+        "codename": "delete_reportissue"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 149,
+    "fields": {
+        "name": "Can view Report Issue",
+        "content_type": [
+            "ticket",
+            "reportissue"
+        ],
+        "codename": "view_reportissue"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 150,
+    "fields": {
+        "name": "Can add Restaurant Message",
+        "content_type": [
+            "ticket",
+            "restaurantmessage"
+        ],
+        "codename": "add_restaurantmessage"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 151,
+    "fields": {
+        "name": "Can change Restaurant Message",
+        "content_type": [
+            "ticket",
+            "restaurantmessage"
+        ],
+        "codename": "change_restaurantmessage"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 152,
+    "fields": {
+        "name": "Can delete Restaurant Message",
+        "content_type": [
+            "ticket",
+            "restaurantmessage"
+        ],
+        "codename": "delete_restaurantmessage"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 153,
+    "fields": {
+        "name": "Can view Restaurant Message",
+        "content_type": [
+            "ticket",
+            "restaurantmessage"
+        ],
+        "codename": "view_restaurantmessage"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 154,
+    "fields": {
+        "name": "Can add Restaurant Ticket",
+        "content_type": [
+            "ticket",
+            "restaurantticket"
+        ],
+        "codename": "add_restaurantticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 155,
+    "fields": {
+        "name": "Can change Restaurant Ticket",
+        "content_type": [
+            "ticket",
+            "restaurantticket"
+        ],
+        "codename": "change_restaurantticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 156,
+    "fields": {
+        "name": "Can delete Restaurant Ticket",
+        "content_type": [
+            "ticket",
+            "restaurantticket"
+        ],
+        "codename": "delete_restaurantticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 157,
+    "fields": {
+        "name": "Can view Restaurant Ticket",
+        "content_type": [
+            "ticket",
+            "restaurantticket"
+        ],
+        "codename": "view_restaurantticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 158,
+    "fields": {
+        "name": "Can add customer ticket topic",
+        "content_type": [
+            "ticket",
+            "customertickettopic"
+        ],
+        "codename": "add_customertickettopic"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 159,
+    "fields": {
+        "name": "Can change customer ticket topic",
+        "content_type": [
+            "ticket",
+            "customertickettopic"
+        ],
+        "codename": "change_customertickettopic"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 160,
+    "fields": {
+        "name": "Can delete customer ticket topic",
+        "content_type": [
+            "ticket",
+            "customertickettopic"
+        ],
+        "codename": "delete_customertickettopic"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 161,
+    "fields": {
+        "name": "Can view customer ticket topic",
+        "content_type": [
+            "ticket",
+            "customertickettopic"
+        ],
+        "codename": "view_customertickettopic"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 162,
+    "fields": {
+        "name": "Can add Customer Ticket",
+        "content_type": [
+            "ticket",
+            "customerticket"
+        ],
+        "codename": "add_customerticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 163,
+    "fields": {
+        "name": "Can change Customer Ticket",
+        "content_type": [
+            "ticket",
+            "customerticket"
+        ],
+        "codename": "change_customerticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 164,
+    "fields": {
+        "name": "Can delete Customer Ticket",
+        "content_type": [
+            "ticket",
+            "customerticket"
+        ],
+        "codename": "delete_customerticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 165,
+    "fields": {
+        "name": "Can view Customer Ticket",
+        "content_type": [
+            "ticket",
+            "customerticket"
+        ],
+        "codename": "view_customerticket"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 166,
+    "fields": {
+        "name": "Can add misc",
+        "content_type": [
+            "customer",
+            "misc"
+        ],
+        "codename": "add_misc"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 167,
+    "fields": {
+        "name": "Can change misc",
+        "content_type": [
+            "customer",
+            "misc"
+        ],
+        "codename": "change_misc"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 168,
+    "fields": {
+        "name": "Can delete misc",
+        "content_type": [
+            "customer",
+            "misc"
+        ],
+        "codename": "delete_misc"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 169,
+    "fields": {
+        "name": "Can view misc",
+        "content_type": [
+            "customer",
+            "misc"
+        ],
+        "codename": "view_misc"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 170,
+    "fields": {
+        "name": "Can add action",
+        "content_type": [
+            "notification",
+            "action"
+        ],
+        "codename": "add_action"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 171,
+    "fields": {
+        "name": "Can change action",
+        "content_type": [
+            "notification",
+            "action"
+        ],
+        "codename": "change_action"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 172,
+    "fields": {
+        "name": "Can delete action",
+        "content_type": [
+            "notification",
+            "action"
+        ],
+        "codename": "delete_action"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 173,
+    "fields": {
+        "name": "Can view action",
+        "content_type": [
+            "notification",
+            "action"
+        ],
+        "codename": "view_action"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 174,
+    "fields": {
+        "name": "Can add invoice",
+        "content_type": [
+            "invoice",
+            "invoice"
+        ],
+        "codename": "add_invoice"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 175,
+    "fields": {
+        "name": "Can change invoice",
+        "content_type": [
+            "invoice",
+            "invoice"
+        ],
+        "codename": "change_invoice"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 176,
+    "fields": {
+        "name": "Can delete invoice",
+        "content_type": [
+            "invoice",
+            "invoice"
+        ],
+        "codename": "delete_invoice"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 177,
+    "fields": {
+        "name": "Can view invoice",
+        "content_type": [
+            "invoice",
+            "invoice"
+        ],
+        "codename": "view_invoice"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 178,
+    "fields": {
+        "name": "Can add invoice item",
+        "content_type": [
+            "invoice",
+            "invoiceitem"
+        ],
+        "codename": "add_invoiceitem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 179,
+    "fields": {
+        "name": "Can change invoice item",
+        "content_type": [
+            "invoice",
+            "invoiceitem"
+        ],
+        "codename": "change_invoiceitem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 180,
+    "fields": {
+        "name": "Can delete invoice item",
+        "content_type": [
+            "invoice",
+            "invoiceitem"
+        ],
+        "codename": "delete_invoiceitem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 181,
+    "fields": {
+        "name": "Can view invoice item",
+        "content_type": [
+            "invoice",
+            "invoiceitem"
+        ],
+        "codename": "view_invoiceitem"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 182,
+    "fields": {
+        "name": "Can add Transaction",
+        "content_type": [
+            "invoice",
+            "transaction"
+        ],
+        "codename": "add_transaction"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 183,
+    "fields": {
+        "name": "Can change Transaction",
+        "content_type": [
+            "invoice",
+            "transaction"
+        ],
+        "codename": "change_transaction"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 184,
+    "fields": {
+        "name": "Can delete Transaction",
+        "content_type": [
+            "invoice",
+            "transaction"
+        ],
+        "codename": "delete_transaction"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 185,
+    "fields": {
+        "name": "Can view Transaction",
+        "content_type": [
+            "invoice",
+            "transaction"
+        ],
+        "codename": "view_transaction"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 186,
+    "fields": {
+        "name": "Can add rating",
+        "content_type": [
+            "order",
+            "rating"
+        ],
+        "codename": "add_rating"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 187,
+    "fields": {
+        "name": "Can change rating",
+        "content_type": [
+            "order",
+            "rating"
+        ],
+        "codename": "change_rating"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 188,
+    "fields": {
+        "name": "Can delete rating",
+        "content_type": [
+            "order",
+            "rating"
+        ],
+        "codename": "delete_rating"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 189,
+    "fields": {
+        "name": "Can view rating",
+        "content_type": [
+            "order",
+            "rating"
+        ],
+        "codename": "view_rating"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 190,
+    "fields": {
+        "name": "Can add Restaurant Commission and Earning",
+        "content_type": [
+            "restaurant",
+            "payable"
+        ],
+        "codename": "add_payable"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 191,
+    "fields": {
+        "name": "Can change Restaurant Commission and Earning",
+        "content_type": [
+            "restaurant",
+            "payable"
+        ],
+        "codename": "change_payable"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 192,
+    "fields": {
+        "name": "Can delete Restaurant Commission and Earning",
+        "content_type": [
+            "restaurant",
+            "payable"
+        ],
+        "codename": "delete_payable"
+    }
+},
+{
+    "model": "auth.permission",
+    "pk": 193,
+    "fields": {
+        "name": "Can view Restaurant Commission and Earning",
+        "content_type": [
+            "restaurant",
+            "payable"
+        ],
+        "codename": "view_payable"
+    }
+},
+{
     "model": "auth.group",
     "pk": 1,
     "fields": {
