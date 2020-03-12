@@ -162,9 +162,14 @@ class TransactionVerifyViewSet(CreateAPIView):
                     if order.invoice.invoice_items.filter(paid=False).exists() is False:
                         # Everything is paid!!
                         order.status = OrderStatusType.CHECKOUT
-                        order.save()
                         order.confirmed = True
                         order.save()
+    
+                        transactions = Transaction.objects.filter(order=order, transaction_status=PaymentStatus.AUTHORIZED)
+                        for t in transactions:
+                            result = capture_transaction(t.pt_transaction_id)
+                            print(result)
+
                         send_new_order_items_confirmed_notification.delay(
                             order_id=order.id
                         )
