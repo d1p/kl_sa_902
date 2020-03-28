@@ -396,11 +396,20 @@ class OrderSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
+        if Order.objects.filter(restaurant=validated_data.get("restaurant"),
+                                table=validated_data.get("table"),
+                                status__in=[OrderStatusType.OPEN, OrderStatusType.CHECKOUT]).exists():
+            raise ValidationError({
+                "table": ["This table is already booked."]
+            })
+
         order = Order.objects.create(**validated_data)
         order.order_participants.create(user=order.created_by)
         # By default the acceptance is on for in house but pickup needs to be accepted.
+
         if order.order_type == OrderType.PICK_UP:
             order.has_restaurant_accepted = False
+            
         order.save()
 
         order.created_by.misc.set_new_order(order)
