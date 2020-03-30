@@ -396,7 +396,8 @@ class OrderSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        if Order.objects.filter(restaurant=validated_data.get("restaurant"),
+        if Order.objects.filter(order_type=OrderType.IN_HOUSE,
+                                restaurant=validated_data.get("restaurant"),
                                 table=validated_data.get("table"),
                                 status__in=[OrderStatusType.OPEN, OrderStatusType.CHECKOUT]).exists():
             raise ValidationError({
