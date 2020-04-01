@@ -372,6 +372,7 @@ def send_order_is_delivered_notification(order_id: int):
             }
             send_push_notification(participant_user.user, title, body, data)
             translation.deactivate()
+            # TODO: Mark order as completed if it is a pickup order.
     except:
         pass
 

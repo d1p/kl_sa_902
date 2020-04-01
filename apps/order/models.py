@@ -49,12 +49,18 @@ class Order(models.Model):
         choices=OrderStatusType.CHOICES, default=OrderStatusType.OPEN
     )
 
-    has_restaurant_accepted = models.BooleanField(default=True, db_index=True)
+    has_restaurant_accepted = models.BooleanField(null=True, blank=True, default=None)
+
+    payment_completed = models.BooleanField(default=False, db_index=True)
 
     confirmed = models.BooleanField(
         default=False,
         db_index=True,
         help_text=_("Indicated if an order is confirmed by the users"),
+    )
+
+    tax_percentage = models.DecimalField(
+        max_digits=6, decimal_places=2, default=0.00
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -108,7 +114,7 @@ class Order(models.Model):
         Get total tax by each user
         """
         total = self.shared_price_without_tax(user) + (
-                    self.shared_price_without_tax(user) * Decimal(self.restaurant.restaurant.tax_percentage)) / Decimal(
+                    self.shared_price_without_tax(user) * Decimal(self.tax_percentage)) / Decimal(
             100.00)
         return Decimal(total)
 

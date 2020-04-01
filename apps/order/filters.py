@@ -12,6 +12,7 @@ class OrderFilter(filters.FilterSet):
             "restaurant": ["exact"],
             "table": ["exact"],
             "status": ["exact"],
+            "has_restaurant_accepted": ["exact"],
             "created_by": ["exact"],
             "created_at": ["range"],
         }

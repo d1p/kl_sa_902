@@ -325,6 +325,7 @@ class OrderViewSet(
         if order.order_type == OrderType.PICK_UP:
             if order.has_restaurant_accepted is False:
                 if serializer.validated_data.get("sure") is True:
+
                     transactions = Transaction.objects.filter(
                         order=order, transaction_status=PaymentStatus.AUTHORIZED
                     )
@@ -399,7 +400,7 @@ class OrderViewSet(
                             if participant.user.profile_picture
                             else None,
                         },
-                        "amount": order.get_total_of_user(participant.user),
+                        "amount": order.shared_price_with_tax(participant.user),
                         "has_paid": has_paid,
                     }
                 )

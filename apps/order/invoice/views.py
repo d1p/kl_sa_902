@@ -81,11 +81,14 @@ class TransactionVerifyViewSet(CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         print("Transaction_ID " + serializer.validated_data.get("transaction_id"))
+
         response_data = verify_transaction(
             serializer.validated_data.get("transaction_id")
         )
         print(f"response from paytabs {response_data}")
+
         try:
             transaction = Transaction.objects.get(
                 pt_order_id=response_data.get("order_id")
@@ -100,97 +103,50 @@ class TransactionVerifyViewSet(CreateAPIView):
             )
 
         transaction.transaction_id = response_data.get("transaction_id")
+
         transaction.save()
 
-        if transaction.order.order_type == OrderType.IN_HOUSE:
-            if response_data.get("response_code") in ["100", "481"]:
-                if str(transaction.amount) != response_data.get(
+        if response_data.get("response_code") in ["100"]:
+            if str(transaction.amount) != response_data.get(
                     "amount"
-                ) or transaction.currency != response_data.get("currency"):
-                    transaction.transaction_status = PaymentStatus.INVALID
-                    transaction.save()
-                    return Response(
-                        {"transaction_status": transaction.transaction_status},
-                        status=status.HTTP_200_OK,
-                    )
+            ) or transaction.currency != response_data.get("currency"):
+                # Lets handle the failing state first.
+                transaction.transaction_status = PaymentStatus.INVALID
+                transaction.save()
+                return Response(
+                    {"transaction_status": transaction.transaction_status},
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                transaction.transaction_status = PaymentStatus.SUCCESSFUL
+                transaction.save()
+                # Send necessary signals
+                transaction.invoice_items.update(paid=True)
+                order: Order = transaction.order
+
+                if order.invoice.invoice_items.filter(paid=False).exists() is False:
+                    # Everything is paid!!
+                    order.status = OrderStatusType.COMPLETED
+                    order.save()
+                    send_all_bill_paid_notification.delay(order_id=order.id)
+
+                    for participant in order.order_participants.all():
+                        participant.user.misc.set_order_in_rating()
                 else:
-                    # Post processing for inhouse orders
-                    transaction.transaction_status = PaymentStatus.SUCCESSFUL
-                    transaction.save()
-                    # Send necessary signals
-                    transaction.invoice_items.update(paid=True)
-
-                    transaction.user.misc.set_order_in_rating()
-
-                    # Check if everything has been paid off.
-                    order: Order = transaction.order
-                    if order.invoice.invoice_items.filter(paid=False).exists() is False:
-                        # Everything is paid!!
-                        order.status = OrderStatusType.COMPLETED
-                        order.save()
-                        send_all_bill_paid_notification.delay(order_id=order.id)
-                    else:
-                        print("Invoke single pay notification")
-                        send_single_bill_paid_notification.delay(
-                            invoice_id=order.invoice.id, user_id=transaction.user_id, transaction_id=transaction.id
-                        )
-                    return Response(
-                        {"transaction_status": transaction.transaction_status},
-                        status=status.HTTP_200_OK,
+                    send_single_bill_paid_notification.delay(
+                        invoice_id=order.invoice.id, user_id=transaction.user_id, transaction_id=transaction.id
                     )
+                return Response(
+                    {"transaction_status": transaction.transaction_status},
+                    status=status.HTTP_200_OK,
+                )
         else:
-            if response_data.get("response_code") in ["111", "481"]:
-                if str(transaction.amount) != response_data.get(
-                    "amount"
-                ) or transaction.currency != response_data.get("currency"):
-                    transaction.transaction_status = PaymentStatus.INVALID
-                    transaction.save()
-                    return Response(
-                        {"transaction_status": transaction.transaction_status},
-                        status=status.HTTP_200_OK,
-                    )
-                else:
-                    # Post processing for pickup orders
-                    transaction.transaction_status = PaymentStatus.AUTHORIZED
-                    transaction.save()
-                    transaction.invoice_items.update(paid=True)
-
-                    transaction.user.misc.set_order_in_rating()
-
-                    order: Order = transaction.order
-
-                    if order.invoice.invoice_items.filter(paid=False).exists() is False:
-                        # Everything is paid!!
-                        order.status = OrderStatusType.CHECKOUT
-                        order.confirmed = True
-                        order.save()
-    
-                        transactions = Transaction.objects.filter(order=order, transaction_status=PaymentStatus.AUTHORIZED)
-                        for t in transactions:
-                            result = capture_transaction(t.pt_transaction_id)
-                            print(result)
-
-                        send_new_order_items_confirmed_notification.delay(
-                            order_id=order.id
-                        )
-                        send_all_bill_paid_notification.delay(order_id=order.id)
-                    else:
-                        print("Invoke single pay notification")
-                        send_single_bill_paid_notification.delay(
-                            invoice_id=order.invoice.id, user_id=transaction.user_id, transaction_id= transaction.id
-                        )
-                    return Response(
-                        {"transaction_status": transaction.transaction_status},
-                        status=status.HTTP_200_OK,
-                    )
-        transaction.transaction_status = PaymentStatus.FAILED
-        transaction.save()
-
-        return Response(
-            {"transaction_status": transaction.transaction_status},
-            status=status.HTTP_200_OK,
-        )
-
+            transaction.transaction_status = PaymentStatus.FAILED
+            transaction.save()
+            return Response(
+                {"transaction_status": transaction.transaction_status},
+                status=status.HTTP_200_OK,
+            )
 
 class TransactionViewSet(
     mixins.CreateModelMixin, mixins.RetrieveModelMixin, GenericViewSet
