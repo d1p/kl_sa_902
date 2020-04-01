@@ -13,12 +13,14 @@ class OrderStatusType:
     CANCELED = 2
     CHECKOUT = 3
     COMPLETED = 4
+    IN_PROCESS = 5
 
     CHOICES = (
         (CANCELED, _("Canceled")),
         (OPEN, _("Open")),
         (CHECKOUT, _("Checkout")),
         (COMPLETED, _("Completed")),
+        (IN_PROCESS, _("In Process"))
     )
 
 

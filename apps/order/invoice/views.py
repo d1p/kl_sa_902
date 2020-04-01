@@ -15,9 +15,8 @@ from apps.order.invoice.tasks import (
     send_single_bill_paid_notification,
 )
 from apps.order.invoice.types import PaymentStatus
-from apps.order.invoice.utils import verify_transaction, capture_transaction
+from apps.order.invoice.utils import verify_transaction
 from apps.order.models import Order
-from apps.order.tasks import send_new_order_items_confirmed_notification
 from apps.order.types import OrderType, OrderStatusType
 from .models import Invoice, Transaction
 from .serializers import (
@@ -126,8 +125,9 @@ class TransactionVerifyViewSet(CreateAPIView):
 
                 if order.invoice.invoice_items.filter(paid=False).exists() is False:
                     # Everything is paid!!
-                    order.status = OrderStatusType.COMPLETED
-                    order.save()
+                    if order.order_type is OrderType.PICK_UP:
+                        order.status = OrderStatusType.IN_PROCESS
+                        order.save()
                     send_all_bill_paid_notification.delay(order_id=order.id)
 
                     for participant in order.order_participants.all():
@@ -147,6 +147,7 @@ class TransactionVerifyViewSet(CreateAPIView):
                 {"transaction_status": transaction.transaction_status},
                 status=status.HTTP_200_OK,
             )
+
 
 class TransactionViewSet(
     mixins.CreateModelMixin, mixins.RetrieveModelMixin, GenericViewSet
