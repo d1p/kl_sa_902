@@ -103,7 +103,7 @@ class TransactionVerifyViewSet(CreateAPIView):
             )
 
         transaction.transaction_id = response_data.get("transaction_id")
-
+        print(transaction.transaction_id)
         transaction.save()
 
         if response_data.get("response_code") in ["100"]:
