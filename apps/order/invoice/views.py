@@ -127,7 +127,9 @@ class TransactionVerifyViewSet(CreateAPIView):
                     # Everything is paid!!
                     if order.order_type is OrderType.PICK_UP:
                         order.status = OrderStatusType.IN_PROCESS
+                        order.confirmed = True
                         order.save()
+
                     send_all_bill_paid_notification.delay(order_id=order.id)
 
                     for participant in order.order_participants.all():

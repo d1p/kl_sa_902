@@ -8,6 +8,7 @@ from .models import User
 
 def save_user_information(user_instance: User, user_data: dict):
     user_instance.name = user_data.get("name", user_instance.name)
+    user_instance.name_in_ar = user_data.get("name_in_ar", user_instance.name_in_ar)
     user_instance.email = user_data.get("email", user_instance.email)
 
     user_instance.locale = user_data.get("locale", user_instance.locale)
@@ -39,6 +40,7 @@ def register_basic_user(group_name: str, user_data: dict) -> User:
     try:
         user = User.objects.create(
             name=user_data.get("name"),
+            name_in_ar=user_data.get("name_in_ar"),
             phone_number=user_data.get("phone_number"),
             email=user_data.get("email"),
             locale=user_data.get("locale", "en"),

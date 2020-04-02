@@ -25,6 +25,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(
         max_length=50, db_index=True, help_text=_("Users name / Restaurants name")
     )
+    name_in_ar = models.CharField(
+        max_length=50, null=True, blank=True, help_text=_("Name in arabic")
+    )
     phone_number = models.CharField(
         validators=[_PHONE_REGEX], max_length=17, unique=True
     )
