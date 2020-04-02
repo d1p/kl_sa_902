@@ -14,7 +14,7 @@ from .models import (
 class FoodAddOnSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodAddOn
-        fields = ("id", "food", "name", "price")
+        fields = ("id", "food", "name", "name_in_ar", "price")
         read_only_fields = ("id",)
 
     def create(self, validated_data):
@@ -41,7 +41,7 @@ class FoodAttributeMatrixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FoodAttributeMatrix
-        fields = ("id", "name", "attribute", "attribute_name")
+        fields = ("id", "name", "name_in_ar", "attribute", "attribute_name")
         read_only_fields = ("id",)
 
     def create(self, validated_data):
@@ -69,7 +69,7 @@ class FoodAttributeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FoodAttribute
-        fields = ("id", "name", "food", "attribute_matrix")
+        fields = ("id", "name", "name_in_ar", "food", "attribute_matrix")
         read_only_fields = ("id",)
 
     def create(self, validated_data):
@@ -93,13 +93,15 @@ class FoodAttributeSerializer(serializers.ModelSerializer):
 class FoodCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodCategory
-        fields = ("id", "user", "name", "created_at")
+        fields = ("id", "user", "name", "name_in_ar", "created_at")
         read_only_fields = ("id", "user", "created_at")
 
 
 class FoodItemSerializer(serializers.ModelSerializer):
     user = PublicUserSerializer(read_only=True)
     category_name = serializers.CharField(source="category.name", read_only=True)
+    category_name_in_ar = serializers.CharField(source="category.name_in_ar", read_only=True)
+
     addons = FoodAddOnSerializer(many=True, read_only=True)
     attributes = FoodAttributeSerializer(many=True, read_only=True)
 
@@ -112,7 +114,9 @@ class FoodItemSerializer(serializers.ModelSerializer):
             "id",
             "category",
             "category_name",
+            "category_name_in_ar",
             "name",
+            "name_in_ar",
             "user",
             "picture",
             "price",

@@ -29,19 +29,19 @@ class TestFoodCategoryViewSet:
         return r
 
     def test_add_new_category(self, restaurant1):
-        data = {"name": "Burgers"}
+        data = {"name": "Burgers", "name_in_ar": "Burger in arabic"}
         factory = APIRequestFactory()
         request = factory.post("/", data=data)
         force_authenticate(request, restaurant1.user)
 
         response = FoodCategoryViewSet.as_view({"post": "create"})(request)
         assert (
-            response.status_code == status.HTTP_201_CREATED
+                response.status_code == status.HTTP_201_CREATED
         ), "Should create a new category"
 
     def test_edit_category(self, restaurant1):
         category = mixer.blend("food.FoodCategory", user=restaurant1.user)
-        data = {"name": "Burgers"}
+        data = {"name": "Burgers", "name_in_ar": "Burger in arabic"}
         factory = APIRequestFactory()
         request = factory.put("/", data=data)
         force_authenticate(request, restaurant1.user)
@@ -62,13 +62,13 @@ class TestFoodCategoryViewSet:
             request, pk=category.id
         )
         assert (
-            response.status_code == status.HTTP_204_NO_CONTENT
+                response.status_code == status.HTTP_204_NO_CONTENT
         ), "Should delete a category"
 
     def test_edit_category_permission(self, restaurant1, restaurant2):
         category = mixer.blend("food.FoodCategory", user=restaurant1.user)
 
-        data = {"name": "Burgers"}
+        data = {"name": "Burgers", "name_in_ar": "Burger in arabic"}
         factory = APIRequestFactory()
         request = factory.put("/", data=data)
         force_authenticate(request, restaurant2.user)
@@ -77,7 +77,7 @@ class TestFoodCategoryViewSet:
             request, pk=category.id
         )
         assert (
-            response.status_code == status.HTTP_403_FORBIDDEN
+                response.status_code == status.HTTP_403_FORBIDDEN
         ), "Should not edit a category"
 
     def test_delete_category_permission(self, restaurant1, restaurant2):
@@ -91,7 +91,7 @@ class TestFoodCategoryViewSet:
             request, pk=category.id
         )
         assert (
-            response.status_code == status.HTTP_403_FORBIDDEN
+                response.status_code == status.HTTP_403_FORBIDDEN
         ), "Should not delete a category"
 
 
@@ -123,6 +123,7 @@ class TestFoodItemViewSet:
         data = {
             "category": category.id,
             "name": "Burgers",
+            "name_in_ar": "Burgers in ar",
             "picture": img,
             "price": 99.96,
             "calorie": 854,
@@ -136,7 +137,7 @@ class TestFoodItemViewSet:
         response = FoodItemViewSet.as_view({"post": "create"})(request)
 
         assert (
-            response.status_code == status.HTTP_201_CREATED
+                response.status_code == status.HTTP_201_CREATED
         ), "Should create a new Food item"
 
     def test_edit_item(self, restaurant1, category):
@@ -147,6 +148,7 @@ class TestFoodItemViewSet:
         data = {
             "category": category.id,
             "name": "Meaw Burger",
+            "name_in_ar": "Burgers in ar",
             "picture": img,
             "price": 91.96,
             "calorie": 854,
@@ -169,7 +171,7 @@ class TestFoodItemViewSet:
 
         response = FoodItemViewSet.as_view({"delete": "destroy"})(request, pk=item.id)
         assert (
-            response.status_code == status.HTTP_204_NO_CONTENT
+                response.status_code == status.HTTP_204_NO_CONTENT
         ), "Should delete a food Item"
 
     def test_edit_item_permission(self, restaurant1, restaurant2, category):
@@ -180,6 +182,7 @@ class TestFoodItemViewSet:
         data = {
             "category": category.id,
             "name": "Meaw Burger",
+            "name_in_ar": "Burgers in ar",
             "picture": img,
             "price": 91.96,
             "calorie": 854,
@@ -192,7 +195,7 @@ class TestFoodItemViewSet:
 
         response = FoodItemViewSet.as_view({"put": "update"})(request, pk=item.id)
         assert (
-            response.status_code == status.HTTP_403_FORBIDDEN
+                response.status_code == status.HTTP_403_FORBIDDEN
         ), "Should not edit the food item"
 
     def test_delete_item_permission(self, restaurant1, restaurant2):
@@ -204,7 +207,7 @@ class TestFoodItemViewSet:
 
         response = FoodItemViewSet.as_view({"delete": "destroy"})(request, pk=item.id)
         assert (
-            response.status_code == status.HTTP_403_FORBIDDEN
+                response.status_code == status.HTTP_403_FORBIDDEN
         ), "Should not delete a food Item"
 
 
@@ -234,7 +237,8 @@ class TestFoodItemAddOnViewSet:
         return mixer.blend("food.FoodAddOn", food=food)
 
     def test_add_a_new_add_on(self, restaurant1, food):
-        data = {"name": "Cheese", "price": 9.96, "food": food.id}
+        data = {"name": "Cheese", "name_in_ar": "Cheese in ar",
+                "price": 9.96, "food": food.id}
 
         factory = APIRequestFactory()
         request = factory.post("/", data=data)
@@ -243,11 +247,12 @@ class TestFoodItemAddOnViewSet:
         response = FoodAddOnViewSet.as_view({"post": "create"})(request)
 
         assert (
-            response.status_code == status.HTTP_201_CREATED
+                response.status_code == status.HTTP_201_CREATED
         ), "Should create a new add on"
 
     def test_edit_add_on(self, restaurant1, addon):
-        data = {"name": "Cheese", "price": 9.96, "food": addon.food.id}
+        data = {"name": "Cheese", "name_in_ar": "Cheeseee in ar",
+                "price": 9.96, "food": addon.food.id}
 
         factory = APIRequestFactory()
         request = factory.put("/", data=data)
@@ -267,11 +272,12 @@ class TestFoodItemAddOnViewSet:
         response = FoodAddOnViewSet.as_view({"delete": "destroy"})(request, pk=addon.id)
 
         assert (
-            response.status_code == status.HTTP_204_NO_CONTENT
+                response.status_code == status.HTTP_204_NO_CONTENT
         ), "Should destroy add on"
 
     def test_invalid_add_a_new_add_on(self, restaurant2, food):
-        data = {"name": "Cheese", "price": 9.96, "food": food.id}
+        data = {"name": "Cheese", "name_in_ar": "Burgers in ar",
+                "price": 9.96, "food": food.id}
 
         factory = APIRequestFactory()
         request = factory.post("/", data=data)
@@ -280,11 +286,12 @@ class TestFoodItemAddOnViewSet:
         response = FoodAddOnViewSet.as_view({"post": "create"})(request)
 
         assert (
-            response.status_code == status.HTTP_403_FORBIDDEN
+                response.status_code == status.HTTP_403_FORBIDDEN
         ), "Should not create a new add on"
 
     def test_invalid_edit_add_on(self, restaurant2, addon):
-        data = {"name": "Cheese", "price": 9.96, "food": addon.food.id}
+        data = {"name": "Cheese", "name_in_ar": "Burgers in ar",
+                "price": 9.96, "food": addon.food.id}
 
         factory = APIRequestFactory()
         request = factory.put("/", data=data)
@@ -293,7 +300,7 @@ class TestFoodItemAddOnViewSet:
         response = FoodAddOnViewSet.as_view({"put": "update"})(request, pk=addon.id)
 
         assert (
-            response.status_code == status.HTTP_403_FORBIDDEN
+                response.status_code == status.HTTP_403_FORBIDDEN
         ), "Should not edit add on"
 
     def test_invalid_delete_add_on(self, restaurant2, addon):
@@ -306,5 +313,5 @@ class TestFoodItemAddOnViewSet:
         response = FoodAddOnViewSet.as_view({"delete": "destroy"})(request, pk=addon.id)
 
         assert (
-            response.status_code == status.HTTP_403_FORBIDDEN
+                response.status_code == status.HTTP_403_FORBIDDEN
         ), "Should not destroy add on"

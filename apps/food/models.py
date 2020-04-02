@@ -8,6 +8,7 @@ from utils.file import RandomFileName
 class FoodCategory(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, db_index=True)
     name = models.CharField(max_length=266, db_index=True)
+    name_in_ar = models.CharField(max_length=266, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False, db_index=True)
 
@@ -21,10 +22,13 @@ class FoodCategory(models.Model):
         except:
             return ""
 
+
 class FoodItem(models.Model):
     category = models.ForeignKey(FoodCategory, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, db_index=True)
     name = models.CharField(max_length=300, db_index=True)
+    name_in_ar = models.CharField(max_length=300, db_index=True)
+
     picture = models.ImageField(
         upload_to=RandomFileName("user/restaurant/food/"),
         default="user/restaurant/food/default.png",
@@ -53,6 +57,7 @@ class FoodItem(models.Model):
 
 class FoodAttribute(models.Model):
     name = models.CharField(max_length=144)
+    name_in_ar = models.CharField(max_length=144)
     food = models.ForeignKey(
         FoodItem, on_delete=models.CASCADE, related_name="attributes"
     )
@@ -72,6 +77,8 @@ class FoodAttribute(models.Model):
 
 class FoodAttributeMatrix(models.Model):
     name = models.CharField(max_length=144)
+    name_in_ar = models.CharField(max_length=144)
+
     attribute = models.ForeignKey(
         FoodAttribute, on_delete=models.CASCADE, related_name="attribute_matrix"
     )
@@ -89,6 +96,8 @@ class FoodAttributeMatrix(models.Model):
 class FoodAddOn(models.Model):
     food = models.ForeignKey(FoodItem, on_delete=models.CASCADE, related_name="addons")
     name = models.CharField(max_length=144, db_index=True)
+    name_in_ar = models.CharField(max_length=144)
+
     price = models.DecimalField(max_digits=9, decimal_places=3)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
