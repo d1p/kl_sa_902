@@ -118,6 +118,9 @@ class InvoiceSerializer(serializers.ModelSerializer):
     restaurant_address = serializers.CharField(
         source="order.restaurant.Restaurant.full_address", read_only=True
     )
+    has_restaurant_accepted = serializers.BooleanField(
+        source="order.has_restaurant_accepted", read_only=True
+    )
 
     class Meta:
         model = Invoice
@@ -128,9 +131,10 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "invoice_items",
             "restaurant_name",
             "restaurant_address",
+            "has_restaurant_accepted",
             "created_at",
         )
-        read_only_fields = ("id", "successful_transactions", "order_type", "created_at")
+        read_only_fields = ("id", "successful_transactions", "order_type", "has_restaurant_accepted", "created_at")
 
     def create(self, validated_data):
         current_user: User = self.context["request"].user
