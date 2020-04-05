@@ -41,6 +41,9 @@ class Invoice(models.Model):
                     amount=amount,
                 )
 
+    class Meta:
+        ordering = ("-id",)
+
     @property
     def order_type(self) -> int:
         return self.order.order_type
