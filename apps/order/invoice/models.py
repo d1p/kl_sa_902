@@ -31,7 +31,7 @@ class Invoice(models.Model):
             if ordered_items.count() > 0:
                 price = order.shared_price_without_tax(participant.user)
                 tax = order.shared_tax_amount(participant.user)
-                amount = order.total_price_with_tax()
+                amount = order.shared_price_with_tax(participant.user)
 
                 InvoiceItem.objects.create(
                     invoice=self,
