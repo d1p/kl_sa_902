@@ -446,7 +446,11 @@ class OrderRatingSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 {"non_field_error": ["Order has not been checked out or completed."]}
             )
-        
+        if order.order_type is OrderType.PICK_UP and order.has_restaurant_accepted is True and order.status is OrderStatusType.CANCELED:
+            raise ValidationError(
+                {"non_field_error": ["Order has not been checked out or completed."]}
+            )
+
         if order.order_participants.filter(user=user).exists() is False:
             raise PermissionDenied
 
