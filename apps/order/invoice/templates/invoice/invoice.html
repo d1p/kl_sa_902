@@ -18,9 +18,9 @@
                 <div class="col-md-6">
                     <h6>Restaurant Name: {{ invoice.order.restaurant.name }} SAR</h6>
                     <h6>First Customer Name: {{ invoice.order.created_by.name }} SAR</h6>
-                    <h6>Total Price Without Tax: {{ invoice.order.total_price_without_tax }} SAR</h6>
-                    <h6>Total Tax: {{ invoice.order.total_tax_amount }} SAR</h6>
-                    <h6>Total payable: {{ invoice.order.total_price_with_tax }} SAR </h6>
+                    <h6>Total Price Without Tax: {{ invoice.order.total_price_without_tax|floatformat:2 }} SAR</h6>
+                    <h6>Total Tax: {{ invoice.order.total_tax_amount|floatformat:2 }} SAR</h6>
+                    <h6>Total payable: {{ invoice.order.total_price_with_tax|floatformat:2 }} SAR </h6>
                 </div>
                 <div class="col-md-6">
                     <h6>Order Type: {{ invoice.order.get_order_type_display }}</h6>
@@ -62,9 +62,9 @@
                                                     <tr>
                                                         <th scope="row">{{ order_item.food_item.name }}</th>
                                                         <td>{{ order_item.quantity }}</td>
-                                                        <td>{{ order_item.total_price_without_tax }}</td>
-                                                        <td>{{ order_item.total_tax }}</td>
-                                                        <td>{{ order_item.total_price_with_tax }}</td>
+                                                        <td>{{ order_item.total_price_without_tax|floatformat:2 }}</td>
+                                                        <td>{{ order_item.total_tax|floatformat:2 }}</td>
+                                                        <td>{{ order_item.total_price_with_tax|floatformat:2 }}</td>
                                                     </tr>
                                                 {% endfor %}
                                             {% endfor %}
