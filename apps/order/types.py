@@ -20,7 +20,7 @@ class OrderStatusType:
         (OPEN, _("Open")),
         (CHECKOUT, _("Checkout")),
         (COMPLETED, _("Completed")),
-        (IN_PROCESS, _("In Process"))
+        (IN_PROCESS, _("In Process")),
     )
 
 

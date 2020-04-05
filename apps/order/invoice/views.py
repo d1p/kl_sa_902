@@ -137,7 +137,6 @@ class TransactionVerifyViewSet(CreateAPIView):
 
                     send_all_bill_paid_notification.delay(order_id=order.id)
 
-
                     for participant in order.order_participants.all():
                         participant.user.misc.set_order_in_rating()
                     print(transaction.get_transaction_status_display())
