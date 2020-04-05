@@ -119,7 +119,7 @@ class Order(models.Model):
         return Decimal(total)
 
     def total_tax_amount(self) -> Decimal:
-        return self.total_price_with_tax() - self.total_price_with_tax()
+        return self.total_price_with_tax() - self.total_price_without_tax()
 
     def shared_tax_amount(self, user: User):
         return self.shared_price_with_tax(user) - self.shared_price_without_tax(user)
