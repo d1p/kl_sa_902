@@ -121,6 +121,7 @@ class TransactionVerifyViewSet(CreateAPIView):
                 transaction.save()
                 # Send necessary signals
                 transaction.invoice_items.update(paid=True)
+                transaction.refresh_from_db()
                 order: Order = transaction.order
 
                 if order.invoice.invoice_items.filter(paid=False).exists() is False:
@@ -131,6 +132,7 @@ class TransactionVerifyViewSet(CreateAPIView):
                         order.payment_completed = True
                         order.save()
                     else:
+                        print("WE ARE HERE")
                         order.status = OrderStatusType.COMPLETED
                         order.payment_completed = True
                         order.save()
@@ -139,7 +141,9 @@ class TransactionVerifyViewSet(CreateAPIView):
 
                     for participant in order.order_participants.all():
                         participant.user.misc.set_order_in_rating()
+
                     print(transaction.get_transaction_status_display())
+
                 else:
                     send_single_bill_paid_notification.delay(
                         invoice_id=order.invoice.id, user_id=transaction.user_id, transaction_id=transaction.id
