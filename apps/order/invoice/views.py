@@ -105,9 +105,16 @@ class TransactionVerifyViewSet(CreateAPIView):
         transaction.save()
 
         if response_data.get("response_code") in ["100"]:
-            if str(transaction.amount) != response_data.get(
-                    "amount"
-            ) or transaction.currency != response_data.get("currency"):
+
+            tamount = response_data.get("amount")
+            aamount = str(transaction.amount)
+            if tamount[-1] == "0":
+                tamount = tamount[:-1]
+                aamount = str(round(transaction.amount, 2))
+
+            print(f"tamount: {tamount}, aamount: {aamount}")
+
+            if tamount != aamount or transaction.currency != response_data.get("currency"):
                 # Lets handle the failing state first.
                 transaction.transaction_status = PaymentStatus.INVALID
                 transaction.save()
