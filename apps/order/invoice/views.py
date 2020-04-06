@@ -101,8 +101,7 @@ class TransactionVerifyViewSet(CreateAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        transaction.transaction_id = response_data.get("transaction_id")
-        print(transaction.transaction_id)
+        transaction.pt_transaction_id = response_data.get("transaction_id")
         transaction.save()
 
         if response_data.get("response_code") in ["100"]:
