@@ -13,20 +13,20 @@ from .views import (
 router = DefaultRouter()
 
 router.register(
-    "order-item-invite", OrderItemInviteViewSet, base_name="order-item-invite"
+    "order-item-invite", OrderItemInviteViewSet, basename="order-item-invite"
 )
 router.register(
-    "order-participant", OrderParticipantViewSet, base_name="order-participant"
+    "order-participant", OrderParticipantViewSet, basename="order-participant"
 )
-router.register("order-item", OrderItemViewSet, base_name="order-item")
-router.register("order-invite", OrderInviteViewSet, base_name="order-invite")
+router.register("order-item", OrderItemViewSet, basename="order-item")
+router.register("order-invite", OrderInviteViewSet, basename="order-invite")
 
 
-router.register("order", OrderViewSet, base_name="order")
-router.register("order-rating", OrderRatingViewSet, base_name="order_rating")
+router.register("order", OrderViewSet, basename="order")
+router.register("order-rating", OrderRatingViewSet, basename="order_rating")
 
-router.register("transaction", TransactionViewSet, base_name="transaction")
-router.register("invoice", InvoiceViewSet, base_name="invoice")
+router.register("transaction", TransactionViewSet, basename="transaction")
+router.register("invoice", InvoiceViewSet, basename="invoice")
 
 urlpatterns = [
     path("api/", include(router.urls)),

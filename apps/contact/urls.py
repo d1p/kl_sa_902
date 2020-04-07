@@ -5,7 +5,7 @@ from .views import ContactListSyncApiView, ContactGroupViewSet
 
 router = DefaultRouter()
 
-router.register("contact-group", ContactGroupViewSet, base_name="contact-group")
+router.register("contact-group", ContactGroupViewSet, basename="contact-group")
 
 urlpatterns = [
     path("api/contact-list/", ContactListSyncApiView.as_view(), name="contact-list"),

@@ -15,17 +15,17 @@ router = DefaultRouter()
 router.register(
     "customer-ticket-topics",
     CustomerTicketTopicViewSet,
-    base_name="customer-ticket-topic",
+    basename="customer-ticket-topic",
 )
-router.register("customer-ticket", CustomerTicketViewSet, base_name="ticket")
+router.register("customer-ticket", CustomerTicketViewSet, basename="ticket")
 
-router.register("restaurant-ticket", RestaurantTicketViewSet, base_name="ticket")
-router.register("report-issue", ReportIssueViewSet, base_name="report-issue")
+router.register("restaurant-ticket", RestaurantTicketViewSet, basename="ticket")
+router.register("report-issue", ReportIssueViewSet, basename="report-issue")
 
 router.register(
     "restaurant-pre-ticket-topics",
     PreBackedTicketTopicViewSet,
-    base_name="restaurant-pre-ticket-topic",
+    basename="restaurant-pre-ticket-topic",
 )
 urlpatterns = [
     path(

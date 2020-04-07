@@ -25,49 +25,49 @@ router = DefaultRouter()
 router.register("account/fcm", FCMDeviceAuthorizedViewSet, basename="fcm")
 
 router.register("account/customer", CustomerViewSet, basename="customer")
-router.register("account/customer-misc", MiscViewSet, base_name="customer-misc")
+router.register("account/customer-misc", MiscViewSet, basename="customer-misc")
 router.register(
     r"account/restaurant/category",
     RestaurantCategoryViewSet,
-    base_name="restaurant-category",
+    basename="restaurant-category",
 )
 router.register("account/restaurant", RestaurantViewSet, basename="restaurant")
 router.register(
-    r"restaurant-table", RestaurantTableViewSet, base_name="restaurant-table"
+    r"restaurant-table", RestaurantTableViewSet, basename="restaurant-table"
 )
 router.register(
-    "account/change-password", ChangePasswordViewSet, base_name="change-password"
+    "account/change-password", ChangePasswordViewSet, basename="change-password"
 )
 router.register(
-    "account/forgot-password", ForgotPasswordViewSet, base_name="forgot-password"
+    "account/forgot-password", ForgotPasswordViewSet, basename="forgot-password"
 )
 router.register(
-    "account/reset-password", ResetPasswordViewSet, base_name="reset-password"
+    "account/reset-password", ResetPasswordViewSet, basename="reset-password"
 )
 router.register(
-    "account/check-reset-token", CheckResetTokenViewSet, base_name="check-reset-token"
+    "account/check-reset-token", CheckResetTokenViewSet, basename="check-reset-token"
 )
 
 router.register(
     "account/resend-verification-code",
     ResendVerificationViewSet,
-    base_name="resend-verification-code",
+    basename="resend-verification-code",
 )
 router.register(
     "account/change-phone-number",
     ChangePhoneNumberViewSet,
-    base_name="change-phone-number",
+    basename="change-phone-number",
 )
 router.register(
     "account/verify-phone-number",
     VerifyPhoneNumberViewSet,
-    base_name="verify-phone-number",
+    basename="verify-phone-number",
 )
 
 router.register(
     "account/verify-new-phone-number",
     ChangePhoneNumberVerificationViewSet,
-    base_name="verify-new-phone-number",
+    basename="verify-new-phone-number",
 )
 
 urlpatterns = [

@@ -6,8 +6,15 @@ from .models import Customer, Misc
 
 @admin.register(Misc)
 class MiscAdmin(admin.ModelAdmin):
-    list_display = ("user",)
-    search_fields = ("user",)
+    list_display = ("name", "phone_number", "state")
+    search_fields = ("user__phone_number", "user__name")
+
+    def name(self, obj):
+        return obj.user.name
+
+    def phone_number(self, obj):
+        return obj.user.phone_number
+
 
 
 class CustomerInline(admin.TabularInline):

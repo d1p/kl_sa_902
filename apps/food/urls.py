@@ -11,14 +11,14 @@ from .views import (
 
 router = DefaultRouter()
 
-router.register("food/category", FoodCategoryViewSet, base_name="food-category")
-router.register("food/item", FoodItemViewSet, base_name="food-item")
-router.register("food/add-on", FoodAddOnViewSet, base_name="food-add-on")
-router.register("food/attribute", FoodAttributeViewSet, base_name="food-attribute")
+router.register("food/category", FoodCategoryViewSet, basename="food-category")
+router.register("food/item", FoodItemViewSet, basename="food-item")
+router.register("food/add-on", FoodAddOnViewSet, basename="food-add-on")
+router.register("food/attribute", FoodAttributeViewSet, basename="food-attribute")
 router.register(
     "food/attribute-matrix",
     FoodAttributeMatrixViewSet,
-    base_name="food-attribute-matrix",
+    basename="food-attribute-matrix",
 )
 
 
