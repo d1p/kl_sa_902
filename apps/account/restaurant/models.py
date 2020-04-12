@@ -3,7 +3,6 @@ from decimal import Decimal
 from django.contrib.gis.db.models import PointField
 from django.contrib.gis.geos import Point
 from django.db import models
-from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
 
 from apps.account.models import User
@@ -75,35 +74,31 @@ class Restaurant(models.Model):
 
     def get_inhouse_earning(self) -> Decimal:
         from apps.order.invoice.models import Transaction
+        total = Decimal(0)
 
         transactions = Transaction.objects.filter(
             order__restaurant=self.user,
             transaction_status=PaymentStatus.SUCCESSFUL,
             order__order_type=OrderType.IN_HOUSE,
-        ).aggregate(Sum("amount"))
-
-        amount = (
-            (transactions["amount__sum"] / Decimal(100)) * self.inhouse_order_cut
-            if transactions["amount__sum"] is not None
-            else Decimal(0.0)
         )
-        return amount
+
+        for t in transactions:
+            total += (t.amount / Decimal(100)) * t.order.invoice.order_cut
+        return total
 
     def get_pickup_earning(self) -> Decimal:
         from apps.order.invoice.models import Transaction
+        total = Decimal(0)
 
         transactions = Transaction.objects.filter(
             order__restaurant=self.user,
             transaction_status=PaymentStatus.SUCCESSFUL,
             order__order_type=OrderType.PICK_UP,
-        ).aggregate(Sum("amount"))
-
-        amount = (
-            (transactions["amount__sum"] / Decimal(100)) * self.inhouse_order_cut
-            if transactions["amount__sum"] is not None
-            else Decimal(0.0)
         )
-        return amount
+
+        for t in transactions:
+            total += (t.amount / Decimal(100)) * t.order.invoice.order_cut
+        return total
 
     def get_total_earning(self) -> Decimal:
         return self.get_inhouse_earning() + self.get_pickup_earning()
