@@ -67,19 +67,39 @@ class PayableAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "phone_number",
+        "get_total_orders",
+        "get_total_order_amount",
         "get_inhouse_earning",
         "get_pickup_earning",
         "get_total_earning",
+        "inhouse_cut",
+        "pickup_cut",
     )
 
     date_hierarchy = "user__created_at"
     search_fields = ("user__email", "user__phone_number")
+
+    def inhouse_cut(self, obj):
+        return obj.inhouse_order_cut
+
+    def pickup_cut(self, obj):
+        return obj.pickup_order_cut
 
     def name(self, obj):
         return obj.user.name
 
     def phone_number(self, obj):
         return obj.user.phone_number
+
+    def get_total_orders(self, obj):
+        return obj.user.order_set.all().count()
+
+    get_total_orders.short_description = "Total Orders"
+
+    def get_total_order_amount(self, obj):
+        return obj.get_total_order_amount()
+
+    get_total_order_amount.short_description = "Total order amount"
 
     def get_inhouse_earning(self, obj):
         return obj.get_inhouse_earning()

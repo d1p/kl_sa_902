@@ -7,9 +7,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from apps.account.models import User
 from apps.order.invoice.types import PaymentStatus
-from apps.order.types import OrderType
+from apps.order.types import OrderType, OrderStatusType
 from utils.file import RandomFileName
-
+from django.db.models import Sum
 
 class Category(models.Model):
     name = models.CharField(max_length=45, unique=True, db_index=True)
@@ -59,6 +59,17 @@ class Restaurant(models.Model):
         max_digits=6, decimal_places=2, default=0.00
     )
 
+    pickup_earning = models.DecimalField(
+        max_digits=6, decimal_places=3, default=0.00
+    )
+    inhouse_earning = models.DecimalField(
+        max_digits=6, decimal_places=3, default=0.00
+    )
+
+    total_earning = models.DecimalField(
+        max_digits=6, decimal_places=3, default=0.00
+    )
+
     def __str__(self):
         return f"{self.user} - {self.user.name}"
 
@@ -71,6 +82,17 @@ class Restaurant(models.Model):
 
         rate = Rating.get_average_restaurant_rating(restaurant=self.user)
         return rate
+
+    def get_total_order_amount(self):
+        from apps.order.invoice.models import InvoiceItem
+
+        items = InvoiceItem.objects.filter(
+            invoice__order__restaurant=self.user,
+            invoice__order__status=OrderStatusType.COMPLETED,
+        ).aggregate(Sum("amount"))
+
+        amount = items["amount__sum"] if items is not None else Decimal(0.0)
+        return amount
 
     def get_inhouse_earning(self) -> Decimal:
         from apps.order.invoice.models import Transaction

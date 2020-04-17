@@ -27,7 +27,7 @@ from apps.order.types import (
 )
 from .filters import OrderFilter, OrderItemFilter, OrderParticipantFilter
 from .invoice.types import PaymentStatus
-from .invoice.utils import capture_transaction
+from .invoice.utils import capture_transaction, process_new_completed_order_earning
 from .models import (
     OrderInvite,
     Order,
@@ -313,6 +313,8 @@ class OrderViewSet(
         if order.order_type == OrderType.PICK_UP:
             order.status = OrderStatusType.COMPLETED
             order.save()
+            process_new_completed_order_earning(order)
+
         return Response({"status": "success"}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["POST"])

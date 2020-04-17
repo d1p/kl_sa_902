@@ -15,7 +15,7 @@ from apps.order.invoice.tasks import (
     send_single_bill_paid_notification,
 )
 from apps.order.invoice.types import PaymentStatus
-from apps.order.invoice.utils import verify_transaction
+from apps.order.invoice.utils import verify_transaction, process_new_completed_order_earning
 from apps.order.models import Order
 from apps.order.types import OrderType, OrderStatusType
 from .models import Invoice, Transaction
@@ -138,10 +138,10 @@ class TransactionVerifyViewSet(CreateAPIView):
                         order.payment_completed = True
                         order.save()
                     else:
-                        print("WE ARE HERE")
                         order.status = OrderStatusType.COMPLETED
                         order.payment_completed = True
                         order.save()
+                        process_new_completed_order_earning(order)
 
                     send_all_bill_paid_notification.delay(order_id=order.id)
 
