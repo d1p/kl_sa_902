@@ -92,7 +92,7 @@ class PayableAdmin(admin.ModelAdmin):
         return obj.user.phone_number
 
     def get_total_orders(self, obj):
-        return obj.user.order_set.all().count()
+        return obj.total_orders()
 
     get_total_orders.short_description = "Total Orders"
 

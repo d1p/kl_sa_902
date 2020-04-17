@@ -83,6 +83,10 @@ class Restaurant(models.Model):
         rate = Rating.get_average_restaurant_rating(restaurant=self.user)
         return rate
 
+    def total_orders(self) -> int:
+        from apps.order.models import Order
+        return Order.objects.filter(restaurant=self.user).count()
+
     def get_total_order_amount(self):
         from apps.order.invoice.models import InvoiceItem
 
