@@ -4,13 +4,12 @@ import requests
 from django.conf import settings
 
 from apps.account.restaurant.models import Restaurant
-from apps.order.invoice.models import InvoiceItem
+from apps.order.invoice.models import Invoice
 from apps.order.models import Order
 from apps.order.types import OrderType
 
 
 def verify_transaction(transaction_id):
-
     data = {
         "merchant_email": settings.PAYTABS_MERCHANT_EMAIL,
         "secret_key": settings.PAYTABS_SECRET_KEY,
@@ -37,18 +36,28 @@ def capture_transaction(transaction_id, amount):
 def process_new_completed_order_earning(order: Order):
     restaurant: Restaurant = order.restaurant.restaurant
 
+    total = Decimal(0.0)
+    print(order.get_status_display())
     try:
-        total = Decimal(0.0)
-        for invoice_item in order.invoice.invoice_items.all():
-            total += invoice_item.amount
+        invoice = Invoice.objects.get(order=order)
+    except Invoice.DoesNotExist:
+        raise ValueError("Invoice does not exists")
 
-        earning = (total / Decimal(100)) * order.invoice.order_cut
-        if order.order_type is OrderType.PICK_UP:
-            restaurant.pickup_earning += earning
-        elif order.order_type is OrderType.IN_HOUSE:
-            restaurant.inhouse_earning += earning
+    for invoice_item in invoice.invoice_items.all():
+        total += invoice_item.amount
 
-        restaurant.total_earning += earning
-        restaurant.save()
-    except:
-        print(f"Something went wrong in process_new_completed_order_earning({order.id}")
+    app_earning = (total / Decimal(100)) * order.invoice.order_cut
+    restaurant_earning = total - app_earning
+
+    if order.order_type is OrderType.PICK_UP:
+        restaurant.app_pickup_earning += app_earning
+        restaurant.pickup_earning += total - restaurant_earning
+    elif order.order_type is OrderType.IN_HOUSE:
+        restaurant.app_inhouse_earning += app_earning
+        restaurant.inhouse_earning += total - restaurant_earning
+
+    restaurant.total_earning += restaurant_earning
+    restaurant.app_total_earning += app_earning
+    restaurant.total += total
+
+    restaurant.save()

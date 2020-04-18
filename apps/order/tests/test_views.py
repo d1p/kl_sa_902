@@ -11,7 +11,8 @@ from apps.account.customer.models import Customer
 from apps.account.restaurant.models import Restaurant
 from apps.food.models import FoodAddOn, FoodItem, FoodAttributeMatrix
 from apps.order.models import Order
-from ..types import OrderType, OrderStatusType
+from ..invoice.views import InvoiceViewSet
+from ..types import OrderType, OrderStatusType, OrderItemStatusType
 from ..views import OrderViewSet, OrderInviteViewSet, OrderItemViewSet
 
 pytestmark = pytest.mark.django_db
@@ -216,9 +217,31 @@ class TestOrder(TOrderFixtures):
         ), "Should have zero participant"
         assert order.status == OrderStatusType.CANCELED, "Order should be cancelled."
 
-    def test_restaurant_notifications(self, restaurant, order):
+    def test_restaurant_notifications(self, restaurant, order, customer, food, other_customer):
+        order.order_participants.create(user=other_customer.user)
+        order.refresh_from_db()
+
+        order_item = mixer.blend(
+            "order.OrderItem",
+            food_item=food,
+            quantity=3,
+            order=order,
+            added_by=customer.user,
+            shared_with=[customer.user,other_customer.user],
+            status=OrderItemStatusType.CONFIRMED,
+        )
+
+        factory = APIRequestFactory()
+        request = factory.post("/", data={"order": order.id})
+
+        force_authenticate(request, customer.user)
+
+        response = InvoiceViewSet.as_view({"post": "create"})(request)
+        order.refresh_from_db()
+
         order.confirmed = True
         order.save()
+
         order.refresh_from_db()
         factory = APIRequestFactory()
         request = factory.post("/", data={"time": 10})

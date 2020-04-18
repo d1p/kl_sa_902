@@ -43,7 +43,16 @@ class RestaurantAdmin(admin.ModelAdmin):
         "phone_number",
         "is_public",
     )
-    search_fields = ("user__name", "user__email_address", "user__phone_number")
+    readonly_fields = (
+        "pickup_earning",
+        "inhouse_earning",
+        "app_pickup_earning",
+        "app_inhouse_earning",
+        "total_earning",
+        "app_total_earning",
+        "total",
+    )
+    search_fields = ("user__name", "user__email", "user__phone_number")
     list_filter = ("is_public", "user__name")
 
     def view_food_items(self, obj):
@@ -68,22 +77,26 @@ class PayableAdmin(admin.ModelAdmin):
         "name",
         "phone_number",
         "get_total_orders",
-        "get_total_order_amount",
         "get_inhouse_earning",
         "get_pickup_earning",
         "get_total_earning",
-        "inhouse_cut",
-        "pickup_cut",
+        "restaurant_inhouse_earning",
+        "restaurant_pickup_earning",
+        "restaurant_total_earning",
+        "get_total_order_amount",
     )
 
     date_hierarchy = "user__created_at"
     search_fields = ("user__email", "user__phone_number")
 
-    def inhouse_cut(self, obj):
-        return obj.inhouse_order_cut
+    def restaurant_inhouse_earning(self, obj: Restaurant):
+        return obj.inhouse_earning
 
-    def pickup_cut(self, obj):
-        return obj.pickup_order_cut
+    def restaurant_pickup_earning(self, obj: Restaurant):
+        return obj.pickup_earning
+
+    def restaurant_total_earning(self, obj: Restaurant):
+        return obj.pickup_earning + obj.inhouse_earning
 
     def name(self, obj):
         return obj.user.name
@@ -97,22 +110,22 @@ class PayableAdmin(admin.ModelAdmin):
     get_total_orders.short_description = "Total Orders"
 
     def get_total_order_amount(self, obj):
-        return obj.get_total_order_amount()
+        return obj.total
 
-    get_total_order_amount.short_description = "Total order amount"
+    get_total_order_amount.short_description = "Total amount"
 
-    def get_inhouse_earning(self, obj):
-        return obj.get_inhouse_earning()
+    def get_inhouse_earning(self, obj: Restaurant):
+        return obj.app_inhouse_earning
 
     get_inhouse_earning.short_description = "Inhouse earning"
 
-    def get_pickup_earning(self, obj):
-        return obj.get_pickup_earning()
+    def get_pickup_earning(self, obj: Restaurant):
+        return obj.app_pickup_earning
 
     get_pickup_earning.short_description = "Pickup earning"
 
-    def get_total_earning(self, obj):
-        return obj.get_total_earning()
+    def get_total_earning(self, obj: Restaurant):
+        return obj.app_inhouse_earning + obj.app_pickup_earning
 
     get_total_earning.short_description = "Total earning"
 

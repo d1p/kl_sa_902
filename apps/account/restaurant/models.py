@@ -66,8 +66,23 @@ class Restaurant(models.Model):
         max_digits=6, decimal_places=3, default=0.00
     )
 
+    app_pickup_earning = models.DecimalField(
+        max_digits=6, decimal_places=3, default=0.0
+    )
+
+    app_inhouse_earning = models.DecimalField(
+        max_digits=6, decimal_places=3, default=0.0
+    )
+
     total_earning = models.DecimalField(
         max_digits=6, decimal_places=3, default=0.00
+    )
+    app_total_earning = models.DecimalField(
+        max_digits=6, decimal_places=3, default=0.00
+    )
+
+    total = models.DecimalField(
+        max_digits=6, decimal_places=3, default=0.0
     )
 
     def __str__(self):
@@ -85,7 +100,7 @@ class Restaurant(models.Model):
 
     def total_orders(self) -> int:
         from apps.order.models import Order
-        return Order.objects.filter(restaurant=self.user).count()
+        return Order.objects.filter(restaurant=self.user, status=OrderStatusType.COMPLETED).count()
 
     def get_total_order_amount(self):
         from apps.order.invoice.models import InvoiceItem
