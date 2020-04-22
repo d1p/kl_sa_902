@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0017_order_has_restaurant_accepted'),
+        ("order", "0017_order_has_restaurant_accepted"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='tax_percentage',
+            model_name="order",
+            name="tax_percentage",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=6),
         ),
     ]

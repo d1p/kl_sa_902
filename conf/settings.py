@@ -103,7 +103,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {"default": env.db()}
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 CACHES = {"default": env.cache()}
 
 # Password validation
@@ -264,4 +264,3 @@ if "heroku" in os.environ:
     GDAL_LIBRARY_PATH = os.getenv("GDAL_LIBRARY_PATH")
     GEOS_LIBRARY_PATH = os.getenv("GEOS_LIBRARY_PATH")
     DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
-

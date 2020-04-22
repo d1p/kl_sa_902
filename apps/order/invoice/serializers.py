@@ -72,8 +72,8 @@ class TransactionSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         order: Order = validated_data.get("order")
         if (
-                order.order_participants.filter(user=validated_data.get("user")).exists()
-                is False
+            order.order_participants.filter(user=validated_data.get("user")).exists()
+            is False
         ):
             raise PermissionDenied
 
@@ -134,7 +134,13 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "has_restaurant_accepted",
             "created_at",
         )
-        read_only_fields = ("id", "successful_transactions", "order_type", "has_restaurant_accepted", "created_at")
+        read_only_fields = (
+            "id",
+            "successful_transactions",
+            "order_type",
+            "has_restaurant_accepted",
+            "created_at",
+        )
 
     def create(self, validated_data):
         current_user: User = self.context["request"].user
@@ -149,11 +155,12 @@ class InvoiceSerializer(serializers.ModelSerializer):
             invoice = Invoice.objects.get(order=order)
         except Invoice.DoesNotExist:
             with transaction.atomic():
-                invoice = Invoice.objects.create(**validated_data,
-                                                 order_cut=order.restaurant.restaurant.pickup_order_cut
-                                                 if order.order_type is OrderType.PICK_UP
-                                                 else order.restaurant.restaurant.inhouse_order_cut,
-                                                 )
+                invoice = Invoice.objects.create(
+                    **validated_data,
+                    order_cut=order.restaurant.restaurant.pickup_order_cut
+                    if order.order_type is OrderType.PICK_UP
+                    else order.restaurant.restaurant.inhouse_order_cut,
+                )
                 invoice.generate_invoice_items()
                 order.status = OrderStatusType.CHECKOUT
                 order.save()

@@ -14,10 +14,7 @@ from .managers import CustomUserManager
 from .types import ProfileType
 
 _PHONE_REGEX = RegexValidator(
-    regex=r"\d{10}",
-    message=_(
-        "Phone number must be 10 digits."
-    ),
+    regex=r"\d{10}", message=_("Phone number must be 10 digits."),
 )
 
 

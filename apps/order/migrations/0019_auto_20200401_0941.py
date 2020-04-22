@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0018_order_tax_percentage'),
+        ("order", "0018_order_tax_percentage"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='payment_completed',
+            model_name="order",
+            name="payment_completed",
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='has_restaurant_accepted',
+            model_name="order",
+            name="has_restaurant_accepted",
             field=models.BooleanField(blank=True, default=None, null=True),
         ),
     ]

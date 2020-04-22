@@ -13,15 +13,21 @@ from .types import ProfileType
 class PublicUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "name" ,"name_in_ar", "profile_picture")
+        fields = ("id", "name", "name_in_ar", "profile_picture")
         read_only_fields = ("id", "name", "name_in_ar", "profile_picture")
 
 
 class PrivateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "name", "name_in_ar","phone_number", "profile_picture")
-        read_only_fields = ("id", "name", "name_in_ar", "phone_number", "profile_picture")
+        fields = ("id", "name", "name_in_ar", "phone_number", "profile_picture")
+        read_only_fields = (
+            "id",
+            "name",
+            "name_in_ar",
+            "phone_number",
+            "profile_picture",
+        )
 
 
 class UserSerializer(serializers.ModelSerializer):

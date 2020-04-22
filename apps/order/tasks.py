@@ -258,7 +258,9 @@ def send_update_order_items_confirmed_notification(order_id: int):
     try:
         order = Order.objects.get(id=order_id)
         translation.activate(order.restaurant.locale)
-        title = _(f"A new item just added to the order #{order_id} from {order.table_id}.")
+        title = _(
+            f"A new item just added to the order #{order_id} from {order.table_id}."
+        )
         body = _("See the dashboard for details")
         data = {
             "notification_id": 9,
@@ -270,8 +272,12 @@ def send_update_order_items_confirmed_notification(order_id: int):
         send_push_notification(order.restaurant, title, body, data)
         translation.deactivate()
 
-        message = f"A new item just added to the order #{order_id} from {order.table_id}."
-        message_in_ar = f"A new item just added to the order #{order_id} from {order.table_id}."
+        message = (
+            f"A new item just added to the order #{order_id} from {order.table_id}."
+        )
+        message_in_ar = (
+            f"A new item just added to the order #{order_id} from {order.table_id}."
+        )
         action_type = NotificationActionType.RESTAURANT_NEW_ITEM_IN_ORDER
 
         Action.objects.create(
@@ -401,6 +407,7 @@ def send_order_edit_notification(from_user: int, order_id: int):
             translation.deactivate()
     except:
         pass
+
 
 @app.task
 def send_order_accepted_notification(order_id: int):

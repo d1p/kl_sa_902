@@ -16,7 +16,6 @@ from .serializers import (
 )
 
 
-
 class ContactListSyncApiView(CreateAPIView):
     serializer_class = ContactListSyncSerializer
 
@@ -24,7 +23,9 @@ class ContactListSyncApiView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             contact_list = serializer.validated_data.get("contacts")
-            contact_list = [number[-10:] for number in contact_list]  # Check first 10 digits.
+            contact_list = [
+                number[-10:] for number in contact_list
+            ]  # Check first 10 digits.
 
             kole_contacts = User.objects.filter(
                 groups__name="Customer", phone_number__in=contact_list
@@ -86,8 +87,7 @@ class ContactGroupViewSet(ModelViewSet):
                     user = User.objects.get(id=contact_id)
                     if user.groups.filter(name="Customer").exists() is False:
                         return Response(
-                            {"id": "User not found."},
-                            status=status.HTTP_404_NOT_FOUND,
+                            {"id": "User not found."}, status=status.HTTP_404_NOT_FOUND,
                         )
                 except User.DoesNotExist:
                     return Response(

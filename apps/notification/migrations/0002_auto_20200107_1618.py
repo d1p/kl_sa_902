@@ -8,18 +8,42 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('notification', '0001_initial'),
+        ("notification", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='action',
-            name='action_type',
-            field=models.CharField(choices=[('RESTAURANT_NEW_TABLE_ORDER', 'New Table Order'), ('RESTAURANT_NEW_PICKUP_ORDER', 'New Pickup Order'), ('RESTAURANT_NEW_ITEM_IN_ORDER', 'New Item In Order'), ('RESTAURANT_CHECKOUT_FROM_ORDER', 'Checkout From Order'), ('RESTAURANT_RECEIVED_PAYMENT_FOR_ORDER', 'Received Payment For Order'), ('RESTAURANT_TICKET_RESPONSE_FROM_ADMIN', 'Ticket Response From Admin'), ('RESTAURANT_ORDER_COMPLETED', 'Order has been completed'), ('RESTAURANT_TICKET_CLOSED_BY_ADMIN', 'Ticket Closed By Admin')], max_length=100),
+            model_name="action",
+            name="action_type",
+            field=models.CharField(
+                choices=[
+                    ("RESTAURANT_NEW_TABLE_ORDER", "New Table Order"),
+                    ("RESTAURANT_NEW_PICKUP_ORDER", "New Pickup Order"),
+                    ("RESTAURANT_NEW_ITEM_IN_ORDER", "New Item In Order"),
+                    ("RESTAURANT_CHECKOUT_FROM_ORDER", "Checkout From Order"),
+                    (
+                        "RESTAURANT_RECEIVED_PAYMENT_FOR_ORDER",
+                        "Received Payment For Order",
+                    ),
+                    (
+                        "RESTAURANT_TICKET_RESPONSE_FROM_ADMIN",
+                        "Ticket Response From Admin",
+                    ),
+                    ("RESTAURANT_ORDER_COMPLETED", "Order has been completed"),
+                    ("RESTAURANT_TICKET_CLOSED_BY_ADMIN", "Ticket Closed By Admin"),
+                ],
+                max_length=100,
+            ),
         ),
         migrations.AlterField(
-            model_name='action',
-            name='sender',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='notification_sender', to=settings.AUTH_USER_MODEL),
+            model_name="action",
+            name="sender",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="notification_sender",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

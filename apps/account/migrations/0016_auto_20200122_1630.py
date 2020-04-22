@@ -7,23 +7,47 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0015_auto_20200120_1343'),
+        ("account", "0015_auto_20200120_1343"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='changephonenumbertoken',
-            name='new_phone_number',
-            field=models.CharField(db_index=True, max_length=17, validators=[django.core.validators.RegexValidator(message='Phone number must be 10 digits.', regex='\\d{10}')]),
+            model_name="changephonenumbertoken",
+            name="new_phone_number",
+            field=models.CharField(
+                db_index=True,
+                max_length=17,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message="Phone number must be 10 digits.", regex="\\d{10}"
+                    )
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='changephonenumbertoken',
-            name='old_phone_number',
-            field=models.CharField(db_index=True, max_length=17, validators=[django.core.validators.RegexValidator(message='Phone number must be 10 digits.', regex='\\d{10}')]),
+            model_name="changephonenumbertoken",
+            name="old_phone_number",
+            field=models.CharField(
+                db_index=True,
+                max_length=17,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message="Phone number must be 10 digits.", regex="\\d{10}"
+                    )
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='phone_number',
-            field=models.CharField(max_length=17, unique=True, validators=[django.core.validators.RegexValidator(message='Phone number must be 10 digits.', regex='\\d{10}')]),
+            model_name="user",
+            name="phone_number",
+            field=models.CharField(
+                max_length=17,
+                unique=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message="Phone number must be 10 digits.", regex="\\d{10}"
+                    )
+                ],
+            ),
         ),
     ]

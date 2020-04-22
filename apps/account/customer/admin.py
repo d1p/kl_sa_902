@@ -16,7 +16,6 @@ class MiscAdmin(admin.ModelAdmin):
         return obj.user.phone_number
 
 
-
 class CustomerInline(admin.TabularInline):
     def __init__(self, *args, **kwargs):
         super(CustomerInline, self).__init__(*args, **kwargs)

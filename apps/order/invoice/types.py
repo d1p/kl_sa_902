@@ -13,5 +13,5 @@ class PaymentStatus:
         (SUCCESSFUL, _("Successful")),
         (FAILED, _("Failed")),
         (INVALID, _("Invalid")),
-        (AUTHORIZED, _("Authorized"))
+        (AUTHORIZED, _("Authorized")),
     )

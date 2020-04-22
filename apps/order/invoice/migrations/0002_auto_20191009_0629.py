@@ -7,25 +7,25 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0014_auto_20191009_0629'),
-        ('invoice', '0001_initial'),
+        ("order", "0014_auto_20191009_0629"),
+        ("invoice", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='transaction',
-            old_name='order_id',
-            new_name='pt_order_id',
+            model_name="transaction", old_name="order_id", new_name="pt_order_id",
         ),
         migrations.RenameField(
-            model_name='transaction',
-            old_name='transaction_id',
-            new_name='pt_transaction_id',
+            model_name="transaction",
+            old_name="transaction_id",
+            new_name="pt_transaction_id",
         ),
         migrations.AddField(
-            model_name='transaction',
-            name='order',
-            field=models.ForeignKey(default=8, on_delete=django.db.models.deletion.CASCADE, to='order.Order'),
+            model_name="transaction",
+            name="order",
+            field=models.ForeignKey(
+                default=8, on_delete=django.db.models.deletion.CASCADE, to="order.Order"
+            ),
             preserve_default=False,
         ),
     ]

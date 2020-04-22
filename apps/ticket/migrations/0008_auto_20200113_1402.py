@@ -6,17 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ticket', '0007_auto_20200113_1246'),
+        ("ticket", "0007_auto_20200113_1246"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='restaurantmessage',
-            options={'ordering': ('created_at',), 'verbose_name': 'Restaurant Message', 'verbose_name_plural': 'Restaurant Messages'},
+            name="restaurantmessage",
+            options={
+                "ordering": ("created_at",),
+                "verbose_name": "Restaurant Message",
+                "verbose_name_plural": "Restaurant Messages",
+            },
         ),
         migrations.AddField(
-            model_name='restaurantticket',
-            name='new_message',
+            model_name="restaurantticket",
+            name="new_message",
             field=models.BooleanField(db_index=True, default=True),
         ),
     ]

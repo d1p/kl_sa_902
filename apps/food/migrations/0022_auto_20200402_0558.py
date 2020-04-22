@@ -6,38 +6,42 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('food', '0021_auto_20191112_1452'),
+        ("food", "0021_auto_20191112_1452"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foodaddon',
-            name='name_in_ar',
-            field=models.CharField(default='dummy arabic text', max_length=144),
+            model_name="foodaddon",
+            name="name_in_ar",
+            field=models.CharField(default="dummy arabic text", max_length=144),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='foodattribute',
-            name='name_in_ar',
-            field=models.CharField(default='dummy arabic text', max_length=144),
+            model_name="foodattribute",
+            name="name_in_ar",
+            field=models.CharField(default="dummy arabic text", max_length=144),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='foodattributematrix',
-            name='name_in_ar',
-            field=models.CharField(default='dummy arabic text', max_length=144),
+            model_name="foodattributematrix",
+            name="name_in_ar",
+            field=models.CharField(default="dummy arabic text", max_length=144),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='foodcategory',
-            name='name_in_ar',
-            field=models.CharField(db_index=True, default='dummy arabic text', max_length=266),
+            model_name="foodcategory",
+            name="name_in_ar",
+            field=models.CharField(
+                db_index=True, default="dummy arabic text", max_length=266
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='fooditem',
-            name='name_in_ar',
-            field=models.CharField(db_index=True, default='dummy arabic text', max_length=300),
+            model_name="fooditem",
+            name="name_in_ar",
+            field=models.CharField(
+                db_index=True, default="dummy arabic text", max_length=300
+            ),
             preserve_default=False,
         ),
     ]

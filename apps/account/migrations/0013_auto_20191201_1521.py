@@ -7,13 +7,19 @@ import utils.file
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0012_auto_20190817_1233'),
+        ("account", "0012_auto_20190817_1233"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='profile_picture',
-            field=models.ImageField(blank=True, default='/user/profile-picture/default.png', null=True, upload_to=utils.file.RandomFileName('user/profile-picture/'), verbose_name='Profile Picture'),
+            model_name="user",
+            name="profile_picture",
+            field=models.ImageField(
+                blank=True,
+                default="/user/profile-picture/default.png",
+                null=True,
+                upload_to=utils.file.RandomFileName("user/profile-picture/"),
+                verbose_name="Profile Picture",
+            ),
         ),
     ]

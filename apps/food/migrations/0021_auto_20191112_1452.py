@@ -7,13 +7,18 @@ import utils.file
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('food', '0020_auto_20191023_1429'),
+        ("food", "0020_auto_20191023_1429"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='fooditem',
-            name='picture',
-            field=models.ImageField(blank=True, default='user/restaurant/food/default.png', null=True, upload_to=utils.file.RandomFileName('user/restaurant/food/')),
+            model_name="fooditem",
+            name="picture",
+            field=models.ImageField(
+                blank=True,
+                default="user/restaurant/food/default.png",
+                null=True,
+                upload_to=utils.file.RandomFileName("user/restaurant/food/"),
+            ),
         ),
     ]

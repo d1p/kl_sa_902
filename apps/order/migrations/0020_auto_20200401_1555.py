@@ -6,13 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0019_auto_20200401_0941'),
+        ("order", "0019_auto_20200401_0941"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='status',
-            field=models.SmallIntegerField(choices=[(2, 'Canceled'), (1, 'Open'), (3, 'Checkout'), (4, 'Completed'), (5, 'In Process')], default=1),
+            model_name="order",
+            name="status",
+            field=models.SmallIntegerField(
+                choices=[
+                    (2, "Canceled"),
+                    (1, "Open"),
+                    (3, "Checkout"),
+                    (4, "Completed"),
+                    (5, "In Process"),
+                ],
+                default=1,
+            ),
         ),
     ]

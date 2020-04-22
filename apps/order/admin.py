@@ -10,7 +10,8 @@ from .models import (
     OrderItemAddOn,
     OrderItemAttributeMatrix,
     OrderItemInvite,
-    Rating)
+    Rating,
+)
 from .types import OrderStatusType
 
 
@@ -32,11 +33,13 @@ class OrderAdmin(admin.ModelAdmin):
 
     def invoice_link(self, obj: Order):
         if obj.status is OrderStatusType.COMPLETED:
-            return mark_safe(f"<a href='/invoice/view/{obj.id}/' target='_blank'>View Invoice</a>")
+            return mark_safe(
+                f"<a href='/invoice/view/{obj.id}/' target='_blank'>View Invoice</a>"
+            )
         else:
             return gettext_lazy("Order hasn't been completed yet.")
 
-    invoice_link.short_description = ''
+    invoice_link.short_description = ""
 
 
 admin.register(OrderItemAddOn)
@@ -88,8 +91,17 @@ class OrderParticipantAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ("id", "order", "quantity", "total_price_without_tax", "total_price_with_tax", "total_tax",
-                    "shared_price_without_tax", "shared_price_with_tax", "shared_total_tax")
+    list_display = (
+        "id",
+        "order",
+        "quantity",
+        "total_price_without_tax",
+        "total_price_with_tax",
+        "total_tax",
+        "shared_price_without_tax",
+        "shared_price_with_tax",
+        "shared_total_tax",
+    )
     list_display_links = ("id", "order")
     inlines = [OrderItemAddOnInline, OrderItemMatrixInline]
 

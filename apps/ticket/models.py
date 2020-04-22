@@ -85,7 +85,10 @@ class RestaurantTicket(models.Model):
 
 class RestaurantMessage(models.Model):
     ticket = models.ForeignKey(
-        RestaurantTicket, on_delete=models.CASCADE, db_index=True, related_name="messages"
+        RestaurantTicket,
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name="messages",
     )
     sender = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     text = models.TextField(max_length=5000)

@@ -100,7 +100,9 @@ class FoodCategorySerializer(serializers.ModelSerializer):
 class FoodItemSerializer(serializers.ModelSerializer):
     user = PublicUserSerializer(read_only=True)
     category_name = serializers.CharField(source="category.name", read_only=True)
-    category_name_in_ar = serializers.CharField(source="category.name_in_ar", read_only=True)
+    category_name_in_ar = serializers.CharField(
+        source="category.name_in_ar", read_only=True
+    )
 
     addons = FoodAddOnSerializer(many=True, read_only=True)
     attributes = FoodAttributeSerializer(many=True, read_only=True)

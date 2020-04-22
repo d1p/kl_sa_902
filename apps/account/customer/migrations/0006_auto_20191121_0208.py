@@ -6,31 +6,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('customer', '0005_auto_20191021_1740'),
+        ("customer", "0005_auto_20191021_1740"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='misc',
-            name='last_order_type',
-        ),
-        migrations.RemoveField(
-            model_name='misc',
-            name='last_restaurant',
-        ),
+        migrations.RemoveField(model_name="misc", name="last_order_type",),
+        migrations.RemoveField(model_name="misc", name="last_restaurant",),
         migrations.AddField(
-            model_name='misc',
-            name='last_order_in_rating',
+            model_name="misc",
+            name="last_order_in_rating",
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AddField(
-            model_name='misc',
-            name='state',
-            field=models.CharField(choices=[('IN_ORDER', 'In Order'), ('IN_CHECKOUT', 'In Checkout'), ('IN_RATING', 'In Rating')], db_index=True, default='IN_ORDER', max_length=40),
+            model_name="misc",
+            name="state",
+            field=models.CharField(
+                choices=[
+                    ("IN_ORDER", "In Order"),
+                    ("IN_CHECKOUT", "In Checkout"),
+                    ("IN_RATING", "In Rating"),
+                ],
+                db_index=True,
+                default="IN_ORDER",
+                max_length=40,
+            ),
         ),
         migrations.AddField(
-            model_name='misc',
-            name='updated_at',
+            model_name="misc",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

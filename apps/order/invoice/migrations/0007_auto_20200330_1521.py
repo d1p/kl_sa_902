@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('invoice', '0006_auto_20191121_0320'),
+        ("invoice", "0006_auto_20191121_0320"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='invoiceitem',
-            name='order_cut',
+            model_name="invoiceitem",
+            name="order_cut",
             field=models.DecimalField(decimal_places=3, default=100.0, max_digits=6),
         ),
         migrations.AddField(
-            model_name='invoiceitem',
-            name='tax_percentage',
+            model_name="invoiceitem",
+            name="tax_percentage",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=6),
         ),
     ]

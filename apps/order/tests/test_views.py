@@ -217,7 +217,9 @@ class TestOrder(TOrderFixtures):
         ), "Should have zero participant"
         assert order.status == OrderStatusType.CANCELED, "Order should be cancelled."
 
-    def test_restaurant_notifications(self, restaurant, order, customer, food, other_customer):
+    def test_restaurant_notifications(
+        self, restaurant, order, customer, food, other_customer
+    ):
         order.order_participants.create(user=other_customer.user)
         order.refresh_from_db()
 
@@ -227,7 +229,7 @@ class TestOrder(TOrderFixtures):
             quantity=3,
             order=order,
             added_by=customer.user,
-            shared_with=[customer.user,other_customer.user],
+            shared_with=[customer.user, other_customer.user],
             status=OrderItemStatusType.CONFIRMED,
         )
 
@@ -246,9 +248,9 @@ class TestOrder(TOrderFixtures):
         factory = APIRequestFactory()
         request = factory.post("/", data={"time": 10})
         force_authenticate(request, restaurant.user)
-        response = OrderViewSet.as_view({"post": "send_order_is_ready_in_x_notification"})(
-            request, pk=order.id
-        )
+        response = OrderViewSet.as_view(
+            {"post": "send_order_is_ready_in_x_notification"}
+        )(request, pk=order.id)
         assert (
             response.status_code == status.HTTP_201_CREATED
         ), "Should send notification"

@@ -28,7 +28,9 @@ def capture_transaction(transaction_id, amount):
         "transaction_id": transaction_id,
         "amount": amount,
     }
-    response = requests.post("https://www.paytabs.com/apiv3/release_capture_preauth", data=data)
+    response = requests.post(
+        "https://www.paytabs.com/apiv3/release_capture_preauth", data=data
+    )
     response_data = response.json()
     return response_data
 

@@ -7,17 +7,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0015_rating'),
+        ("order", "0015_rating"),
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='order',
-            options={'ordering': ('-id',)},
-        ),
+        migrations.AlterModelOptions(name="order", options={"ordering": ("-id",)},),
         migrations.AlterField(
-            model_name='order',
-            name='table',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='restaurant.RestaurantTable'),
+            model_name="order",
+            name="table",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="restaurant.RestaurantTable",
+            ),
         ),
     ]

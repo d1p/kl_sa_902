@@ -1,14 +1,20 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from apps.order.invoice.views import InvoiceViewSet, TransactionVerifyViewSet, TransactionViewSet, invoice_view
+from apps.order.invoice.views import (
+    InvoiceViewSet,
+    TransactionVerifyViewSet,
+    TransactionViewSet,
+    invoice_view,
+)
 from .views import (
     OrderViewSet,
     OrderItemViewSet,
     OrderInviteViewSet,
     OrderItemInviteViewSet,
     OrderParticipantViewSet,
-    OrderRatingViewSet)
+    OrderRatingViewSet,
+)
 
 router = DefaultRouter()
 
@@ -35,5 +41,5 @@ urlpatterns = [
         TransactionVerifyViewSet.as_view(),
         name="transaction_verification",
     ),
-    path("invoice/view/<int:order_id>/", invoice_view, name="view_invoice")
+    path("invoice/view/<int:order_id>/", invoice_view, name="view_invoice"),
 ]

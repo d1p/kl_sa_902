@@ -18,7 +18,9 @@ from apps.order.tasks import (
     send_order_will_be_ready_in_x_notification,
     send_order_is_ready_notification,
     send_order_is_delivered_notification,
-    send_order_rejected_notification, send_order_accepted_notification)
+    send_order_rejected_notification,
+    send_order_accepted_notification,
+)
 from apps.order.types import (
     OrderInviteStatusType,
     OrderStatusType,
@@ -147,10 +149,10 @@ class OrderItemInviteViewSet(
             except User.DoesNotExist:
                 continue
             if (
-                    OrderItemInvite.can_send_invite(
-                        to_user=user, order_item=validated_data.get("order_item")
-                    )
-                    is True
+                OrderItemInvite.can_send_invite(
+                    to_user=user, order_item=validated_data.get("order_item")
+                )
+                is True
             ):
                 OrderItemInvite.objects.create(
                     to_user=user,
@@ -178,7 +180,7 @@ class OrderViewSet(
             "leave",
             "send_order_is_ready_notification",
             "send_order_is_delivered_notification",
-            "accept_order"
+            "accept_order",
         ]:
             return ConfirmSerializer
         elif self.action == "send_order_is_ready_in_x_notification":
@@ -196,9 +198,11 @@ class OrderViewSet(
                 order_participants__user=current_user
             ).distinct("id")
         elif current_user.profile_type == ProfileType.RESTAURANT:
-            queryset = Order.objects.filter(
-                restaurant=current_user, confirmed=True
-            ).exclude(status=OrderStatusType.CANCELED).exclude(status=OrderStatusType.COMPLETED)
+            queryset = (
+                Order.objects.filter(restaurant=current_user, confirmed=True)
+                .exclude(status=OrderStatusType.CANCELED)
+                .exclude(status=OrderStatusType.COMPLETED)
+            )
         else:
             queryset = Order.objects.all()
 
@@ -217,8 +221,8 @@ class OrderViewSet(
         order = self.get_object()
 
         if (
-                order.order_participants.filter(user=request.user).exists() is True
-                and order.confirmed is False
+            order.order_participants.filter(user=request.user).exists() is True
+            and order.confirmed is False
         ):
             OrderParticipant.objects.filter(order=order, user=request.user).delete()
 

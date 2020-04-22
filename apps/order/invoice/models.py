@@ -15,9 +15,7 @@ class Invoice(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     # payables
-    order_cut = models.DecimalField(
-        max_digits=6, decimal_places=3, default=100.00
-    )
+    order_cut = models.DecimalField(max_digits=6, decimal_places=3, default=100.00)
 
     def generate_invoice_items(self):
         order: Order = self.order

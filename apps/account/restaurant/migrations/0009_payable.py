@@ -6,21 +6,20 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('restaurant', '0008_auto_20191031_1435'),
+        ("restaurant", "0008_auto_20191031_1435"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Payable',
-            fields=[
-            ],
+            name="Payable",
+            fields=[],
             options={
-                'verbose_name': 'Restaurant Commission and Earning',
-                'verbose_name_plural': 'Restaurant Commissions and Earnings',
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "verbose_name": "Restaurant Commission and Earning",
+                "verbose_name_plural": "Restaurant Commissions and Earnings",
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('restaurant.restaurant',),
+            bases=("restaurant.restaurant",),
         ),
     ]

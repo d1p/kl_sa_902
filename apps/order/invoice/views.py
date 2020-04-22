@@ -15,7 +15,10 @@ from apps.order.invoice.tasks import (
     send_single_bill_paid_notification,
 )
 from apps.order.invoice.types import PaymentStatus
-from apps.order.invoice.utils import verify_transaction, process_new_completed_order_earning
+from apps.order.invoice.utils import (
+    verify_transaction,
+    process_new_completed_order_earning,
+)
 from apps.order.models import Order
 from apps.order.types import OrderType, OrderStatusType
 from .models import Invoice, Transaction
@@ -114,7 +117,9 @@ class TransactionVerifyViewSet(CreateAPIView):
 
             print(f"tamount: {tamount}, aamount: {aamount}")
 
-            if tamount != aamount or transaction.currency != response_data.get("currency"):
+            if tamount != aamount or transaction.currency != response_data.get(
+                "currency"
+            ):
                 # Lets handle the failing state first.
                 transaction.transaction_status = PaymentStatus.INVALID
                 transaction.save()
@@ -150,7 +155,9 @@ class TransactionVerifyViewSet(CreateAPIView):
 
                 else:
                     send_single_bill_paid_notification.delay(
-                        invoice_id=order.invoice.id, user_id=transaction.user_id, transaction_id=transaction.id
+                        invoice_id=order.invoice.id,
+                        user_id=transaction.user_id,
+                        transaction_id=transaction.id,
                     )
                 return Response(
                     {"transaction_status": transaction.transaction_status},
