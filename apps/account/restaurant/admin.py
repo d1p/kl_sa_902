@@ -87,7 +87,7 @@ class PayableAdmin(admin.ModelAdmin):
     )
 
     date_hierarchy = "user__created_at"
-    search_fields = ("user__email", "user__phone_number")
+    search_fields = ("user__name", "user__email", "user__phone_number")
 
     def restaurant_inhouse_earning(self, obj: Restaurant):
         return obj.inhouse_earning
