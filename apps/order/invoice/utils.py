@@ -51,13 +51,14 @@ def process_new_completed_order_earning(order: Order):
 
     if order.order_type is OrderType.PICK_UP:
         restaurant.app_pickup_earning += app_earning
-        restaurant.pickup_earning += total - restaurant_earning
+        restaurant.pickup_earning += restaurant_earning
     elif order.order_type is OrderType.IN_HOUSE:
         restaurant.app_inhouse_earning += app_earning
-        restaurant.inhouse_earning += total - restaurant_earning
+        restaurant.inhouse_earning += restaurant_earning
 
     restaurant.total_earning += restaurant_earning
     restaurant.app_total_earning += app_earning
+
     restaurant.total += total
 
     restaurant.save()
