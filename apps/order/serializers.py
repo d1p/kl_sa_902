@@ -332,7 +332,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
                 OrderItemAttributeMatrix.objects.create(
                     order_item=instance, food_attribute_matrix=attribute_matrix
                 )
-        print(f"invited users: {invited_users}")
+
         for i_user in invited_users:
             try:
                 user = User.objects.get(id=i_user)

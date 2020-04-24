@@ -51,7 +51,7 @@ def send_order_item_invite_notification(
         order_item = OrderItem.objects.get(id=item_id)
 
         translation.activate(t_user.locale)
-        title = _(f"{t_user.name} has sent you an invitation")
+        title = _(f"{f_user.name} has sent you an invitation")
         body = _("Tap to get started")
         data = {
             "title": title,
