@@ -103,7 +103,7 @@ class OrderInviteViewSet(
                 continue
 
             if user.misc.state != CustomerMiscType.NO_ORDER:
-                return Response({"non_fields_error": ["The user is in another order."]}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"non_field_error": ["The user is in another order."]}, status=status.HTTP_400_BAD_REQUEST)
 
             invite = OrderInvite.objects.create(
                 order=order,
