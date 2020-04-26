@@ -24,7 +24,7 @@ class Misc(models.Model):
         max_length=40,
         db_index=True,
         choices=CustomerMiscType.choices,
-        default=CustomerMiscType.IN_ORDER,
+        default=CustomerMiscType.NO_ORDER,
     )
 
     updated_at = models.DateTimeField(auto_now=True)

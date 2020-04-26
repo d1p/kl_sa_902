@@ -50,6 +50,7 @@ from .serializers import (
     OrderRatingSerializer,
     OrderIsReadySerializer,
 )
+from ..account.customer.types import CustomerMiscType
 
 
 class OrderInviteViewSet(
@@ -99,6 +100,8 @@ class OrderInviteViewSet(
                     continue
             except User.DoesNotExist:
                 continue
+            if user.misc.state != CustomerMiscType.NO_ORDER:
+                return Response({"error": ["The user is in another order."]}, status=status.HTTP_400_BAD_REQUEST)
             invite = OrderInvite.objects.create(
                 order=order,
                 invited_user=user,
