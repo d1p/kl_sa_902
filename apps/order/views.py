@@ -90,6 +90,7 @@ class OrderInviteViewSet(
             return Response(
                 {"order": "Invalid Order id"}, status=status.HTTP_400_BAD_REQUEST
             )
+
         if order.order_participants.filter(user=invited_by).exists() is False:
             return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -100,8 +101,10 @@ class OrderInviteViewSet(
                     continue
             except User.DoesNotExist:
                 continue
+
             if user.misc.state != CustomerMiscType.NO_ORDER:
-                return Response({"error": ["The user is in another order."]}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"non_fields_error": ["The user is in another order."]}, status=status.HTTP_400_BAD_REQUEST)
+
             invite = OrderInvite.objects.create(
                 order=order,
                 invited_user=user,
