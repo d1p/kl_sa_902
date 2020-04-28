@@ -243,7 +243,7 @@ class OrderViewSet(
             )
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            return Response({"status": "failed"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status": "Please complete the order first."}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=["POST"])
     def confirm_current_items(self, request, pk):
