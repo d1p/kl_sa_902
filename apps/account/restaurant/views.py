@@ -46,7 +46,7 @@ class RestaurantViewSet(
 
     def get_queryset(self):
         request = self.request
-        radius = request.GET.get("radius", 100)
+        radius = request.GET.get("radius", 300)
 
         if (
             request.GET.get("lat", None) is not None
