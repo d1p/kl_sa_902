@@ -28,7 +28,7 @@ class OrderAdmin(admin.ModelAdmin):
         "table",
         "created_at",
     )
-    list_filter = ("status", "order_type", "confirmed")
+    list_filter = ("status", "order_type", "confirmed", "has_restaurant_accepted",)
     search_fields = ("id",)
 
     def invoice_link(self, obj: Order):

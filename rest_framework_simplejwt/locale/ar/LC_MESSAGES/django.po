@@ -1,0 +1,108 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-02 10:36+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+#: rest_framework_simplejwt/authentication.py:73
+msgid "Authorization header must contain two space-delimited values"
+msgstr ""
+
+#: rest_framework_simplejwt/authentication.py:99
+msgid "Given token not valid for any token type"
+msgstr ""
+
+#: rest_framework_simplejwt/authentication.py:111
+#: rest_framework_simplejwt/authentication.py:133
+msgid "Token contained no recognizable user identification"
+msgstr ""
+
+#: rest_framework_simplejwt/authentication.py:116
+msgid "User not found"
+msgstr ""
+
+#: rest_framework_simplejwt/authentication.py:119
+msgid "User is inactive"
+msgstr ""
+
+#: rest_framework_simplejwt/backends.py:15
+msgid "Unrecognized algorithm type '{}'"
+msgstr ""
+
+#: rest_framework_simplejwt/backends.py:45
+#: rest_framework_simplejwt/exceptions.py:38
+#: rest_framework_simplejwt/tokens.py:43
+msgid "Token is invalid or expired"
+msgstr ""
+
+#: rest_framework_simplejwt/serializers.py:24
+msgid "No active account found with the given credentials"
+msgstr ""
+
+#: rest_framework_simplejwt/settings.py:52
+msgid ""
+"The '{}' setting has been removed. Please refer to '{}' for available "
+"settings."
+msgstr ""
+
+#: rest_framework_simplejwt/token_blacklist/admin.py:56
+msgid "jti"
+msgstr ""
+
+#: rest_framework_simplejwt/token_blacklist/admin.py:62
+msgid "user"
+msgstr ""
+
+#: rest_framework_simplejwt/token_blacklist/admin.py:68
+msgid "created at"
+msgstr ""
+
+#: rest_framework_simplejwt/token_blacklist/admin.py:74
+msgid "expires at"
+msgstr ""
+
+#: rest_framework_simplejwt/token_blacklist/apps.py:7
+msgid "Token Blacklist"
+msgstr ""
+
+#: rest_framework_simplejwt/tokens.py:29
+msgid "Cannot create token with no type or lifetime"
+msgstr ""
+
+#: rest_framework_simplejwt/tokens.py:97
+msgid "Token has no id"
+msgstr ""
+
+#: rest_framework_simplejwt/tokens.py:108
+msgid "Token has no type"
+msgstr ""
+
+#: rest_framework_simplejwt/tokens.py:111
+msgid "Token has wrong type"
+msgstr ""
+
+#: rest_framework_simplejwt/tokens.py:148
+msgid "Token has no '{}' claim"
+msgstr ""
+
+#: rest_framework_simplejwt/tokens.py:152
+msgid "Token '{}' claim has expired"
+msgstr ""
+
+#: rest_framework_simplejwt/tokens.py:193
+msgid "Token is blacklisted"
+msgstr ""
