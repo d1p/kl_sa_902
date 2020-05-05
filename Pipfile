@@ -37,6 +37,7 @@ shortuuid = "*"
 sentry-sdk = "*"
 django-nested-admin = "*"
 django-cors-headers = "*"
+django-crispy-forms = "*"
 
 [requires]
 python_version = "3.7.5"

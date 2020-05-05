@@ -113,6 +113,7 @@ class PayableAdmin(admin.ModelAdmin):
         "restaurant_pickup_earning",
         "restaurant_total_earning",
         "get_total_order_amount",
+        "view_report",
     )
 
     date_hierarchy = "user__created_at"
@@ -157,6 +158,11 @@ class PayableAdmin(admin.ModelAdmin):
         return obj.app_inhouse_earning + obj.app_pickup_earning
 
     get_total_earning.short_description = "Total earning"
+
+    def view_report(self, obj: Payable):
+        return mark_safe(
+            f"<a href='/account/restaurant/report/{obj.user_id}/' target='_blank'>View Report</a>"
+        )
 
     def has_add_permission(self, request):
         return False

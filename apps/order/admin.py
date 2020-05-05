@@ -24,6 +24,7 @@ class OrderAdmin(admin.ModelAdmin):
         "restaurant",
         "created_by",
         "confirmed",
+        "accepted",
         "invoice_link",
         "table",
         "created_at",
@@ -41,6 +42,9 @@ class OrderAdmin(admin.ModelAdmin):
 
     invoice_link.short_description = ""
 
+    def accepted(self, obj: Order):
+        return obj.has_restaurant_accepted
+    accepted.boolean = True
 
 admin.register(OrderItemAddOn)
 

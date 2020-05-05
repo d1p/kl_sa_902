@@ -48,6 +48,7 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
     "nested_admin",
     "django_filters",
+    "crispy_forms",
 ]
 
 CORE_APPS = [
@@ -264,3 +265,6 @@ if "heroku" in os.environ:
     GDAL_LIBRARY_PATH = os.getenv("GDAL_LIBRARY_PATH")
     GEOS_LIBRARY_PATH = os.getenv("GEOS_LIBRARY_PATH")
     DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
+
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -1,12 +1,17 @@
-from django.contrib.gis.geos import Point
+from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import D
+from django.core.exceptions import PermissionDenied
+from django.db.models import Sum
+from django.shortcuts import get_object_or_404, render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ModelViewSet
 
 from apps.account.restaurant.filters import RestaurantTableFilter, RestaurantFilter
+from apps.account.restaurant.forms import PayableDetailsSearchForm
 from apps.account.restaurant.models import Restaurant, Category, RestaurantTable
 from apps.account.restaurant.serializers import (
     CategorySerializer,
@@ -14,6 +19,8 @@ from apps.account.restaurant.serializers import (
     RestaurantTableSerializer,
     PublicRestaurantSerializer,
 )
+from apps.order.invoice.models import Invoice
+from apps.order.types import OrderStatusType, OrderType
 from utils.permission import IsAuthenticatedOrCreateOnly, IsRestaurantOwnerOrReadOnly
 
 
@@ -49,8 +56,8 @@ class RestaurantViewSet(
         radius = request.GET.get("radius", 300)
 
         if (
-            request.GET.get("lat", None) is not None
-            and request.GET.get("lng", None) is not None
+                request.GET.get("lat", None) is not None
+                and request.GET.get("lng", None) is not None
         ):
             point = Point(
                 float(request.GET.get("lng")), float(request.GET.get("lat")), srid=4326
@@ -59,8 +66,8 @@ class RestaurantViewSet(
                 Restaurant.objects.filter(
                     is_public=True, geolocation__distance_lte=(point, D(km=radius))
                 )
-                .annotate(distance=Distance("geolocation", point))
-                .order_by("distance")
+                    .annotate(distance=Distance("geolocation", point))
+                    .order_by("distance")
             )
         return Restaurant.objects.filter(is_public=True)
 
@@ -117,3 +124,52 @@ class RestaurantTableViewSet(ModelViewSet):
         instance: RestaurantTable = self.get_object()
         instance.is_active = False
         instance.save()
+
+
+@login_required
+def report_view(request, user_id: int):
+    if request.user.is_superuser is False:
+        raise PermissionDenied
+    restaurant = get_object_or_404(Restaurant, user__id=user_id)
+
+    form = PayableDetailsSearchForm()
+
+    if request.method == "POST":
+        form = PayableDetailsSearchForm(request.POST)
+        if form.is_valid():
+            from_date = form.cleaned_data.get("from_date")
+            to_date = form.cleaned_data.get("to_date")
+            inhouse = Invoice.objects.filter(
+                order__restaurant=restaurant.user,
+                order__status=OrderStatusType.COMPLETED,
+                order__order_type=OrderType.IN_HOUSE,
+                created_at__range=[from_date, to_date],
+            ).aggregate(Sum("app_earning"), Sum("restaurant_earning"))
+
+            pickup = Invoice.objects.filter(
+                order__restaurant=restaurant.user,
+                order__status=OrderStatusType.COMPLETED,
+                order__order_type=OrderType.PICK_UP,
+                created_at__range=[from_date, to_date],
+            ).aggregate(Sum("app_earning"), Sum("restaurant_earning"))
+
+            app_total = inhouse["app_earning__sum"] + pickup["app_earning__sum"]
+            restaurant_total = inhouse["restaurant_earning__sum"] + pickup["restaurant_earning__sum"]
+            pickup_count = Invoice.objects.filter(
+                order__restaurant=restaurant.user,
+                order__status=OrderStatusType.COMPLETED,
+                order__order_type=OrderType.PICK_UP,
+                created_at__range=[from_date, to_date],
+            ).count()
+            inhouse_count = Invoice.objects.filter(
+                order__restaurant=restaurant.user,
+                order__status=OrderStatusType.COMPLETED,
+                order__order_type=OrderType.IN_HOUSE,
+                created_at__range=[from_date, to_date],
+            ).count()
+            return render(request, "restaurant/report.html",
+                          {"restaurant": restaurant, "form": form, "inhouse": inhouse, "pickup": pickup,
+                           "app_total": app_total, "restaurant_total": restaurant_total, "pickup_count": pickup_count,
+                           "inhouse_count": inhouse_count, "total_orders": inhouse_count + pickup_count})
+
+    return render(request, "restaurant/report.html", {"restaurant": restaurant, "form": form, "get": True})

@@ -48,7 +48,7 @@ def process_new_completed_order_earning(order: Order):
     for invoice_item in invoice.invoice_items.all():
         total += invoice_item.amount
 
-    app_earning = (total / Decimal(100)) * order.invoice.order_cut
+    app_earning = (total / Decimal(100)) * invoice.order_cut
     restaurant_earning = total - app_earning
 
     if order.order_type is OrderType.PICK_UP:
@@ -64,3 +64,7 @@ def process_new_completed_order_earning(order: Order):
     restaurant.total += total
 
     restaurant.save()
+
+    invoice.app_earning = app_earning
+    invoice.restaurant_earning = restaurant_earning
+    invoice.save()

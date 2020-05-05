@@ -17,6 +17,14 @@ class Invoice(models.Model):
     # payables
     order_cut = models.DecimalField(max_digits=6, decimal_places=3, default=100.00)
 
+    # earnings
+    app_earning = models.DecimalField(max_digits=8, decimal_places=3, null=True)
+    restaurant_earning = models.DecimalField(max_digits=8, decimal_places=3, null=True)
+
+    @property
+    def total(self) -> Decimal:
+        return self.app_earning + self.restaurant_earning
+
     def generate_invoice_items(self):
         order: Order = self.order
         participants = order.order_participants.all()

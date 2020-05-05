@@ -1,0 +1,82 @@
+{% load static %}{% load crispy_forms_tags %}{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Report: {{ restaurant.user.name }} - {{ restaurant.user.name_in_ar }}</title>
+</head>
+<body style="padding-top:50px;">
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3 style="text-align: center;">{{ restaurant.user.name }}</h3><br>
+            <hr>
+            <br><br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="row">
+                <form action="." method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <input type="submit" value="Go" class="btn btn-primary"/>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            {% if get is None %}
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h4> Kole Earnings</h4>
+                        <hr>
+                        <p>
+                            <b>Inhouse earnings</b>: {{ inhouse.app_earning__sum }} SAR
+                            <br>
+                            <b>Pickup earnings</b>: {{ pickup.app_earning__sum }} SAR
+                            <br>
+                            <b>Total earnings</b>: {{ app_total }} SAR
+                        </p>
+                    </div>
+                    <div class="col-sm-4">
+                        <h4> Restaurant Earnings</h4>
+                        <hr>
+                        <p>
+                            <b>Inhouse earnings</b>: {{ inhouse.restaurant_earning__sum }} SAR
+                            <br>
+                            <b>Pickup earnings</b>: {{ pickup.restaurant_earning__sum }} SAR
+                            <br>
+                            <b>Total earnings</b>: {{ restaurant_total }} SAR
+                        </p>
+                    </div>
+                    <div class="col-sm-4">
+                        <h4>Orders</h4>
+                        <hr>
+                        <p>
+                            <b>Pickup orders</b>: {{ pickup_count|intword }}
+                            <br>
+                            <b>Dine In orders</b>: {{ inhouse_count|intword }}
+                            <br>
+                            <b>Total orders</b>: {{ total_orders|intword }}
+
+                        </p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Please select a date.</h4>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</body>
+</html>
