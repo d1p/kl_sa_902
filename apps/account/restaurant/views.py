@@ -22,7 +22,7 @@ from apps.account.restaurant.serializers import (
     PublicRestaurantSerializer,
 )
 from apps.order.invoice.models import Invoice
-from apps.order.types import OrderStatusType, OrderType
+from apps.order.types import OrderType
 from utils.permission import IsAuthenticatedOrCreateOnly, IsRestaurantOwnerOrReadOnly
 
 
@@ -141,43 +141,65 @@ def report_view(request, user_id: int):
         if form.is_valid():
             from_date = form.cleaned_data.get("from_date")
             to_date = form.cleaned_data.get("to_date")
+
             inhouse = Invoice.objects.filter(
                 order__restaurant=restaurant.user,
-                order__status=OrderStatusType.COMPLETED,
+                order__payment_completed=True,
                 order__order_type=OrderType.IN_HOUSE,
-                created_at__range=[from_date, to_date],
+                created_at__date__gte=from_date,
+                created_at__date__lte=to_date,
             ).aggregate(Sum("app_earning"), Sum("restaurant_earning"))
 
             pickup = Invoice.objects.filter(
                 order__restaurant=restaurant.user,
-                order__status=OrderStatusType.COMPLETED,
+                order__payment_completed=True,
                 order__order_type=OrderType.PICK_UP,
-                created_at__range=[from_date, to_date],
+                created_at__date__gte=from_date,
+                created_at__date__lte=to_date,
             ).aggregate(Sum("app_earning"), Sum("restaurant_earning"))
-            try:
-                app_total = inhouse["app_earning__sum"] + pickup["app_earning__sum"]
-            except TypeError:
-                app_total = Decimal(0)
-            try:
-                restaurant_total = inhouse["restaurant_earning__sum"] + pickup["restaurant_earning__sum"]
-            except TypeError:
-                restaurant_total = Decimal(0)
+
+            inhouse_app_earnings = inhouse["app_earning__sum"] if inhouse["app_earning__sum"] is not None else Decimal(
+                0)
+            pickup_app_earnings = pickup["app_earning__sum"] if pickup["app_earning__sum"] is not None else Decimal(0)
+
+            app_total = inhouse_app_earnings + pickup_app_earnings
+
+            inhouse_restaurant_earnings = inhouse["restaurant_earning__sum"] if inhouse[
+                                                                                    "restaurant_earning__sum"] is not None else Decimal(
+                0)
+            pickup_restaurant_earnings = pickup["restaurant_earning__sum"] if pickup[
+                                                                                  "restaurant_earning__sum"] is not None else Decimal(
+                0)
+
+            restaurant_total = inhouse_restaurant_earnings + pickup_restaurant_earnings
 
             pickup_count = Invoice.objects.filter(
                 order__restaurant=restaurant.user,
-                order__status=OrderStatusType.COMPLETED,
+                order__payment_completed=True,
                 order__order_type=OrderType.PICK_UP,
-                created_at__range=[from_date, to_date],
+                created_at__date__gte=from_date,
+                created_at__date__lte=to_date,
             ).count()
             inhouse_count = Invoice.objects.filter(
                 order__restaurant=restaurant.user,
-                order__status=OrderStatusType.COMPLETED,
+                order__payment_completed=True,
                 order__order_type=OrderType.IN_HOUSE,
-                created_at__range=[from_date, to_date],
+                created_at__date__gte=from_date,
+                created_at__date__lte=to_date,
             ).count()
+
             return render(request, "restaurant/report.html",
-                          {"restaurant": restaurant, "form": form, "inhouse": inhouse, "pickup": pickup,
-                           "app_total": app_total, "restaurant_total": restaurant_total, "pickup_count": pickup_count,
-                           "inhouse_count": inhouse_count, "total_orders": inhouse_count + pickup_count})
+                          {"restaurant": restaurant,
+                           "form": form,
+                           "inhouse_app_earnings": inhouse_app_earnings,
+                           "pickup_app_earnings": pickup_app_earnings,
+                           "inhouse_restaurant_earnings": inhouse_restaurant_earnings,
+                           "pickup_restaurant_earnings": pickup_restaurant_earnings,
+                           "pickup": pickup,
+                           "app_total": app_total,
+                           "restaurant_total": restaurant_total,
+                           "pickup_count": pickup_count,
+                           "inhouse_count": inhouse_count,
+                           "total_orders": inhouse_count + pickup_count})
 
     return render(request, "restaurant/report.html", {"restaurant": restaurant, "form": form, "get": True})
