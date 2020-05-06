@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point
@@ -152,9 +154,15 @@ def report_view(request, user_id: int):
                 order__order_type=OrderType.PICK_UP,
                 created_at__range=[from_date, to_date],
             ).aggregate(Sum("app_earning"), Sum("restaurant_earning"))
+            try:
+                app_total = inhouse["app_earning__sum"] + pickup["app_earning__sum"]
+            except TypeError:
+                app_total = Decimal(0)
+            try:
+                restaurant_total = inhouse["restaurant_earning__sum"] + pickup["restaurant_earning__sum"]
+            except TypeError:
+                restaurant_total = Decimal(0)
 
-            app_total = inhouse["app_earning__sum"] + pickup["app_earning__sum"]
-            restaurant_total = inhouse["restaurant_earning__sum"] + pickup["restaurant_earning__sum"]
             pickup_count = Invoice.objects.filter(
                 order__restaurant=restaurant.user,
                 order__status=OrderStatusType.COMPLETED,
