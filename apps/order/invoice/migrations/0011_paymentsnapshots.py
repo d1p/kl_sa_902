@@ -7,19 +7,37 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0020_auto_20200401_1555'),
-        ('invoice', '0010_auto_20200405_1448'),
+        ("order", "0020_auto_20200401_1555"),
+        ("invoice", "0010_auto_20200405_1448"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PaymentSnapshots',
+            name="PaymentSnapshots",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('app_earning', models.DecimalField(decimal_places=3, max_digits=8)),
-                ('restaurant_earning', models.DecimalField(decimal_places=3, max_digits=8)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('order', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='order.Order')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("app_earning", models.DecimalField(decimal_places=3, max_digits=8)),
+                (
+                    "restaurant_earning",
+                    models.DecimalField(decimal_places=3, max_digits=8),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "order",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="order.Order",
+                    ),
+                ),
             ],
         ),
     ]

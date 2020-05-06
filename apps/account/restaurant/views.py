@@ -58,8 +58,8 @@ class RestaurantViewSet(
         radius = request.GET.get("radius", 300)
 
         if (
-                request.GET.get("lat", None) is not None
-                and request.GET.get("lng", None) is not None
+            request.GET.get("lat", None) is not None
+            and request.GET.get("lng", None) is not None
         ):
             point = Point(
                 float(request.GET.get("lng")), float(request.GET.get("lat")), srid=4326
@@ -68,8 +68,8 @@ class RestaurantViewSet(
                 Restaurant.objects.filter(
                     is_public=True, geolocation__distance_lte=(point, D(km=radius))
                 )
-                    .annotate(distance=Distance("geolocation", point))
-                    .order_by("distance")
+                .annotate(distance=Distance("geolocation", point))
+                .order_by("distance")
             )
         return Restaurant.objects.filter(is_public=True)
 
@@ -158,18 +158,29 @@ def report_view(request, user_id: int):
                 created_at__date__lte=to_date,
             ).aggregate(Sum("app_earning"), Sum("restaurant_earning"))
 
-            inhouse_app_earnings = inhouse["app_earning__sum"] if inhouse["app_earning__sum"] is not None else Decimal(
-                0)
-            pickup_app_earnings = pickup["app_earning__sum"] if pickup["app_earning__sum"] is not None else Decimal(0)
+            inhouse_app_earnings = (
+                inhouse["app_earning__sum"]
+                if inhouse["app_earning__sum"] is not None
+                else Decimal(0)
+            )
+            pickup_app_earnings = (
+                pickup["app_earning__sum"]
+                if pickup["app_earning__sum"] is not None
+                else Decimal(0)
+            )
 
             app_total = inhouse_app_earnings + pickup_app_earnings
 
-            inhouse_restaurant_earnings = inhouse["restaurant_earning__sum"] if inhouse[
-                                                                                    "restaurant_earning__sum"] is not None else Decimal(
-                0)
-            pickup_restaurant_earnings = pickup["restaurant_earning__sum"] if pickup[
-                                                                                  "restaurant_earning__sum"] is not None else Decimal(
-                0)
+            inhouse_restaurant_earnings = (
+                inhouse["restaurant_earning__sum"]
+                if inhouse["restaurant_earning__sum"] is not None
+                else Decimal(0)
+            )
+            pickup_restaurant_earnings = (
+                pickup["restaurant_earning__sum"]
+                if pickup["restaurant_earning__sum"] is not None
+                else Decimal(0)
+            )
 
             restaurant_total = inhouse_restaurant_earnings + pickup_restaurant_earnings
 
@@ -188,18 +199,27 @@ def report_view(request, user_id: int):
                 created_at__date__lte=to_date,
             ).count()
 
-            return render(request, "restaurant/report.html",
-                          {"restaurant": restaurant,
-                           "form": form,
-                           "inhouse_app_earnings": inhouse_app_earnings,
-                           "pickup_app_earnings": pickup_app_earnings,
-                           "inhouse_restaurant_earnings": inhouse_restaurant_earnings,
-                           "pickup_restaurant_earnings": pickup_restaurant_earnings,
-                           "pickup": pickup,
-                           "app_total": app_total,
-                           "restaurant_total": restaurant_total,
-                           "pickup_count": pickup_count,
-                           "inhouse_count": inhouse_count,
-                           "total_orders": inhouse_count + pickup_count})
+            return render(
+                request,
+                "restaurant/report.html",
+                {
+                    "restaurant": restaurant,
+                    "form": form,
+                    "inhouse_app_earnings": inhouse_app_earnings,
+                    "pickup_app_earnings": pickup_app_earnings,
+                    "inhouse_restaurant_earnings": inhouse_restaurant_earnings,
+                    "pickup_restaurant_earnings": pickup_restaurant_earnings,
+                    "pickup": pickup,
+                    "app_total": app_total,
+                    "restaurant_total": restaurant_total,
+                    "pickup_count": pickup_count,
+                    "inhouse_count": inhouse_count,
+                    "total_orders": inhouse_count + pickup_count,
+                },
+            )
 
-    return render(request, "restaurant/report.html", {"restaurant": restaurant, "form": form, "get": True})
+    return render(
+        request,
+        "restaurant/report.html",
+        {"restaurant": restaurant, "form": form, "get": True},
+    )

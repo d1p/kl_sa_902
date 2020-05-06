@@ -8,7 +8,8 @@ from .restaurant.views import (
     RestaurantViewSet,
     RestaurantCategoryViewSet,
     RestaurantTableViewSet,
-    report_view)
+    report_view,
+)
 from .views import (
     MyTokenObtainPairView,
     ChangePasswordViewSet,
@@ -81,5 +82,4 @@ urlpatterns = [
         "api/auth/api-token-refresh/", TokenRefreshView.as_view(), name="token_refresh"
     ),
     path("account/restaurant/report/<int:user_id>/", report_view, name="report_view"),
-
 ]

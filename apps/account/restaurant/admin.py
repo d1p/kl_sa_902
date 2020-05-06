@@ -55,33 +55,30 @@ class RestaurantAdmin(admin.ModelAdmin):
     search_fields = ("user__name", "user__email", "user__phone_number")
     list_filter = ("is_public", "user__name")
     fieldsets = (
-        (_("Basic"), {
-            "fields": ("user", "cover_picture", "restaurant_type")
-        }),
+        (_("Basic"), {"fields": ("user", "cover_picture", "restaurant_type")}),
         (
-            _("Address"), {
-                "fields": ("full_address", "lat", "lng"),
-                'classes': ('collapse',),
+            _("Address"),
+            {"fields": ("full_address", "lat", "lng"), "classes": ("collapse",),},
+        ),
+        (_("Administrative"), {"fields": ("online", "is_public")}),
+        (
+            _("Cuts"),
+            {"fields": ("pickup_order_cut", "inhouse_order_cut", "tax_percentage")},
+        ),
+        (
+            _("KOL Earnings"),
+            {
+                "fields": (
+                    "app_inhouse_earning",
+                    "app_pickup_earning",
+                    "app_total_earning",
+                )
             },
         ),
         (
-            _("Administrative"), {
-                "fields": ("online", "is_public")
-            }
-        ), (
-            _("Cuts"), {
-                "fields": ("pickup_order_cut", "inhouse_order_cut", "tax_percentage")
-            }
-        ), (
-            _("KOL Earnings"), {
-                "fields": ("app_inhouse_earning", "app_pickup_earning", "app_total_earning")
-            }
+            _("Restaurant Earnings"),
+            {"fields": ("inhouse_earning", "pickup_earning", "total")},
         ),
-        (
-            _("Restaurant Earnings"), {
-                "fields": ("inhouse_earning", "pickup_earning", "total")
-            }
-        )
     )
 
     def view_food_items(self, obj):

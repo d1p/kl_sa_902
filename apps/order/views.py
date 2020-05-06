@@ -103,7 +103,10 @@ class OrderInviteViewSet(
                 continue
 
             if user.misc.state != CustomerMiscType.NO_ORDER:
-                return Response({"non_field_error": ["The user is in another order."]}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"non_field_error": ["The user is in another order."]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             invite = OrderInvite.objects.create(
                 order=order,
@@ -243,7 +246,10 @@ class OrderViewSet(
             )
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            return Response({"status": "Please complete the order first."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"status": "Please complete the order first."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     @action(detail=True, methods=["POST"])
     def confirm_current_items(self, request, pk):

@@ -6,13 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('customer', '0007_auto_20191121_0320'),
+        ("customer", "0007_auto_20191121_0320"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='misc',
-            name='state',
-            field=models.CharField(choices=[('No Order', 'No Order'), ('IN_ORDER', 'In Order'), ('IN_CHECKOUT', 'In Checkout'), ('IN_RATING', 'In Rating')], db_index=True, default='No Order', max_length=40),
+            model_name="misc",
+            name="state",
+            field=models.CharField(
+                choices=[
+                    ("No Order", "No Order"),
+                    ("IN_ORDER", "In Order"),
+                    ("IN_CHECKOUT", "In Checkout"),
+                    ("IN_RATING", "In Rating"),
+                ],
+                db_index=True,
+                default="No Order",
+                max_length=40,
+            ),
         ),
     ]

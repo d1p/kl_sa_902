@@ -29,7 +29,12 @@ class OrderAdmin(admin.ModelAdmin):
         "table",
         "created_at",
     )
-    list_filter = ("status", "order_type", "confirmed", "has_restaurant_accepted",)
+    list_filter = (
+        "status",
+        "order_type",
+        "confirmed",
+        "has_restaurant_accepted",
+    )
     search_fields = ("id",)
 
     def invoice_link(self, obj: Order):
@@ -44,7 +49,9 @@ class OrderAdmin(admin.ModelAdmin):
 
     def accepted(self, obj: Order):
         return obj.has_restaurant_accepted
+
     accepted.boolean = True
+
 
 admin.register(OrderItemAddOn)
 

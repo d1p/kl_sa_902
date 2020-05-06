@@ -267,4 +267,4 @@ if "heroku" in os.environ:
     DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = "bootstrap4"
