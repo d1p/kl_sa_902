@@ -24,8 +24,8 @@ class ContactListSyncApiView(CreateAPIView):
         if serializer.is_valid():
             contact_list = serializer.validated_data.get("contacts")
             contact_list = [
-                number[-9:] for number in contact_list
-            ]  # Check first 9 digits.
+                f"0{number[-9:]}" for number in contact_list
+            ]  # Check first 9 digits and add 0.
 
             kole_contacts = User.objects.filter(
                 groups__name="Customer", phone_number__in=contact_list
