@@ -215,25 +215,25 @@ msgstr ""
 
 #: apps/order/invoice/tasks.py:23
 msgid "Please checkout"
-msgstr ""
+msgstr "فضلا المتابعة للدفع"
 
 #: apps/order/invoice/tasks.py:24 apps/order/invoice/tasks.py:46
 #: apps/order/invoice/tasks.py:92 apps/order/invoice/tasks.py:116
 #: apps/order/invoice/tasks.py:173 apps/order/tasks.py:305
 msgid "Tap to see more"
-msgstr ""
+msgstr "اضغط هنا للتفاصيل"
 
 #: apps/order/invoice/tasks.py:44
 #, python-brace-format
 msgid ""
 "The order #{order_id} from #{order.table_id} has been checked out. Please "
 "check the payment status."
-msgstr ""
+msgstr "تم دفع الطلب {order_id} من طاولة {order.table_id}. الرجاء التحقق من حالة الدفع"
 
 #: apps/order/invoice/tasks.py:91
 #, python-brace-format
 msgid "{user.name} has paid bill."
-msgstr ""
+msgstr "{user.name} دفع الفاتورة"
 
 #: apps/order/invoice/tasks.py:154
 msgid "Bill has been paid"
@@ -243,7 +243,7 @@ msgstr ""
 #: apps/order/tasks.py:55 apps/order/tasks.py:91 apps/order/tasks.py:117
 #: apps/order/tasks.py:196 apps/order/tasks.py:395
 msgid "Tap to get started"
-msgstr ""
+msgstr "تم دفع الفاتورة"
 
 #: apps/order/invoice/types.py:12 apps/order/models.py:262
 #: apps/order/types.py:40
@@ -289,36 +289,36 @@ msgstr ""
 #: apps/order/tasks.py:22 apps/order/tasks.py:54
 #, python-brace-format
 msgid "{f_user.name} has sent you an invitation"
-msgstr ""
+msgstr "{f_user.name} قام بإرسالك دعوة"
 
 #: apps/order/tasks.py:90
 #, python-brace-format
 msgid "{joined_user} has joined the order"
-msgstr ""
+msgstr "{joined_user} انضم للطلب"
 
 #: apps/order/tasks.py:116
 #, python-brace-format
 msgid "{left_user} has left the order"
-msgstr ""
+msgstr "{left_user} قام بالخروج من الطلب"
 
 #: apps/order/tasks.py:145
 #, python-brace-format
 msgid "{added_by_name} has added a new item"
-msgstr ""
+msgstr "{added_by_name} قام بإضافة صنف جديد"
 
 #: apps/order/tasks.py:146 apps/order/tasks.py:172
 msgid "Tap to see"
-msgstr ""
+msgstr "اضغط هنا للتفاصيل"
 
 #: apps/order/tasks.py:171
 #, python-brace-format
 msgid "{removed_by_name} has removed a item"
-msgstr ""
+msgstr "{removed_by_name} قام بحذف صنف"
 
 #: apps/order/tasks.py:195
 #, python-brace-format
 msgid "{joined_user} has accepted to share the item."
-msgstr ""
+msgstr "قام {joined_user} بقبول دعوة مشاركتك"
 
 #: apps/order/tasks.py:223 apps/order/tasks.py:264
 msgid "See the dashboard for details"
@@ -327,11 +327,11 @@ msgstr ""
 #: apps/order/tasks.py:262
 #, python-brace-format
 msgid "A new item just added to the order #{order_id} from {order.table_id}."
-msgstr ""
+msgstr "تم إضافة صنف جديد لطلب رقم {order_id} من طاولة {order.table_id}"
 
 #: apps/order/tasks.py:304
 msgid "Order items has been confirmed"
-msgstr ""
+msgstr "تم تأكيد الطلب"
 
 #: apps/order/tasks.py:326 apps/order/tasks.py:348 apps/order/tasks.py:370
 #: apps/order/tasks.py:419 apps/order/tasks.py:441
@@ -342,27 +342,27 @@ msgstr ""
 #: apps/order/tasks.py:327
 #, python-brace-format
 msgid "Your order will be ready in {time} minutes."
-msgstr ""
+msgstr "طلبك سيكون جاهز للإستلام خلال {time} دقيقة"
 
 #: apps/order/tasks.py:349
 msgid "Your order is ready."
-msgstr ""
+msgstr "طلبك جاهز للإستلام"
 
 #: apps/order/tasks.py:371
 msgid "Your order is delivered."
-msgstr ""
+msgstr "تم إستلام طلبك"
 
 #: apps/order/tasks.py:394
 msgid "Order has been updated"
-msgstr ""
+msgstr "تم تحديث الطلب"
 
 #: apps/order/tasks.py:420
 msgid "Your order has been accepted."
-msgstr ""
+msgstr "تم قبول طلبك"
 
 #: apps/order/tasks.py:442
 msgid "Your order has been rejected."
-msgstr ""
+msgstr "تم رفض طلبك من قبل المطعم/الكافيه"
 
 #: apps/order/types.py:8
 msgid "Pick Up"
