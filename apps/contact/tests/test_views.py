@@ -25,12 +25,13 @@ class TestSyncContacts:
         active_contacts = []
         for i in range(0, 9):
             active_contacts.append(
-                mixer.blend("customer.Customer", user__phone_number=f"18763662{i}")
+                mixer.blend("customer.Customer", user__phone_number=f"018763662{i}")
             )
         mixer.cycle(2).blend("customer.Customer")
 
         for a in active_contacts:
             a.user.groups.add(groups)
+
         ids = [contact.user.phone_number for contact in active_contacts]
         factory = APIRequestFactory()
         request = factory.post("/", data={"contacts": ids})
