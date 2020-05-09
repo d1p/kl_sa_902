@@ -7,7 +7,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.account.types import ProfileType
 from apps.order.invoice.filters import InvoiceFilter
 from apps.order.invoice.tasks import (
@@ -186,7 +186,21 @@ class TransactionViewSet(
 
 @login_required
 def invoice_view(request, order_id: int):
-    if request.user.is_superuser is False:
-        raise PermissionDenied
+    user_id = None
+
+    if request.user.is_authenticated is True:
+        if request.user.is_superuser is False:
+            raise PermissionDenied
+    else:
+        try:
+            jwt_info = JWTAuthentication().get_validated_token(raw_token=request.GET.get("auth", ""))
+            user_id = jwt_info["user_id"]
+        except:
+            raise PermissionDenied
+
     invoice = get_object_or_404(Invoice, order__id=order_id)
+    if user_id is not None:
+        if invoice.order.restaurant.id != user_id:
+            raise PermissionDenied
+
     return render(request, "invoice/invoice.html", {"invoice": invoice})
