@@ -71,7 +71,7 @@ class RestaurantViewSet(
                 .annotate(distance=Distance("geolocation", point))
                 .order_by("distance")
             )
-        return Restaurant.objects.filter(is_public=True)
+        return Restaurant.objects.filter(is_public=True, online=True)
 
     def get_serializer_class(self):
         if self.request.user.is_superuser:
