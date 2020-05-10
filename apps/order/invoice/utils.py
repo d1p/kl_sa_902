@@ -39,7 +39,6 @@ def process_new_completed_order_earning(order: Order):
     restaurant: Restaurant = order.restaurant.restaurant
 
     total = Decimal(0.0)
-    print(order.get_status_display())
     try:
         invoice = Invoice.objects.get(order=order)
     except Invoice.DoesNotExist:

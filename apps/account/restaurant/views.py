@@ -21,6 +21,7 @@ from apps.account.restaurant.serializers import (
     RestaurantTableSerializer,
     PublicRestaurantSerializer,
 )
+from apps.account.types import ProfileType
 from apps.order.invoice.models import Invoice
 from apps.order.types import OrderType
 from utils.permission import IsAuthenticatedOrCreateOnly, IsRestaurantOwnerOrReadOnly
@@ -55,23 +56,29 @@ class RestaurantViewSet(
 
     def get_queryset(self):
         request = self.request
-        radius = request.GET.get("radius", 300)
+        if request.user.is_superuser:
+            return Restaurant.objects.all()
 
-        if (
-            request.GET.get("lat", None) is not None
-            and request.GET.get("lng", None) is not None
-        ):
-            point = Point(
-                float(request.GET.get("lng")), float(request.GET.get("lat")), srid=4326
-            )
-            return (
-                Restaurant.objects.filter(
-                    is_public=True, geolocation__distance_lte=(point, D(km=radius))
+        if request.user.profile_type == ProfileType.CUSTOMER:
+            radius = request.GET.get("radius", 300)
+
+            if (
+                request.GET.get("lat", None) is not None
+                and request.GET.get("lng", None) is not None
+            ):
+                point = Point(
+                    float(request.GET.get("lng")), float(request.GET.get("lat")), srid=4326
                 )
-                .annotate(distance=Distance("geolocation", point))
-                .order_by("distance")
-            )
-        return Restaurant.objects.filter(is_public=True, online=True)
+                return (
+                    Restaurant.objects.filter(
+                        is_public=True, geolocation__distance_lte=(point, D(km=radius))
+                    )
+                    .annotate(distance=Distance("geolocation", point))
+                    .order_by("distance")
+                )
+            return Restaurant.objects.filter(is_public=True, online=True)
+        else:
+            return Restaurant.objects.filter(user=request.user)
 
     def get_serializer_class(self):
         if self.request.user.is_superuser:

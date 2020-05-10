@@ -62,6 +62,7 @@ class TestCustomerViewSet:
 
         request = factory.put("/", data=data)
         force_authenticate(request, restaurant.user)
+
         response = RestaurantViewSet.as_view({"put": "update"})(
             request, user=restaurant.user.id
         )
