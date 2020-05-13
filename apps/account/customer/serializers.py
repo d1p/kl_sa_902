@@ -51,12 +51,16 @@ class MiscSerializer(serializers.ModelSerializer):
         fields = (
             "last_order",
             "last_order_in_checkout",
+            "last_order_in_rating",
             "last_restaurant",
             "last_order_type",
+            "state",
         )
         read_only_field = (
             "last_order",
             "last_order_in_checkout",
+            "last_order_in_rating",
             "last_restaurant",
             "last_order_type",
+            "state",
         )

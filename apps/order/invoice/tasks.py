@@ -165,8 +165,10 @@ def send_all_bill_paid_notification(order_id: int):
                 translation.deactivate()
 
         if order.order_type is OrderType.IN_HOUSE:
-            message = f"The Table order #{order_id} from {order.table_id} has been fully paid. Please open it from the completed order list to print invoice."
-            message_in_ar = f"The Table order #{order_id} from {order.table_id} has been fully paid. Please open it from the completed order list to print invoice."
+            message = f"The Table order #{order_id} from {order.table_id} has been fully paid. " \
+                      f"Please open it from the completed order list to print invoice."
+            message_in_ar = f"The Table order #{order_id} from {order.table_id} has been fully paid. " \
+                            f"Please open it from the completed order list to print invoice."
 
             translation.activate(order.restaurant.locale)
             title = _(message)
