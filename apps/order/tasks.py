@@ -231,12 +231,14 @@ def send_new_order_items_confirmed_notification(order_id: int):
 
         if order.order_type is OrderType.IN_HOUSE:
             message = f"ORDER #{order.id} A new Table order just arrived from {order.table_id}."
-            message_in_ar = f"ORDER #{order.id} A new Table order just arrived from {order.table_id}."
+            message_in_ar = f"طلب  {order.id} " \
+                            f" تم إنشاء طلب جديد من طاولة {order.table_id}"
             action_type = NotificationActionType.RESTAURANT_NEW_TABLE_ORDER
         else:
-            message = f"ORDER #{order.id} A new Table order just arrived from {order.table_id}."
-            message_in_ar = f"ORDER #{order.id} A new Table order just arrived from {order.table_id}."
-            action_type = NotificationActionType.RESTAURANT_NEW_TABLE_ORDER
+            message = f"ORDER #{order.id} A new Pickup order just arrived."
+            message_in_ar = f"طلب  {order.id}" \
+                            f"تم استلام طلب خارجي جديد"
+            action_type = NotificationActionType.RESTAURANT_NEW_PICKUP_ORDER
 
         Action.objects.create(
             message=message,
@@ -275,9 +277,7 @@ def send_update_order_items_confirmed_notification(order_id: int):
         message = (
             f"A new item just added to the order #{order_id} from {order.table_id}."
         )
-        message_in_ar = (
-            f"A new item just added to the order #{order_id} from {order.table_id}."
-        )
+        message_in_ar = f"تم إضافة صنف جديد إلى طلب {order_id}  من طاولة {order.table_id}"
         action_type = NotificationActionType.RESTAURANT_NEW_ITEM_IN_ORDER
 
         Action.objects.create(

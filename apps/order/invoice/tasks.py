@@ -55,7 +55,9 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
         translation.deactivate()
 
         message = f"The order #{order_id} from #{order.table_id} has been checked out. Please check the payment status."
-        message_in_ar = f"The order #{order_id} from #{order.table_id} has been checked out. Please check the payment status."
+        message_in_ar = f" تم تحويل طلب {order_id}  من طاولة {order.table_id}  إلى الدفع." \
+                        "الرجاء التحقق من حالة الفاتورة "
+
         action_type = NotificationActionType.RESTAURANT_CHECKOUT_FROM_ORDER
 
         Action.objects.create(
@@ -110,7 +112,7 @@ def send_single_bill_paid_notification(
     if invoice.order.order_type is OrderType.IN_HOUSE:
         translation.activate(invoice.order.restaurant.locale)
         message = f"{user.name} has paid for the Table order #{invoice.order.id} from {invoice.order.table_id}. Please check it from the order."
-        message_in_ar = f"{user.name} has paid for the Table order #{invoice.order.id} from {invoice.order.table_id}. Please check it from the order."
+        message_in_ar = f"{user.name} دفع فاتورة الطاولة {invoice.order.id} من {invoice.order.table_id}. الرجاء التحقق من حالة الطلب "
 
         title = _(message)
         body = _("Tap to see more")
@@ -167,8 +169,8 @@ def send_all_bill_paid_notification(order_id: int):
         if order.order_type is OrderType.IN_HOUSE:
             message = f"The Table order #{order_id} from {order.table_id} has been fully paid. " \
                       f"Please open it from the completed order list to print invoice."
-            message_in_ar = f"The Table order #{order_id} from {order.table_id} has been fully paid. " \
-                            f"Please open it from the completed order list to print invoice."
+            message_in_ar = f"تم دفع طلب طاولة {order_id} من {order.table_id} بالكامل." \
+                            "لطباعة الفاتورة، الرجاء الذهاب إلى الطلبات المكتملة."
 
             translation.activate(order.restaurant.locale)
             title = _(message)
