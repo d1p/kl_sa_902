@@ -41,6 +41,7 @@ class RestaurantAdmin(admin.ModelAdmin):
         "view_food_items",
         "email_address",
         "phone_number",
+        "online",
         "is_public",
     )
     readonly_fields = (
