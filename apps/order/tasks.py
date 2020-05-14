@@ -236,7 +236,7 @@ def send_new_order_items_confirmed_notification(order_id: int):
             action_type = NotificationActionType.RESTAURANT_NEW_TABLE_ORDER
         else:
             message = f"ORDER #{order.id} A new Pickup order just arrived."
-            message_in_ar = f"طلب  {order.id}" \
+            message_in_ar = f" طلب  {order.id}" \
                             f"تم استلام طلب خارجي جديد"
             action_type = NotificationActionType.RESTAURANT_NEW_PICKUP_ORDER
 
