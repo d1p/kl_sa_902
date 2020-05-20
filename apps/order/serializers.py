@@ -377,6 +377,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "order_type",
             "restaurant",
             "table",
+            "table_name",
             "order_item_set",
             "order_participants",
             "confirmed",
@@ -388,6 +389,7 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id",
             "status",
+            "table_name",
             "created_by",
             "created_at",
             "has_restaurant_accepted",

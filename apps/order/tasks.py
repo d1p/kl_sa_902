@@ -216,7 +216,7 @@ def send_new_order_items_confirmed_notification(order_id: int):
         order = Order.objects.get(id=order_id)
         translation.activate(order.restaurant.locale)
         if order.order_type is OrderType.IN_HOUSE:
-            title = f"ORDER #{order.id} A new Table order just arrived from Table #{order.table_id}."
+            title = f"ORDER #{order.id} A new Table order just arrived from Table #{order.table_name}."
         else:
             title = f"ORDER #{order.id} A new Pickup order just arrived."
 
@@ -230,7 +230,7 @@ def send_new_order_items_confirmed_notification(order_id: int):
         }
 
         if order.order_type is OrderType.IN_HOUSE:
-            message = f"ORDER #{order.id} A new Table order just arrived from {order.table_id}."
+            message = f"ORDER #{order.id} A new Table order just arrived from {order.table_name}."
             message_in_ar = f"طلب  {order.id} " \
                             f" تم إنشاء طلب جديد من طاولة {order.table_id}"
             action_type = NotificationActionType.RESTAURANT_NEW_TABLE_ORDER
@@ -261,7 +261,7 @@ def send_update_order_items_confirmed_notification(order_id: int):
         order = Order.objects.get(id=order_id)
         translation.activate(order.restaurant.locale)
         title = _(
-            f"A new item just added to the order #{order_id} from {order.table_id}."
+            f"A new item just added to the order #{order_id} from {order.table_name}."
         )
         body = _("See the dashboard for details")
         data = {
@@ -275,9 +275,9 @@ def send_update_order_items_confirmed_notification(order_id: int):
         translation.deactivate()
 
         message = (
-            f"A new item just added to the order #{order_id} from {order.table_id}."
+            f"A new item just added to the order #{order_id} from {order.table_name}."
         )
-        message_in_ar = f"تم إضافة صنف جديد إلى طلب {order_id}  من طاولة {order.table_id}"
+        message_in_ar = f"تم إضافة صنف جديد إلى طلب {order_id}  من طاولة {order.table_name}"
         action_type = NotificationActionType.RESTAURANT_NEW_ITEM_IN_ORDER
 
         Action.objects.create(

@@ -69,6 +69,12 @@ class Order(models.Model):
     def __str__(self):
         return str(self.id)
 
+    @property
+    def table_name(self):
+        if self.table:
+            return self.table_name
+        return None
+
     def is_active(self) -> bool:
         return (
             OrderItem.objects.filter(

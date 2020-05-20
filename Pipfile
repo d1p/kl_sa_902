@@ -39,7 +39,7 @@ django-cors-headers = "*"
 django-crispy-forms = "*"
 
 [requires]
-python_version = "3.7.5"
+python_version = "3.7.7"
 
 [pipenv]
 allow_prereleases = true
