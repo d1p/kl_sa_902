@@ -141,7 +141,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 5,
-    "DATETIME_FORMAT": "%Y-%m-%d %H:%m:%S",
+    "DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S",
     "DATETIME_INPUT_FORMATS": ["iso-8601", "%Y-%m-%d %H:%M:%S"],
 }
 
