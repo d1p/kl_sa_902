@@ -71,7 +71,7 @@ class RestaurantViewSet(
                 )
                 return (
                     Restaurant.objects.filter(
-                        is_public=True, geolocation__distance_lte=(point, D(km=radius))
+                        is_public=True, online=True, geolocation__distance_lte=(point, D(km=radius))
                     )
                     .annotate(distance=Distance("geolocation", point))
                     .order_by("distance")
