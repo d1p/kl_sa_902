@@ -142,7 +142,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 5,
     "DATETIME_FORMAT": "%Y-%m-%d %H:%m:%S",
-    "DATETIME_INPUT_FORMATS": ["iso-8601", "%Y-%m-%d %H:%m:%S"],
+    "DATETIME_INPUT_FORMATS": ["iso-8601", "%Y-%m-%d %H:%M:%S"],
 }
 
 # Static files (CSS, JavaScript, Images)
