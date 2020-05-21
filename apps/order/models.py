@@ -72,7 +72,7 @@ class Order(models.Model):
     @property
     def table_name(self):
         if self.table:
-            return self.table_name
+            return self.table.name
         return None
 
     def is_active(self) -> bool:
