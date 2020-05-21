@@ -148,8 +148,7 @@ class TransactionVerifyViewSet(CreateAPIView):
                         order.status = OrderStatusType.COMPLETED
                         order.payment_completed = True
                         order.save()
-
-                    process_new_completed_order_earning(order)
+                        process_new_completed_order_earning(order)
 
                     send_all_bill_paid_notification.delay(order_id=order.id)
 
