@@ -25,6 +25,6 @@ class InvoiceItemInlineAdmin(admin.TabularInline):
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    list_display = ("id", "order", "created_at")
+    list_display = ("id", "order", "app_earning", "restaurant_earning", "created_at")
     search_fields = ("id", "order")
     list_filter = ("created_at",)

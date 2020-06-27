@@ -37,6 +37,8 @@ sentry-sdk = "*"
 django-nested-admin = "*"
 django-cors-headers = "*"
 django-crispy-forms = "*"
+pyparsing = "*"
+pydot = "*"
 
 [requires]
 python_version = "3.7.7"

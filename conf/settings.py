@@ -49,6 +49,7 @@ THIRD_PARTY_APPS = [
     "nested_admin",
     "django_filters",
     "crispy_forms",
+    "django_extensions",
 ]
 
 CORE_APPS = [
