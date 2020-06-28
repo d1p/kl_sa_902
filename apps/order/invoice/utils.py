@@ -38,12 +38,16 @@ def capture_transaction(transaction_id, amount):
 
 def process_new_completed_order_earning(order: Order):
     with transaction.atomic():
+
         restaurant: Restaurant = order.restaurant.restaurant
         total = Decimal(0.0)
         try:
             invoice = Invoice.objects.get(order=order)
         except Invoice.DoesNotExist:
             raise ValueError("Invoice does not exists")
+
+        if invoice.app_earning is not None and invoice.restaurant_earning is not None:
+            return False
 
         for invoice_item in invoice.invoice_items.all():
             total += invoice_item.amount
