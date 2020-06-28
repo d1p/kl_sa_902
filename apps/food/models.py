@@ -24,8 +24,8 @@ class FoodCategory(models.Model):
 
 
 class FoodItem(models.Model):
-    category = models.ForeignKey(FoodCategory, on_delete=models.SET_NULL, null=True)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, db_index=True)
+    category = models.ForeignKey(FoodCategory, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, db_index=True)
     name = models.CharField(max_length=300, db_index=True)
     name_in_ar = models.CharField(max_length=300, db_index=True)
 
