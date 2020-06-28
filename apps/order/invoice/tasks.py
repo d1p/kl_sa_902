@@ -1,10 +1,12 @@
-from django.utils import translation
+from celery.task import periodic_task
+from django.utils import translation, timezone
 
 from apps.account.models import User
 from apps.notification.models import Action
 from apps.notification.types import NotificationActionType
 from apps.order.invoice.models import Invoice, Transaction
 from apps.order.invoice.types import PaymentStatus
+from apps.order.invoice.utils import process_new_completed_order_earning
 from apps.order.models import Order
 from apps.order.types import OrderType
 from conf.celery import app
@@ -74,7 +76,7 @@ def send_checkout_push_notification_to_the_restaurant(order_id: int):
 
 @app.task
 def send_single_bill_paid_notification(
-    invoice_id: int, user_id: int, transaction_id: int
+        invoice_id: int, user_id: int, transaction_id: int
 ):
     user = User.objects.get(id=user_id)
     transaction = Transaction.objects.get(id=transaction_id)
@@ -199,3 +201,10 @@ def send_all_bill_paid_notification(order_id: int):
             )
     except:
         pass
+
+
+@periodic_task(run_every=timezone.timedelta(minutes=2))
+def sync_error_transactions():
+    unsync_invoices = Invoice.objects.filter(app_earning=None, restaurant_earning=None, order__payment_completed=True)
+    for invoice in unsync_invoices:
+        process_new_completed_order_earning(invoice.order.id)
