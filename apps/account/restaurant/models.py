@@ -58,23 +58,23 @@ class Restaurant(models.Model):
 
     tax_percentage = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
 
-    pickup_earning = models.DecimalField(max_digits=12, decimal_places=3, default=0.00)
-    inhouse_earning = models.DecimalField(max_digits=12, decimal_places=3, default=0.00)
+    pickup_earning = models.DecimalField(max_digits=15, decimal_places=3, default=0.00)
+    inhouse_earning = models.DecimalField(max_digits=15, decimal_places=3, default=0.00)
 
     app_pickup_earning = models.DecimalField(
-        max_digits=12, decimal_places=3, default=0.0
+        max_digits=15, decimal_places=3, default=0.0
     )
 
     app_inhouse_earning = models.DecimalField(
-        max_digits=12, decimal_places=3, default=0.0
+        max_digits=15, decimal_places=3, default=0.0
     )
 
-    total_earning = models.DecimalField(max_digits=12, decimal_places=3, default=0.00)
+    total_earning = models.DecimalField(max_digits=15, decimal_places=3, default=0.00)
     app_total_earning = models.DecimalField(
-        max_digits=12, decimal_places=3, default=0.00
+        max_digits=15, decimal_places=3, default=0.00
     )
 
-    total = models.DecimalField(max_digits=12, decimal_places=3, default=0.0)
+    total = models.DecimalField(max_digits=15, decimal_places=3, default=0.0)
 
     def __str__(self):
         return f"{self.user} - {self.user.name}"
