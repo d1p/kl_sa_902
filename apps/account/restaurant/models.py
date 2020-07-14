@@ -50,13 +50,13 @@ class Restaurant(models.Model):
 
     # payables
     pickup_order_cut = models.DecimalField(
-        max_digits=12, decimal_places=3, default=100.00
+        max_digits=6, decimal_places=3, default=100.00
     )
     inhouse_order_cut = models.DecimalField(
-        max_digits=12, decimal_places=3, default=100.00
+        max_digits=6, decimal_places=3, default=100.00
     )
 
-    tax_percentage = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    tax_percentage = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
 
     pickup_earning = models.DecimalField(max_digits=12, decimal_places=3, default=0.00)
     inhouse_earning = models.DecimalField(max_digits=12, decimal_places=3, default=0.00)

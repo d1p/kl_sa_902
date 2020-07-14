@@ -18,8 +18,8 @@ class Invoice(models.Model):
     order_cut = models.DecimalField(max_digits=6, decimal_places=3, default=100.00)
 
     # earnings
-    app_earning = models.DecimalField(max_digits=8, decimal_places=3, null=True)
-    restaurant_earning = models.DecimalField(max_digits=8, decimal_places=3, null=True)
+    app_earning = models.DecimalField(max_digits=9, decimal_places=3, null=True)
+    restaurant_earning = models.DecimalField(max_digits=9, decimal_places=3, null=True)
 
     @property
     def total(self) -> Decimal:
