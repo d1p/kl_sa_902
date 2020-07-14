@@ -207,4 +207,4 @@ def send_all_bill_paid_notification(order_id: int):
 def sync_error_transactions():
     unsync_invoices = Invoice.objects.filter(app_earning=None, restaurant_earning=None, order__payment_completed=True)
     for invoice in unsync_invoices:
-        process_new_completed_order_earning(invoice.order.id)
+        process_new_completed_order_earning(invoice.order)
