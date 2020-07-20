@@ -91,7 +91,7 @@ class ForgotPasswordViewSet(GenericViewSet, CreateModelMixin):
             )
 
         token = ForgotPasswordToken.objects.create(user=user)
-        user.sms_user(f"Use {token.code} as your reset code for Kole.")
+        user.sms_user(f"Use {token.code} as your reset code for Kol.")
 
         return Response({"success": True}, status=status.HTTP_200_OK)
 
@@ -238,7 +238,7 @@ class ChangePhoneNumberViewSet(GenericViewSet, CreateModelMixin):
             )
             try:
                 request.user.sms_user(
-                    f"Use {token.code} as verification code for Kole."
+                    f"Use {token.code} as verification code for Kol."
                 )
             except TwilioRestException:
                 return Response(

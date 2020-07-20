@@ -46,7 +46,7 @@ class InvoiceViewSet(
         if user.profile_type == ProfileType.CUSTOMER:
             queryset = Invoice.objects.filter(order__order_participants__user=user).exclude(order__restaurant=None)
         elif user.profile_type == ProfileType.RESTAURANT:
-            queryset = Invoice.objects.filter(order__restaurant=user)
+            queryset = Invoice.objects.filter(order__restaurant=user, order__status=OrderStatusType.COMPLETED)
         else:
             queryset = Invoice.objects.all()
 

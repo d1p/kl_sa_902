@@ -25,8 +25,9 @@ class CustomerInline(admin.TabularInline):
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    search_fields = ("user__email", "user__name", "user__phone_number")
-    list_display = ("email_address", "name", "phone_number")
+    search_fields = ("user__email", "user__name", "user__phone_number",)
+
+    list_display = ("email_address", "name", "phone_number", "created_at")
     date_hierarchy = "user__created_at"
 
     def name(self, obj):
@@ -38,6 +39,8 @@ class CustomerAdmin(admin.ModelAdmin):
     def phone_number(self, obj):
         return obj.user.phone_number
 
+    def created_at(self, obj):
+        return obj.user.created_at
     def get_form(self, request, obj=None, **kwargs):
         form = super(CustomerAdmin, self).get_form(request, obj, **kwargs)
 

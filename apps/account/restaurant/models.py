@@ -156,5 +156,8 @@ class RestaurantTable(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True, db_index=True)
 
+    class Meta:
+        ordering = ("created_at", )
+
     def __str__(self):
         return f"{self.name} by {self.user.name}"

@@ -32,7 +32,7 @@ class PrivateUserSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
-        style={"input_type": "password"}, write_only=True, required=False, min_length=8
+        style={"input_type": "password"}, write_only=True, required=False, min_length=6
     )
 
     @property

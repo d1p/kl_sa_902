@@ -22,6 +22,7 @@ from .models import (
     OrderItemAttributeMatrix,
     Rating,
 )
+from ..account.restaurant.models import RestaurantTable
 
 
 class BulkOrderInviteSerializer(serializers.Serializer):
@@ -405,6 +406,10 @@ class OrderSerializer(serializers.ModelSerializer):
             status__in=[OrderStatusType.OPEN, OrderStatusType.CHECKOUT],
         ).exists():
             raise ValidationError({"table": ["This table is already booked."]})
+
+        table: RestaurantTable = validated_data.get("table")
+        if table.is_active is False:
+            raise ValidationError({"table": ["This table is not active."]})
 
         order = Order.objects.create(
             **validated_data,
