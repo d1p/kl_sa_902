@@ -408,8 +408,9 @@ class OrderSerializer(serializers.ModelSerializer):
             raise ValidationError({"table": ["This table is already booked."]})
 
         table: RestaurantTable = validated_data.get("table")
-        if table.is_active is False:
-            raise ValidationError({"table": ["This table is not active."]})
+        if table is not None:
+            if table.is_active is False:
+                raise ValidationError({"table": ["This table is not active."]})
 
         order = Order.objects.create(
             **validated_data,
