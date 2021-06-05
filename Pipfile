@@ -10,7 +10,7 @@ pytest-cov = "*"
 pytest-django = "*"
 
 [packages]
-django = "==2.2.12"
+django = "==2.2.21"
 django-environ = "*"
 psycopg2-binary = "*"
 dj-database-url = "*"
